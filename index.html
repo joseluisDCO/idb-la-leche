@@ -444,7 +444,22 @@
       display: grid !important;
       grid-template-columns: 1fr 1fr;
     }
-
+    .conexion-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    #btn-reintentar-conexion {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      font-size: 0.75rem;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
     button {
       width: 100%;
     }
@@ -472,7 +487,7 @@
   </div>
 
   <div id="pantalla-inicio">
-    <div id="estado-conexion" class="estado-conexion">
+    <div id="estado-conexion" class="conexion-container">
       <span id="conexion-icono" class="led-conexion"></span>
       <span id="conexion-texto">Comprobando conexión...</span>
       <button id="btn-reintentar-conexion">Reintentar conexión</button>
