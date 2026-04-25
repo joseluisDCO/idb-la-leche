@@ -478,6 +478,25 @@
       flex-direction: column;
     }
   }
+     .menu-secundario.vertical {
+    display: grid;
+    grid-template-rows: repeat(3, 1fr);
+    gap: 12px;
+    height: 240px;
+  }
+  
+  .menu-secundario.vertical button {
+    height: 100%;
+    border-radius: 18px;
+    font-size: 1rem;
+  }
+   #btn-informes {
+  min-height: 74px;
+  font-size: 1.08rem;
+  }
+   button {
+  min-height: 60px;
+  }
 </style>
 </head>
 <body>
@@ -496,7 +515,7 @@
     <div class="menu-principal">
       <button id="btn-registrar-ordeno" class="btn-principal">Registrar Ordeño</button>
 
-      <div class="menu-secundario">
+      <div class="menu-secundario vertical">
         <button id="btn-alta-animal">Dar de alta animal</button>
         <button id="btn-crear-turnos">Crear Turnos</button>
         <button id="btn-actualizar-turnos">Actualizar Turnos</button>
