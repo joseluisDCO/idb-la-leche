@@ -139,6 +139,7 @@ function actualizarCantaras(sumaAyer, sumaHoy, porcentaje) {
 async function comprobarConexion() {
   console.log('Entrando en comprobarConexion');
 
+  const estadoConexion = document.getElementById('estado-conexion'); // 👈 NUEVO
   const textoConexion = document.getElementById('conexion-texto');
   const iconoConexion = document.getElementById('conexion-icono');
 
@@ -148,6 +149,11 @@ async function comprobarConexion() {
 
   if (iconoConexion) {
     iconoConexion.className = 'led-conexion checking';
+  }
+
+  // 👇 estado visual mientras comprueba
+  if (estadoConexion) {
+    estadoConexion.classList.remove('conectado', 'desconectado');
   }
 
   try {
@@ -168,9 +174,25 @@ async function comprobarConexion() {
         : 'led-conexion ok';
     }
 
+    // 👇 AQUÍ ESTÁ EL CAMBIO IMPORTANTE
+    if (estadoConexion) {
+      estadoConexion.classList.remove('conectado', 'desconectado');
+      estadoConexion.classList.add(error ? 'desconectado' : 'conectado');
+    }
+
     return !error;
+
   } catch (e) {
     console.error('Error comprobando conexión:', e);
+
+    if (estadoConexion) {
+      estadoConexion.classList.remove('conectado');
+      estadoConexion.classList.add('desconectado');
+    }
+
+    if (textoConexion) {
+      textoConexion.textContent = 'Error conexión';
+    }
   }
 }
 
