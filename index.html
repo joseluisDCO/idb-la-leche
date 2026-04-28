@@ -238,18 +238,20 @@
   #estado-conexion {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
 
-  max-width: 320px;
+  width: fit-content;
   margin: 0 auto 16px auto;
 
-  padding: 12px 16px;
+  padding: 8px 12px;
 
   border-radius: 999px;
-  background: linear-gradient(135deg, var(--ice) 0%, #FFFFFF 100%);
+  background: #e0e0e0; /* default gris */
+
   border: 1px solid var(--border);
   box-shadow: var(--shadow-soft);
+
+  transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
   .led-conexion {
