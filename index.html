@@ -284,6 +284,16 @@
     animation: parpadeo-led 1s infinite ease-in-out;
   }
 
+  #estado-conexion.conectado {
+    background: linear-gradient(135deg, #22A66A, #6BE3A4);
+    color: white;
+  }
+  
+  #estado-conexion.desconectado {
+    background: #e0e0e0;
+    color: #555;
+  }
+   
   #grid,
   #grid-turno-edicion,
   #grid-turno-actualizar {
@@ -466,18 +476,22 @@
     }
     
     #btn-reintentar-conexion {
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      font-size: 0.75rem;
-      padding: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    button {
-      width: 100%;
-    }
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  
+    font-size: 0.65rem;
+    padding: 0;
+  
+    background: rgba(255,255,255,0.25);
+    color: white;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    box-shadow: none;
+  }
 
     .fila {
       gap: 8px;
