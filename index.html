@@ -487,6 +487,126 @@
    button {
   min-height: 60px;
   }
+
+
+  /* ===== Pantalla inicial separada en tarjetas visuales ===== */
+  #pantalla-inicio {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  #pantalla-inicio::before {
+    display: none;
+  }
+
+  .inicio-card {
+    background: rgba(255,255,255,0.88);
+    border: 1px solid rgba(215,234,245,0.95);
+    border-radius: var(--radius) var(--radius) 14px var(--radius);
+    padding: 18px;
+    box-shadow: var(--shadow-soft);
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .inicio-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--blue-dark), var(--blue-soft), var(--milk));
+  }
+
+  .conexion-card #estado-conexion {
+    width: 100%;
+  }
+
+  .registrar-card,
+  .informes-card {
+    padding: 18px;
+  }
+
+  .gestion-card {
+    padding: 18px;
+  }
+
+  .menu-principal {
+    display: contents;
+  }
+
+  .menu-secundario {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    height: auto;
+    margin: 0;
+  }
+
+  .menu-secundario button {
+    width: 100%;
+    min-height: 170px;
+    height: 170px;
+    border-radius: 22px;
+    font-size: 1rem;
+    line-height: 1.18;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 18px 12px;
+  }
+
+  #btn-informes {
+    min-height: 84px;
+    font-size: 1.08rem;
+  }
+
+  #btn-reintentar-conexion {
+    width: 70px;
+    height: 70px;
+    min-width: 70px;
+    border-radius: 50%;
+    font-size: 0.72rem;
+    line-height: 1.05;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  @media (max-width: 520px) {
+    #pantalla-inicio {
+      gap: 12px;
+    }
+
+    .inicio-card {
+      padding: 16px;
+    }
+
+    .menu-secundario {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .menu-secundario button {
+      min-height: 155px;
+      height: 155px;
+      font-size: 0.95rem;
+      padding: 16px 10px;
+    }
+  }
+
 </style>
 </head>
 <body>
@@ -496,22 +616,28 @@
   </div>
 
   <div id="pantalla-inicio">
-    <div id="estado-conexion" class="conexion-container">
-      <span id="conexion-icono" class="led-conexion"></span>
-      <span id="conexion-texto">Comprobando conexión...</span>
-      <button id="btn-reintentar-conexion">Reintentar conexión</button>
-    </div>
-
-    <div class="menu-principal">
-      <button id="btn-registrar-ordeno" class="btn-principal">Registrar Ordeño</button>
-
-      <div class="menu-secundario">
-        <button id="btn-alta-animal">Dar de alta animal</button>
-        <button id="btn-crear-turnos">Crear Turnos</button>
-        <button id="btn-actualizar-turnos">Actualizar Turnos</button>
-        <button id="btn-informes">Informes</button>
+    <section class="inicio-card conexion-card">
+      <div id="estado-conexion" class="conexion-container">
+        <span id="conexion-icono" class="led-conexion"></span>
+        <span id="conexion-texto">Comprobando conexión...</span>
+        <button id="btn-reintentar-conexion">Reintentar conexión</button>
       </div>
-    </div>
+    </section>
+
+    <section class="inicio-card registrar-card">
+      <button id="btn-registrar-ordeno" class="btn-principal">Registrar Ordeño</button>
+    </section>
+
+    <section class="inicio-card gestion-card">
+      <div class="menu-secundario">
+        <button id="btn-alta-animal">Alta / modificación<br>Animal</button>
+        <button id="btn-crear-turnos">Crear / modificar<br>Turnos</button>
+      </div>
+    </section>
+
+    <section class="inicio-card informes-card">
+      <button id="btn-informes">Informes</button>
+    </section>
   </div>
 
   <div id="pantalla-alta-animal" style="display:none;">
