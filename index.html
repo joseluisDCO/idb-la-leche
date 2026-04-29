@@ -32,6 +32,7 @@
   body {
     margin: 0;
     padding: 16px;
+    padding-top: 70px;
     min-height: 100vh;
     font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
     color: var(--ink);
@@ -62,6 +63,35 @@
   box-shadow: 0 6px 18px rgba(23,71,102,0.08);
 }
 
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.app-logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+}
+
+.header-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.title {
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: var(--blue-dark);
+}
+
+.subtitle {
+  font-size: 0.65rem;
+  color: var(--muted);
+  letter-spacing: 1px;
+}
 .title {
   font-size: 1.8rem;
   font-weight: 900;
