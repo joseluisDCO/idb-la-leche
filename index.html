@@ -43,14 +43,23 @@
   }
 
  .app-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
   max-width: 980px;
-  margin: 0 auto 20px;
-  padding: 24px;
-  border-radius: 26px;
-  color: white;
-  background: linear-gradient(135deg, var(--blue-dark), var(--blue), var(--cyan));
-  box-shadow: var(--shadow);
-  position: relative;
+  margin: 0 auto 16px;
+  padding: 10px 12px;
+
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(10px);
+
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 6px 18px rgba(23,71,102,0.08);
 }
 
 .title {
@@ -656,8 +665,13 @@
 </head>
 <body>
   <div class="app-header">
-    <div class="title">iDB La Leche</div>
-    <div class="subtitle">By iDeas Bizarras</div>
+  <div class="header-left">
+    <img src="icon-192.png" alt="logo" class="app-logo">
+    <div class="header-text">
+      <div class="title">iDB La Leche</div>
+      <div class="subtitle">By iDeas Bizarras</div>
+    </div>
+  </div>
   </div>
 
   <div id="pantalla-inicio">
