@@ -53,9 +53,8 @@
   padding: 10px 12px;
 
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  flex-direction: column; /* 👈 clave */
+  gap: 6px;
 
   background: rgba(255,255,255,0.92);
   backdrop-filter: blur(10px);
@@ -91,12 +90,10 @@
 }
 
 .subtitle {
+  align-self: flex-end; /* 👈 derecha */
   font-size: 0.68rem;
   color: var(--muted);
   letter-spacing: 1px;
-  white-space: nowrap;
-  text-align: right;
-  margin-left: auto;
 }
 
 .title {
