@@ -208,7 +208,7 @@ function renderGrid(posiciones) {
   const posicionesTurno = posiciones.filter(p => p.numero_turno === turnoActual);
   const maxTurno = Math.max(...posiciones.map(p => p.numero_turno || 1), 1);
 
-  const btnAnterior = document.getElementById('btn-anterior');
+  const Anterior = document.getElementById('btn-anterior');
   if (btnAnterior) btnAnterior.disabled = turnoActual <= 1;
 
   const btnSiguiente = document.getElementById('btn-siguiente');
