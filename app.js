@@ -142,8 +142,7 @@ async function comprobarConexion() {
   const estadoConexion = document.getElementById('estado-conexion');
   const textoConexion = document.getElementById('conexion-texto');
   const iconoConexion = document.getElementById('conexion-icono');
-  const btnReintentar = document.getElementById('btn-reintentar-conexion');
-
+  
   // Estado inicial (checking)
   if (textoConexion) {
     textoConexion.textContent = 'Comprobando conexión...';
@@ -1720,13 +1719,7 @@ if (btnGuardarTurno) {
   };
 }
 
-  const btnReintentar = document.getElementById('btn-reintentar-conexion');
-  if (btnReintentar) {
-    btnReintentar.onclick = async () => {
-      await comprobarConexion();
-    };
-  }
-
+ 
 const btnBuscarInformeAnimales = document.getElementById('btn-buscar-informe-animales');
 if (btnBuscarInformeAnimales) {
   btnBuscarInformeAnimales.onclick = async () => {
