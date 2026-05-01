@@ -139,10 +139,12 @@ function actualizarCantaras(sumaAyer, sumaHoy, porcentaje) {
 async function comprobarConexion() {
   console.log('Entrando en comprobarConexion');
 
-  const estadoConexion = document.getElementById('estado-conexion'); // 👈 NUEVO
+  const estadoConexion = document.getElementById('estado-conexion');
   const textoConexion = document.getElementById('conexion-texto');
   const iconoConexion = document.getElementById('conexion-icono');
+  const btnReintentar = document.getElementById('btn-reintentar-conexion');
 
+  // Estado inicial (checking)
   if (textoConexion) {
     textoConexion.textContent = 'Comprobando conexión...';
   }
@@ -151,9 +153,13 @@ async function comprobarConexion() {
     iconoConexion.className = 'led-conexion checking';
   }
 
-  // 👇 estado visual mientras comprueba
   if (estadoConexion) {
     estadoConexion.classList.remove('conectado', 'desconectado');
+  }
+
+  // Ocultar botón mientras comprueba
+  if (btnReintentar) {
+    btnReintentar.style.display = 'none';
   }
 
   try {
@@ -164,23 +170,32 @@ async function comprobarConexion() {
 
     console.log('Resultado query:', error);
 
+    const hayError = !!error;
+
+    // Texto
     if (textoConexion) {
-      textoConexion.textContent = error ? 'No conectado' : 'Conectado';
+      textoConexion.textContent = hayError ? 'No conectado' : 'Conectado';
     }
 
+    // LED
     if (iconoConexion) {
-      iconoConexion.className = error
+      iconoConexion.className = hayError
         ? 'led-conexion error'
         : 'led-conexion ok';
     }
 
-    // 👇 AQUÍ ESTÁ EL CAMBIO IMPORTANTE
+    // Cápsula
     if (estadoConexion) {
       estadoConexion.classList.remove('conectado', 'desconectado');
-      estadoConexion.classList.add(error ? 'desconectado' : 'conectado');
+      estadoConexion.classList.add(hayError ? 'desconectado' : 'conectado');
     }
 
-    return !error;
+    // 👇 BOTÓN SOLO SI NO CONECTADO
+    if (btnReintentar) {
+      btnReintentar.style.display = hayError ? 'block' : 'none';
+    }
+
+    return !hayError;
 
   } catch (e) {
     console.error('Error comprobando conexión:', e);
@@ -192,6 +207,15 @@ async function comprobarConexion() {
 
     if (textoConexion) {
       textoConexion.textContent = 'Error conexión';
+    }
+
+    if (iconoConexion) {
+      iconoConexion.className = 'led-conexion error';
+    }
+
+    // Mostrar botón en error
+    if (btnReintentar) {
+      btnReintentar.style.display = 'block';
     }
   }
 }
