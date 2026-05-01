@@ -1953,6 +1953,9 @@ function exportarProduccionFechaCSV() {
 }
 
 arrancarApp();
+window.addEventListener('online', comprobarConexion);
+window.addEventListener('offline', comprobarConexion);
+
 async function registrarDesdeCelda(pos) {
   let crotal = pos?.crotal;
 
