@@ -156,11 +156,6 @@ async function comprobarConexion() {
     estadoConexion.classList.remove('conectado', 'desconectado');
   }
 
-  // Ocultar botón mientras comprueba
-  if (btnReintentar) {
-    btnReintentar.style.display = 'none';
-  }
-
   try {
     const { error } = await supabase
       .from('animales')
@@ -189,11 +184,6 @@ async function comprobarConexion() {
       estadoConexion.classList.add(hayError ? 'desconectado' : 'conectado');
     }
 
-    // 👇 BOTÓN SOLO SI NO CONECTADO
-    if (btnReintentar) {
-      btnReintentar.style.display = hayError ? 'block' : 'none';
-    }
-
     return !hayError;
 
   } catch (e) {
@@ -212,10 +202,6 @@ async function comprobarConexion() {
       iconoConexion.className = 'led-conexion error';
     }
 
-    // Mostrar botón en error
-    if (btnReintentar) {
-      btnReintentar.style.display = 'block';
-    }
   }
 }
 
