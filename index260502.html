@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>iDB La Leche</title>
+ <style>
+  :root {
+    --milk: #FFFFFF;
+    --milk-soft: #F7FBFF;
+    --ice: #EAF6FF;
+    --ice-2: #DFF1FF;
+    --blue: #2F6F9F;
+    --blue-dark: #174766;
+    --blue-soft: #6FAED6;
+    --cyan: #8ED8FF;
+    --ink: #183243;
+    --muted: #6B8394;
+    --border: #D7EAF5;
+    --success: #22A66A;
+    --danger: #D9534F;
+    --warning: #F2B84B;
+    --shadow: 0 18px 45px rgba(23,71,102,0.12);
+    --shadow-soft: 0 10px 24px rgba(47,111,159,0.10);
+    --radius: 22px;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    padding: 16px;
+    padding-top: 70px;
+    min-height: 100vh;
+    font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+    color: var(--ink);
+    background:
+      radial-gradient(circle at 8% 0%, rgba(142,216,255,0.38), transparent 28%),
+      radial-gradient(circle at 92% 8%, rgba(255,255,255,0.95), transparent 22%),
+      radial-gradient(circle at 50% 100%, rgba(47,111,159,0.16), transparent 32%),
+      linear-gradient(135deg, #F9FDFF 0%, #EEF8FF 45%, #FFFFFF 100%);
+  }
+
+ .app-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  max-width: 980px;
+  margin: 0 auto 16px;
+  padding: 5px 10px;
+
+  display: flex;
+  flex-direction: column; /* 👈 clave */
+  gap: 1px;
+
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 6px 18px rgba(23,71,102,0.08);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.app-logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.header-text {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.title {
+  font-size: 1.45rem;
+  font-weight: 900;
+  color: var(--blue-dark);
+  white-space: nowrap;
+}
+
+.subtitle {
+  align-self: flex-end; /* 👈 derecha */
+  font-size: 0.68rem;
+  color: var(--muted);
+  letter-spacing: 1px;
+  margin-top: -2px; /* 👈 lo sube ligeramente */
+}
+
+.title {
+  font-size: 1.8rem;
+  font-weight: 900;
+}
+
+  h1 {
+    margin: 0;
+    color: var(--blue-dark);
+    font-size: 1.45rem;
+    letter-spacing: 0.2px;
+  }
+
+  h2 {
+    margin: 8px 0 10px;
+    color: var(--blue-dark);
+  }
+
+  label {
+    color: var(--blue-dark);
+    font-weight: 800;
+    font-size: 0.9rem;
+  }
+
+  input,
+  select {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 13px 14px;
+    font-size: 16px;
+    background: linear-gradient(180deg, #FFFFFF 0%, #F8FCFF 100%);
+    color: var(--ink);
+    outline: none;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.75);
+    transition: border-color .2s ease, box-shadow .2s ease, transform .12s ease;
+  }
+
+  input:focus,
+  select:focus {
+    border-color: var(--blue-soft);
+    box-shadow: 0 0 0 4px rgba(111,174,214,0.18);
+    transform: translateY(-1px);
+  }
+
+  button {
+    border: none;
+    border-radius: 16px;
+    padding: 13px 15px;
+    font-size: 0.95rem;
+    font-weight: 800;
+    cursor: pointer;
+    color: white;
+    background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue) 62%, var(--blue-soft) 100%);
+    box-shadow: 0 10px 22px rgba(23,71,102,0.15);
+    transition: transform .15s ease, box-shadow .15s ease, filter .15s ease, opacity .15s ease;
+  }
+
+  button:hover {
+    transform: translateY(-2px);
+    filter: saturate(1.06);
+    box-shadow: 0 14px 26px rgba(23,71,102,0.18);
+  }
+
+  button:active {
+    transform: translateY(0) scale(0.995);
+  }
+
+  button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  .btn-principal,
+  #btn-registrar-ordeno {
+    min-height: 74px;
+    font-size: 1.08rem;
+    background: linear-gradient(135deg, #0E4D74 0%, #2F8FC6 54%, #8ED8FF 100%);
+  }
+
+  .btn-volver {
+    padding: 9px 13px;
+    color: var(--blue-dark);
+    background: linear-gradient(135deg, #FFFFFF 0%, #EAF6FF 100%);
+    border: 1px solid var(--border);
+    box-shadow: none;
+  }
+.menu-principal {
+  width: 100%;
+}
+
+.menu-secundario {
+  width: 100%;
+}
+  #pantalla-inicio,
+  #pantalla-alta-animal,
+  #pantalla-crear-turnos,
+  #pantalla-actualizar-turnos,
+  #pantalla-informes,
+  #pantalla-informe-produccion,
+  #pantalla-produccion-fecha,
+  #pantalla-produccion-animal,
+  #pantalla-informe-animales,
+  #header-ordeno,
+  #navegacion-turnos,
+  #comparador-resumen {
+    max-width: 980px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  #pantalla-inicio,
+  #pantalla-alta-animal,
+  #pantalla-crear-turnos,
+  #pantalla-actualizar-turnos,
+  #pantalla-informes,
+  #pantalla-informe-produccion,
+  #pantalla-produccion-fecha,
+  #pantalla-produccion-animal,
+  #pantalla-informe-animales {
+    background: rgba(255,255,255,0.88);
+    border: 1px solid rgba(215,234,245,0.95);
+    border-radius: var(--radius) var(--radius) 14px var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow-soft);
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  #pantalla-inicio::before,
+  #pantalla-alta-animal::before,
+  #pantalla-crear-turnos::before,
+  #pantalla-actualizar-turnos::before,
+  #pantalla-informes::before,
+  #pantalla-informe-produccion::before,
+  #pantalla-produccion-fecha::before,
+  #pantalla-produccion-animal::before,
+  #pantalla-informe-animales::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--blue-dark), var(--blue-soft), var(--milk));
+  }
+
+  .header-pantalla {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .menu-principal {
+    display: grid;
+    gap: 14px;
+    margin-top: 18px;
+  }
+
+  .menu-secundario {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 240px;
+}
+
+.menu-secundario button {
+  flex: 1;
+  border-radius: 18px;
+  font-size: 1rem;
+}
+
+  #estado-conexion {
+  position: sticky;
+  top: 64px; /* 👈 debajo del header */
+
+  z-index: 999;
+
+  max-width: 980px;
+  margin: 0 auto 12px;
+  padding: 8px 12px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+
+  border-radius: 999px;
+  background: #e0e0e0;
+  border: 1px solid var(--border);
+
+  box-shadow: var(--shadow-soft);
+}
+
+  .led-conexion {
+    display: inline-block;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: #bdbdbd;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.15) inset;
+  }
+
+  .led-conexion.ok {
+    background: var(--success);
+    box-shadow: 0 0 8px rgba(34,166,106,0.8);
+  }
+
+  .led-conexion.error {
+    background: var(--danger);
+    box-shadow: 0 0 8px rgba(217,83,79,0.8);
+  }
+
+  @keyframes parpadeo-led {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+
+  .led-conexion.checking {
+    background: var(--warning);
+    box-shadow: 0 0 8px rgba(242,184,75,0.8);
+    animation: parpadeo-led 1s infinite ease-in-out;
+  }
+
+   #estado-conexion.conectado {
+    background: linear-gradient(135deg, #22A66A, #6BE3A4) !important;
+    color: white;
+  }
+  
+  #estado-conexion.desconectado {
+    background: #e0e0e0 !important;
+    color: #555;
+  }
+   
+  #estado-conexion.conectado #conexion-icono {
+  display: none;
+  }
+
+  #grid,
+  #grid-turno-edicion,
+  #grid-turno-actualizar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .fila {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .celda {
+    background: linear-gradient(135deg, #FFFFFF 0%, #F5FBFF 100%);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 15px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 850;
+    min-height: 66px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 18px rgba(47,111,159,0.08);
+  }
+
+  .vacia {
+    color: #9AABB7;
+    font-weight: 600;
+  }
+
+  .celda.mejor {
+    background: linear-gradient(135deg, #E9FFF3 0%, #FFFFFF 100%);
+    border-color: rgba(34,166,106,0.48);
+  }
+
+  .celda.peor {
+    background: linear-gradient(135deg, #FFF0F0 0%, #FFFFFF 100%);
+    border-color: rgba(217,83,79,0.42);
+  }
+
+  .celda.neutro {
+    background: linear-gradient(135deg, #FFFFFF 0%, #F5FBFF 100%);
+  }
+
+  .resumen-box {
+    flex: 1;
+    background: rgba(255,255,255,0.92);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 16px;
+    text-align: center;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .resumen-box h2 {
+    margin: 0 0 8px;
+    font-size: 0.9rem;
+    color: var(--blue);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+  }
+
+  .resumen-litros {
+    font-size: 1.45rem;
+    font-weight: 900;
+    margin-bottom: 10px;
+    color: var(--blue-dark);
+  }
+
+  .barra-progreso {
+    width: 100%;
+    height: 12px;
+    background: var(--ice);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .barra-progreso-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--blue), var(--cyan));
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  #resultado-produccion-fecha > div,
+  #resultado-produccion-animal > div,
+  #resultado-informe-animales > div,
+  #resumen-estados-animales > div {
+    background: linear-gradient(135deg, #FFFFFF 0%, #F7FBFF 100%) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 8px 18px rgba(47,111,159,0.07);
+  }
+
+  .modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(23,71,102,0.38);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(5px);
+  }
+
+  .oculto {
+    display: none;
+  }
+
+  .modal-contenido {
+    background: linear-gradient(135deg, #FFFFFF 0%, #F4FBFF 100%);
+    width: 100%;
+    max-width: 380px;
+    border-radius: 24px;
+    padding: 22px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+
+  .modal-contenido h2 {
+    margin: 0 0 8px;
+    font-size: 1.25rem;
+    color: var(--blue-dark);
+  }
+
+  .modal-botones {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  hr {
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    width: 100%;
+    margin: 10px 0;
+  }
+
+  @media (max-width: 520px) {
+    body {
+      padding: 12px;
+    }
+
+    body::before {
+      font-size: 1.45rem;
+      padding: 22px 18px;
+      border-radius: 24px 24px 16px 24px;
+    }
+
+    body::after {
+      margin-top: -48px;
+      margin-bottom: 28px;
+    }
+
+    .header-pantalla {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .header-pantalla > div:last-child {
+      width: 100%;
+      display: grid !important;
+      grid-template-columns: 1fr 1fr;
+    }
+    .conexion-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    #btn-reintentar-conexion {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  
+    font-size: 0.65rem;
+    padding: 0;
+  
+    background: rgba(255,255,255,0.25);
+    color: white;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    box-shadow: none;
+  }
+
+    .fila {
+      gap: 8px;
+    }
+
+    .celda {
+      min-height: 62px;
+      padding: 12px 8px;
+      font-size: 14px;
+    }
+
+    #comparador-resumen {
+      flex-direction: column;
+    }
+  }
+
+   #btn-informes {
+  min-height: 74px;
+  font-size: 1.08rem;
+  }
+   button {
+  min-height: 60px;
+  }
+
+
+  /* ===== Pantalla inicial separada en tarjetas visuales ===== */
+  #pantalla-inicio {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  #pantalla-inicio::before {
+    display: none;
+  }
+
+  .inicio-card {
+    background: rgba(255,255,255,0.88);
+    border: 1px solid rgba(215,234,245,0.95);
+    border-radius: var(--radius) var(--radius) 14px var(--radius);
+    padding: 18px;
+    box-shadow: var(--shadow-soft);
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .inicio-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--blue-dark), var(--blue-soft), var(--milk));
+  }
+
+  .conexion-card #estado-conexion {
+    width: 100%;
+  }
+
+  #estado-conexion {
+    justify-content: center;
+    gap: 16px;
+  }
+   
+  #conexion-texto {
+  font-size: 0.8rem;
+  font-weight: 600;
+  }
+  
+  #conexion-icono {
+    margin-right: 4px;
+  }
+  .registrar-card,
+  .informes-card {
+    padding: 18px;
+  }
+
+  .gestion-card {
+    padding: 18px;
+  }
+
+  .menu-principal {
+    display: contents;
+  }
+
+  .menu-secundario {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    height: auto;
+    margin: 0;
+  }
+
+  .menu-secundario button {
+    width: 100%;
+    min-height: 170px;
+    height: 170px;
+    border-radius: 22px;
+    font-size: 1rem;
+    line-height: 1.18;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 18px 12px;
+  }
+
+  #btn-informes {
+    min-height: 84px;
+    font-size: 1.08rem;
+  }
+
+  .btn-reintentar {
+  display: none;
+  margin: 8px auto 0;
+  padding: 8px 14px;
+  font-size: 0.8rem;
+
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--blue-dark), var(--blue));
+  color: white;
+  } 
+
+  @media (max-width: 520px) {
+    #pantalla-inicio {
+      gap: 12px;
+    }
+
+    .inicio-card {
+      padding: 16px;
+    }
+
+    .menu-secundario {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .menu-secundario button {
+      min-height: 155px;
+      height: 155px;
+      font-size: 0.95rem;
+      padding: 16px 10px;
+    }
+  }
+
+  .full-width-btn {
+  width: 100%;
+  display: block;
+  }
+</style>
+</head>
+<body>
+  <div class="app-header">
+  <div class="header-left">
+    <img src="icon-192.png" alt="logo" class="app-logo">
+    <div class="header-text">
+      <div class="title">iDB La Leche</div>
+    </div>
+  </div>
+  <div class="subtitle">By iDeas Bizarras</div>
+</div>
+
+  <div id="pantalla-inicio">
+    <section class="inicio-card registrar-card">
+      <button id="btn-registrar-ordeno" class="btn-principal full-width-btn">Registrar Ordeño</button>
+    </section>
+
+    <section class="inicio-card gestion-card">
+      <div class="menu-secundario">
+        <button id="btn-alta-animal">Alta / modificación<br>Animal</button>
+        <button id="btn-crear-turnos">Crear / modificar<br>Turnos</button>
+      </div>
+    </section>
+
+    <section class="inicio-card informes-card">
+      <button id="btn-informes" class="full-width-btn">Informes</button>
+    </section>
+  </div>
+
+  <div id="pantalla-alta-animal" style="display:none;">
+    <div class="header-pantalla">
+      <h1>Alta de Animal</h1>
+      <button id="btn-volver-alta" class="btn-volver">Volver</button>
+    </div>
+
+    <div style="margin-top:20px; display:flex; flex-direction:column; gap:12px;">
+      <label>Crotal</label>
+      <input id="input-crotal" type="text" placeholder="Ej: 1001" />
+
+      <label>Estado</label>
+      <select id="input-estado">
+        <option value="PRODUCTIVO">Productivo</option>
+        <option value="SECADO_PREPARTO">Secado Preparto</option>
+        <option value="NO_PRODUCTIVO">No Productivo</option>
+        <option value="BAJA">Baja</option>
+      </select>
+
+      <button id="btn-guardar-animal">Guardar</button>
+
+      <hr>
+
+      <h2>Modificar estado</h2>
+
+      <label>Crotal existente</label>
+      <input id="input-crotal-estado" type="text" placeholder="Ej: 1001" />
+
+      <label>Nuevo estado</label>
+      <select id="input-estado-nuevo">
+        <option value="PRODUCTIVO">Productivo</option>
+        <option value="SECADO_PREPARTO">Secado Preparto</option>
+        <option value="NO_PRODUCTIVO">No Productivo</option>
+        <option value="BAJA">Baja</option>
+      </select>
+
+      <button id="btn-actualizar-estado">Actualizar estado</button>
+    </div>
+</div>
+
+<div id="pantalla-crear-turnos" style="display:none;">
+  <div class="header-pantalla">
+    <div>
+      <h1>Crear Turnos</h1>
+      <div id="info-turnos-creados" style="font-size:14px; color:#666;"></div>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <button id="btn-ir-actualizar-turnos" class="btn-volver">Actualizar turnos</button>
+      <button id="btn-volver-turnos" class="btn-volver">Volver</button>
+    </div>
+  </div>
+
+  <div style="margin-top:20px; display:flex; flex-direction:column; gap:16px;">
+    <label>Número de turno</label>
+    <input id="input-numero-turno" type="number" min="1" step="1" placeholder="Ej: 3" />
+
+    <div id="aviso-crotal-turno" style="color:#b04a00; font-weight:bold;"></div>
+
+    <div id="grid-turno-edicion" style="display:flex; flex-direction:column; gap:10px;">
+      <div class="fila">
+        <input id="turno-izq-1" type="text" list="lista-crotales" placeholder="Izq 1" />
+        <input id="turno-der-1" type="text" list="lista-crotales" placeholder="Der 1" />
+      </div>
+      <div class="fila">
+        <input id="turno-izq-2" type="text" list="lista-crotales" placeholder="Izq 2" />
+        <input id="turno-der-2" type="text" list="lista-crotales" placeholder="Der 2" />
+      </div>
+      <div class="fila">
+        <input id="turno-izq-3" type="text" list="lista-crotales" placeholder="Izq 3" />
+        <input id="turno-der-3" type="text" list="lista-crotales" placeholder="Der 3" />
+      </div>
+      <div class="fila">
+        <input id="turno-izq-4" type="text" list="lista-crotales" placeholder="Izq 4" />
+        <input id="turno-der-4" type="text" list="lista-crotales" placeholder="Der 4" />
+      </div>
+      <div class="fila">
+        <input id="turno-izq-5" type="text" list="lista-crotales" placeholder="Izq 5" />
+        <input id="turno-der-5" type="text" list="lista-crotales" placeholder="Der 5" />
+      </div>
+      <div class="fila">
+        <input id="turno-izq-6" type="text" list="lista-crotales" placeholder="Izq 6" />
+        <input id="turno-der-6" type="text" list="lista-crotales" placeholder="Der 6" />
+      </div>
+      <div class="fila">
+        <input id="turno-izq-7" type="text" list="lista-crotales" placeholder="Izq 7" />
+        <input id="turno-der-7" type="text" list="lista-crotales" placeholder="Der 7" />
+      </div>
+      <div class="fila">
+        <input id="turno-izq-8" type="text" list="lista-crotales" placeholder="Izq 8" />
+        <input id="turno-der-8" type="text" list="lista-crotales" placeholder="Der 8" />
+      </div>
+    </div>
+
+    <datalist id="lista-crotales"></datalist>
+
+    <button id="btn-guardar-turno">Guardar turno</button>
+  </div>
+</div>
+
+<div id="pantalla-actualizar-turnos" style="display:none;">
+  <div class="header-pantalla">
+  <div>
+    <h1>Actualizar Turnos</h1>
+    <div id="info-turnos-actualizar" style="font-size:14px; color:#666;"></div>
+  </div>
+  <button id="btn-volver-actualizar-turnos" class="btn-volver">Volver</button>
+</div>
+
+  <div style="margin-top:20px; display:flex; flex-direction:column; gap:16px;">
+    <label>Selecciona turno</label>
+    <select id="select-turno-editar">
+      <option value="">Selecciona un turno</option>
+    </select>
+
+    <div id="grid-turno-actualizar" style="display:flex; flex-direction:column; gap:10px;">
+      <div class="fila">
+        <input id="edit-turno-izq-1" type="text" list="lista-crotales" placeholder="Izq 1" />
+        <input id="edit-turno-der-1" type="text" list="lista-crotales" placeholder="Der 1" />
+      </div>
+      <div class="fila">
+        <input id="edit-turno-izq-2" type="text" list="lista-crotales" placeholder="Izq 2" />
+        <input id="edit-turno-der-2" type="text" list="lista-crotales" placeholder="Der 2" />
+      </div>
+      <div class="fila">
+        <input id="edit-turno-izq-3" type="text" list="lista-crotales" placeholder="Izq 3" />
+        <input id="edit-turno-der-3" type="text" list="lista-crotales" placeholder="Der 3" />
+      </div>
+      <div class="fila">
+        <input id="edit-turno-izq-4" type="text" list="lista-crotales" placeholder="Izq 4" />
+        <input id="edit-turno-der-4" type="text" list="lista-crotales" placeholder="Der 4" />
+      </div>
+      <div class="fila">
+        <input id="edit-turno-izq-5" type="text" list="lista-crotales" placeholder="Izq 5" />
+        <input id="edit-turno-der-5" type="text" list="lista-crotales" placeholder="Der 5" />
+      </div>
+      <div class="fila">
+        <input id="edit-turno-izq-6" type="text" list="lista-crotales" placeholder="Izq 6" />
+        <input id="edit-turno-der-6" type="text" list="lista-crotales" placeholder="Der 6" />
+      </div>
+      <div class="fila">
+        <input id="edit-turno-izq-7" type="text" list="lista-crotales" placeholder="Izq 7" />
+        <input id="edit-turno-der-7" type="text" list="lista-crotales" placeholder="Der 7" />
+      </div>
+      <div class="fila">
+        <input id="edit-turno-izq-8" type="text" list="lista-crotales" placeholder="Izq 8" />
+        <input id="edit-turno-der-8" type="text" list="lista-crotales" placeholder="Der 8" />
+      </div>
+    </div>
+
+    <div style="display:flex; gap:12px;">
+      <button id="btn-guardar-cambios-turno">Guardar cambios</button>
+      <button id="btn-eliminar-turno">Eliminar turno</button>
+    </div>
+  </div>
+</div>
+
+<div id="pantalla-informes" style="display:none;">
+  <div class="header-pantalla">
+    <h1>Informes</h1>
+    <button id="btn-volver-informes" class="btn-volver">Volver</button>
+  </div>
+
+  <div style="margin-top:20px; display:flex; flex-direction:column; gap:12px;">
+    <button id="btn-informe-produccion">Producción</button>
+    <button id="btn-informe-animales">Animales</button>
+  </div>
+</div>
+
+<div id="pantalla-informe-produccion" style="display:none;">
+  <div class="header-pantalla">
+    <h1>Producción</h1>
+    <button id="btn-volver-produccion" class="btn-volver">Volver</button>
+  </div>
+
+  <div style="margin-top:20px; display:flex; flex-direction:column; gap:12px;">
+    <button id="btn-produccion-fecha">Producción por fecha</button>
+    <button id="btn-produccion-animal">Producción por animal</button>
+  </div>
+</div>
+
+<div id="pantalla-produccion-fecha" style="display:none;">
+  <div class="header-pantalla">
+    <h1>Producción por fecha</h1>
+    <button id="btn-volver-produccion-fecha" class="btn-volver">Volver</button>
+  </div>
+
+  <div style="margin-top:20px; display:flex; flex-direction:column; gap:12px;">
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <label>Mes a comparar</label>
+      <input id="grafico-mes-base" type="month" />
+
+      <label>Mes de comparación</label>
+      <input id="grafico-mes-comparacion" type="month" />
+
+     <button id="btn-actualizar-grafico-fecha">Actualizar gráfico</button>
+
+    <canvas id="grafico-produccion-fecha" height="220" style="width:100%; background:#ffffff; border:1px solid var(--border); border-radius:18px;"></canvas>
+    </div>
+    
+    <label>Desde</label>
+    <input id="filtro-fecha-desde" type="date" />
+
+    <label>Hasta</label>
+    <input id="filtro-fecha-hasta" type="date" />
+
+    <button id="btn-buscar-produccion-fecha">Buscar</button>
+
+<div style="display:flex; gap:10px;">
+  <button id="btn-exportar-excel-fecha">Exportar Excel</button>
+  <button id="btn-exportar-pdf-fecha">Exportar PDF</button>
+</div>
+
+<div id="resultado-produccion-fecha" style="margin-top:20px;"></div>
+
+  </div>
+</div>
+
+<div id="pantalla-produccion-animal" style="display:none;">
+  <div class="header-pantalla">
+    <h1>Producción por animal</h1>
+    <button id="btn-volver-produccion-animal" class="btn-volver">Volver</button>
+  </div>
+
+  <div style="margin-top:20px; display:flex; flex-direction:column; gap:12px;">
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <h2 style="font-size:1rem;">Top 5 vacas más productivas</h2>
+      <canvas id="grafico-top-animales" height="220" style="width:100%; background:#ffffff; border:1px solid var(--border); border-radius:18px;"></canvas>
+    </div>
+    
+    <label>Desde</label>
+    <input id="filtro-animal-desde" type="date" />
+
+    <label>Hasta</label>
+    <input id="filtro-animal-hasta" type="date" />
+
+    <button id="btn-buscar-produccion-animal">Buscar</button>
+
+<div style="display:flex; gap:10px;">
+  <button id="btn-exportar-excel-animal">Exportar Excel</button>
+  <button id="btn-exportar-pdf-animal">Exportar PDF</button>
+</div>
+
+<div id="resultado-produccion-animal" style="margin-top:20px;"></div>
+  </div>
+</div>
+
+<div id="pantalla-informe-animales" style="display:none;">
+  <div class="header-pantalla">
+    <h1>Animales</h1>
+    <button id="btn-volver-informe-animales" class="btn-volver">Volver</button>
+  </div>
+
+  <div style="margin-top:20px; display:flex; flex-direction:column; gap:12px;">
+    <div id="resumen-estados-animales" style="display:flex; flex-direction:column; gap:8px;"></div>
+
+    <label>Filtrar por crotal</label>
+    <input id="filtro-animales-crotal" type="text" placeholder="Ej: 1001" />
+
+    <label>Filtrar por estado</label>
+    <select id="filtro-animales-estado">
+      <option value="">Todos</option>
+      <option value="PRODUCTIVO">Productivo</option>
+      <option value="SECADO_PREPARTO">Secado Preparto</option>
+      <option value="NO_PRODUCTIVO">No Productivo</option>
+      <option value="BAJA">Baja</option>
+    </select>
+
+    <button id="btn-buscar-informe-animales">Buscar</button>
+
+    <div id="resultado-informe-animales" style="margin-top:20px;"></div>
+
+    <div style="display:flex; gap:10px;">
+      <button id="btn-exportar-excel-animales">Exportar Excel</button>
+      <button id="btn-exportar-pdf-animales">Exportar PDF</button>
+    </div>
+    </div>
+  </div>
+
+  <div id="header-ordeno" style="display:none; justify-content:space-between; align-items:center;">
+    <h1 id="titulo-ordeno">Registro de Producción</h1>
+    <button id="btn-volver">Volver</button>
+  </div>
+
+  <div id="navegacion-turnos" style="display:none; gap:10px; align-items:center; margin-bottom:16px;">
+    <button id="btn-anterior">Anterior</button>
+    <span id="turno-label">Turno 1</span>
+    <button id="btn-siguiente">Siguiente</button>
+  </div>
+
+  <div id="grid" style="display:none;"></div>
+
+  <div id="comparador-resumen" style="display:none; gap:16px; margin-top:24px;">
+    <div class="resumen-box">
+      <h2>Ayer</h2>
+      <div id="resumen-ayer-litros" class="resumen-litros">0.00 L</div>
+    </div>
+
+    <div class="resumen-box">
+      <h2>Hoy</h2>
+      <div id="resumen-hoy-litros" class="resumen-litros">0.00 L · 0%</div>
+      <div class="barra-progreso">
+        <div id="resumen-hoy-barra" class="barra-progreso-fill" style="width: 0%;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal" class="modal oculto">
+    <div class="modal-contenido">
+      <h2>Registrar producción</h2>
+
+      <label>Crotal</label>
+      <input id="modal-crotal" type="text" />
+
+      <label>Litros</label>
+      <input id="modal-litros" type="number" step="0.01" min="0" max="99.99" />
+
+      <label>Ordeño</label>
+      <select id="modal-ordeno">
+        <option value="MANANA">Mañana</option>
+        <option value="TARDE">Tarde</option>
+      </select>
+
+      <div class="modal-botones">
+        <button id="btn-cancelar">Cancelar</button>
+        <button id="btn-guardar">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
