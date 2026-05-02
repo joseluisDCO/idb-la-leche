@@ -272,22 +272,25 @@
 }
 
   #estado-conexion {
+  position: sticky;
+  top: 64px; /* 👈 debajo del header */
+
+  z-index: 999;
+
+  max-width: 980px;
+  margin: 0 auto 12px;
+  padding: 8px 12px;
+
   display: flex;
+  justify-content: center;
   align-items: center;
   gap: 10px;
 
-  width: fit-content;
-  margin: 0 auto 16px auto;
-
-  padding: 8px 12px;
-
   border-radius: 999px;
-  background: #e0e0e0; /* default gris */
-
+  background: #e0e0e0;
   border: 1px solid var(--border);
-  box-shadow: var(--shadow-soft);
 
-  transition: background 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: var(--shadow-soft);
 }
 
   .led-conexion {
@@ -702,14 +705,12 @@
   <div class="subtitle">By iDeas Bizarras</div>
 </div>
 
-  <div id="pantalla-inicio">
-    <section class="inicio-card conexion-card">
-      <div id="estado-conexion" class="conexion-container">
-        <span id="conexion-icono" class="led-conexion"></span>
-        <span id="conexion-texto">Comprobando conexión...</span>
-      </div>
-    </section>
+  <div id="estado-conexion" class="conexion-container">
+     <span id="conexion-icono" class="led-conexion"></span>
+      <span id="conexion-texto">Comprobando conexión...</span>
+  </div>
 
+  <div id="pantalla-inicio">
     <section class="inicio-card registrar-card">
       <button id="btn-registrar-ordeno" class="btn-principal full-width-btn">Registrar Ordeño</button>
     </section>
