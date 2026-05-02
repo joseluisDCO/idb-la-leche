@@ -271,27 +271,37 @@
   font-size: 1rem;
 }
 
+  .connection-header {
+    position: sticky;
+    top: 58px;
+    z-index: 999;
+
+    max-width: 980px;
+    margin: 0 auto 16px;
+    padding: 6px 10px;
+
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 6px 18px rgba(23,71,102,0.08);
+  }
+
   #estado-conexion {
-  position: sticky;
-  top: 64px; /* 👈 debajo del header */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 
-  z-index: 999;
+    width: 100%;
+    padding: 6px 10px;
 
-  max-width: 980px;
-  margin: 0 auto 12px;
-  padding: 8px 12px;
+    border-radius: 0;
+    background: #e0e0e0;
+    border: 1px solid var(--border);
 
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-
-  border-radius: 999px;
-  background: #e0e0e0;
-  border: 1px solid var(--border);
-
-  box-shadow: var(--shadow-soft);
-}
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
 
   .led-conexion {
     display: inline-block;
@@ -695,7 +705,7 @@
 </style>
 </head>
 <body>
-  <div class="app-header">
+<div class="app-header">
   <div class="header-left">
     <img src="icon-192.png" alt="logo" class="app-logo">
     <div class="header-text">
@@ -704,6 +714,13 @@
   </div>
   <div class="subtitle">By iDeas Bizarras</div>
 </div>
+
+  <div class="connection-header">
+    <div id="estado-conexion">
+      <span id="conexion-icono" class="led-conexion"></span>
+      <span id="conexion-texto">Comprobando conexión a base de datos...</span>
+    </div>
+  </div>
 
   <div id="pantalla-inicio">
     <section class="inicio-card registrar-card">
