@@ -271,60 +271,26 @@
   font-size: 1rem;
 }
 
-  .status-bar {
+  #estado-conexion {
   position: sticky;
-  top: 62px;
+  top: 64px; /* 👈 debajo del header */
+
   z-index: 999;
 
   max-width: 980px;
-  margin: 0 auto 14px;
-  padding: 0 12px;
+  margin: 0 auto 12px;
+  padding: 8px 12px;
 
   display: flex;
   justify-content: center;
-
-  background: rgba(247, 251, 255, 0.72);
-  backdrop-filter: blur(10px);
-}
-
-#estado-conexion {
-  width: fit-content;
-  min-width: 170px;
-
-  display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 9px;
+  gap: 10px;
 
-  padding: 7px 14px;
   border-radius: 999px;
+  background: #e0e0e0;
+  border: 1px solid var(--border);
 
-  background: #E5E8EA;
-  color: #4D5B63;
-
-  border: 1px solid rgba(215, 234, 245, 0.95);
-  box-shadow: 0 8px 20px rgba(23, 71, 102, 0.10);
-
-  font-size: 0.78rem;
-  font-weight: 800;
-  letter-spacing: 0.2px;
-
-  transition: background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
-}
-
-#estado-conexion.conectado {
-  background: linear-gradient(135deg, #22A66A, #6BE3A4) !important;
-  color: white;
-  box-shadow: 0 8px 22px rgba(34, 166, 106, 0.25);
-}
-
-#estado-conexion.desconectado {
-  background: #E5E8EA !important;
-  color: #4D5B63;
-}
-
-#estado-conexion.conectado #conexion-icono {
-  display: none;
+  box-shadow: var(--shadow-soft);
 }
 
   .led-conexion {
@@ -738,11 +704,6 @@
   </div>
   <div class="subtitle">By iDeas Bizarras</div>
 </div>
-
-  <div id="estado-conexion" class="conexion-container">
-     <span id="conexion-icono" class="led-conexion"></span>
-      <span id="conexion-texto">Comprobando conexión...</span>
-  </div>
 
   <div id="pantalla-inicio">
     <section class="inicio-card registrar-card">
