@@ -277,13 +277,7 @@
     z-index: 999;
 
     max-width: 980px;
-    margin: 0 auto 16px;
-    padding: 6px 10px;
-
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--border);
-    box-shadow: 0 6px 18px rgba(23,71,102,0.08);
+    margin: -16px auto 16px;
   }
 
   #estado-conexion {
@@ -293,11 +287,14 @@
     gap: 8px;
 
     width: 100%;
-    padding: 6px 10px;
+    padding: 7px 10px;
 
-    border-radius: 0;
+    border-radius: 0 0 14px 14px;
     background: #e0e0e0;
     border: 1px solid var(--border);
+    border-top: none;
+
+    box-shadow: 0 6px 18px rgba(23,71,102,0.08);
 
     font-size: 0.78rem;
     font-weight: 800;
