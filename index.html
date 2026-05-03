@@ -825,6 +825,25 @@
   ) !important;
 }
 
+#panel-turno-fijo {
+  position: sticky;
+  top: 190px;
+  z-index: 997;
+
+  max-width: 980px;
+  margin: 0 auto 8px;
+
+  background: rgba(247,251,255,0.96);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+
+#panel-turno-fijo #navegacion-turnos,
+#panel-turno-fijo #comparador-resumen {
+  position: static !important;
+  top: auto !important;
+  margin: 0 !important;
+}
 
 </style>
 </head>
@@ -1145,6 +1164,7 @@
     <button id="btn-volver">Volver</button>
   </div>
 
+  <div id="panel-turno-fijo">
   <div id="navegacion-turnos" style="display:none; gap:10px; align-items:center; margin-bottom:16px;">
     <button id="btn-anterior">Anterior</button>
     <span id="turno-label">Turno 1</span>
@@ -1162,6 +1182,7 @@
       <div id="resumen-hoy-litros" class="resumen-litros">0.00 L · 0%</div>
     </div>
   </div>
+</div>  
 
   <div id="grid" style="display:none;"></div>
 
