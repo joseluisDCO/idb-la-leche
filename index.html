@@ -777,6 +777,40 @@
   padding: 9px 14px;
 }
 
+/* ===== Comparador fijo ayer / hoy ===== */
+#comparador-resumen {
+  position: sticky;
+  top: 270px;
+  z-index: 996;
+
+  max-width: 980px;
+  margin: 0 auto 14px;
+  padding: 10px;
+
+  display: none;
+  flex-direction: row !important;
+  gap: 10px;
+
+  background: rgba(247,251,255,0.96);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+
+#comparador-resumen .resumen-box {
+  width: 50%;
+  flex: 1 1 0;
+  padding: 10px;
+}
+
+#comparador-resumen .resumen-box h2 {
+  font-size: 0.75rem;
+  margin-bottom: 4px;
+}
+
+#comparador-resumen .resumen-litros {
+  font-size: 1rem;
+  margin-bottom: 6px;
+}
 
 </style>
 </head>
