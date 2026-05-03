@@ -746,11 +746,11 @@
 
 #navegacion-turnos {
   position: sticky;
-  top: 205px;
+  top: 190px;
   z-index: 997;
 
   max-width: 980px;
-  margin: 0 auto 14px;
+  margin: 0 auto;
   padding: 10px;
 
   background: rgba(247,251,255,0.96);
@@ -761,7 +761,7 @@
   align-items: center;
   gap: 10px;
 
-  border-bottom: 1px solid var(--border);
+  border-bottom: none;
 }
 
 #turno-label {
@@ -781,12 +781,12 @@
 /* ===== Comparador fijo ayer / hoy ===== */
 #comparador-resumen {
   position: sticky;
-  top: 205px;
+  top: 255px;
   z-index: 996;
 
   max-width: 980px;
-  margin: 0 auto 6px; /* 👈 menos espacio abajo */
-  padding-top: 4px;   /* 👈 opcional, lo acerca aún más */
+  margin: 0 auto 6px;
+  padding: 0 10px 10px;
 
   display: none;
   flex-direction: row !important;
