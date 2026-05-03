@@ -812,6 +812,19 @@
   margin-bottom: 6px;
 }
 
+.resumen-hoy-box {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    90deg,
+    rgba(47,143,198,0.28) 0%,
+    rgba(47,143,198,0.28) var(--progreso-hoy, 0%),
+    rgba(255,255,255,0.92) var(--progreso-hoy, 0%),
+    rgba(255,255,255,0.92) 100%
+  ) !important;
+}
+
+
 </style>
 </head>
 <body>
@@ -1143,12 +1156,9 @@
       <div id="resumen-ayer-litros" class="resumen-litros">0.00 L</div>
     </div>
 
-    <div class="resumen-box">
+    <div id="resumen-hoy-box" class="resumen-box resumen-hoy-box">
       <h2>Hoy</h2>
       <div id="resumen-hoy-litros" class="resumen-litros">0.00 L · 0%</div>
-      <div class="barra-progreso">
-        <div id="resumen-hoy-barra" class="barra-progreso-fill" style="width: 0%;"></div>
-      </div>
     </div>
   </div>
 

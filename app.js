@@ -132,9 +132,12 @@ function actualizarCantaras(sumaAyer, sumaHoy, porcentaje) {
     hoyTexto.textContent = `${sumaHoy.toFixed(2)} L · ${porcentajeTexto.toFixed(0)}%`;
   }
 
-  if (hoyBarra) {
-    hoyBarra.style.width = `${porcentajeBarra}%`;
+  const hoyBox = document.getElementById('resumen-hoy-box');
+
+  if (hoyBox) {
+    hoyBox.style.setProperty('--progreso-hoy', `${porcentajeBarra}%`);
   }
+
 }
 async function comprobarConexion() {
   console.log('Entrando en comprobarConexion');
