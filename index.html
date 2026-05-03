@@ -816,13 +816,19 @@
 .resumen-hoy-box {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(
-    90deg,
-    rgba(47,143,198,0.28) 0%,
-    rgba(47,143,198,0.28) var(--progreso-hoy, 0%),
-    rgba(255,255,255,0.92) var(--progreso-hoy, 0%),
-    rgba(255,255,255,0.92) 100%
-  ) !important;
+
+ background: linear-gradient(
+  90deg,
+  #ffffff 0%,
+  #ffffff var(--progreso-hoy, 0%),
+  #dcdcdc var(--progreso-hoy, 0%),
+  #dcdcdc 100%
+),
+linear-gradient(
+  180deg,
+  rgba(255,255,255,0.6),
+  rgba(255,255,255,0)
+);
 }
 
 #panel-turno-fijo {
