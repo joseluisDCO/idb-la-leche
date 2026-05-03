@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>iDB La Leche</title>
+  <link rel="manifest" href="/manifest.json">
   <link rel="apple-touch-icon" href="/icon-192.png">
  <style>
   :root {
@@ -708,6 +709,74 @@
     border-radius: 22px;
     font-size: 1rem;
   }
+
+/* ===== Registro de ordeño - cabecera fija ===== */
+#header-ordeno {
+  position: sticky;
+  top: 112px;
+  z-index: 998;
+
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 10px 0 8px;
+
+  background: rgba(247,251,255,0.96);
+  backdrop-filter: blur(10px);
+
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  border-bottom: 1px solid var(--border);
+}
+
+#btn-volver {
+  width: auto;
+  min-height: 44px;
+  padding: 9px 18px;
+}
+
+#titulo-ordeno {
+  text-align: center;
+  font-size: 1.25rem;
+}
+
+#navegacion-turnos {
+  position: sticky;
+  top: 205px;
+  z-index: 997;
+
+  max-width: 980px;
+  margin: 0 auto 14px;
+  padding: 10px;
+
+  background: rgba(247,251,255,0.96);
+  backdrop-filter: blur(10px);
+
+  display: none;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+
+  border-bottom: 1px solid var(--border);
+}
+
+#turno-label {
+  font-weight: 900;
+  color: var(--blue-dark);
+  min-width: 80px;
+  text-align: center;
+}
+
+#btn-anterior,
+#btn-siguiente {
+  width: auto;
+  min-height: 44px;
+  padding: 9px 14px;
+}
+
 
 </style>
 </head>

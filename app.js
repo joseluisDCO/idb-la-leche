@@ -230,7 +230,7 @@ function renderGrid(posiciones) {
   const derecha = posicionesTurno
     .filter(p => p.lado === 'DERECHA')
     .sort((a, b) => a.posicion - b.posicion);
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < 5; i++) {
     const fila = document.createElement('div');
     fila.className = 'fila';
 
