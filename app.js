@@ -239,6 +239,7 @@ function renderGrid(posiciones) {
     const diferencia = posicion?.diferenciaLitros;
     const litros = posicion?.litrosRegistrados;
     const crotal = posicion?.crotal;
+    const estado = posicion?.estadoAnimal;
 
     const claseComparacion =
       diferencia > 0 ? ' mejor' :
@@ -251,51 +252,46 @@ function renderGrid(posiciones) {
       claseComparacion;
 
     if (!crotal) {
-      celda.innerHTML = `
-        <div class="celda-crotal">Vacía</div>
-      `;
+      celda.innerHTML = `<div class="celda-crotal">Vacía</div>`;
       return;
     }
 
     if (litros !== null && litros !== undefined) {
-      const signo = diferencia > 0 ? '+' : '';
-      const textoDiff = diferencia !== null && diferencia !== undefined
-        ? `${signo}${Number(diferencia).toFixed(2)} L`
-        : '';
+      const diffNum = diferencia !== null && diferencia !== undefined
+        ? Number(diferencia)
+        : 0;
 
-const diffNum = Number(diferencia);
-const signo = diffNum > 0 ? '+' : '';
-const flecha = diffNum > 0 ? '▲' : diffNum < 0 ? '▼' : '•';
-const claseDiff = diffNum > 0 ? 'diff-mejor' : diffNum < 0 ? 'diff-peor' : 'diff-neutro';
+      const signoDiff = diffNum > 0 ? '+' : '';
+      const flecha = diffNum > 0 ? '▲' : diffNum < 0 ? '▼' : '•';
+      const claseDiff = diffNum > 0 ? 'diff-mejor' : diffNum < 0 ? 'diff-peor' : 'diff-neutro';
 
-celda.innerHTML = `
-  <div class="celda-crotal">
-    <span class="ok-icon">&#10003;</span> ${crotal}
-  </div>
-  <div class="celda-litros">🪣 ${Number(litros).toFixed(2)} L</div>
-  <div class="celda-diff ${claseDiff}">
-    ${flecha} ${signo}${diffNum.toFixed(2)} L
-  </div>
-`;
+      celda.innerHTML = `
+        <div class="celda-crotal">
+          <span class="ok-icon">&#10003;</span> ${crotal}
+        </div>
+        <div class="celda-litros">🪣 ${Number(litros).toFixed(2)} L</div>
+        <div class="celda-diff ${claseDiff}">
+          ${flecha} ${signoDiff}${diffNum.toFixed(2)} L
+        </div>
+      `;
 
-    } else {
-  const estado = posicion?.estadoAnimal;
+      return;
+    }
 
-  let textoEstado = 'Pendiente';
+    let textoEstado = 'Pendiente';
 
-  if (estado && estado !== 'PRODUCTIVO') {
-    textoEstado =
-      estado === 'SECADO_PREPARTO' ? 'Secado preparto' :
-      estado === 'NO_PRODUCTIVO' ? 'No productivo' :
-      estado === 'BAJA' ? 'Baja' :
-      estado;
-}
+    if (estado && estado !== 'PRODUCTIVO') {
+      textoEstado =
+        estado === 'SECADO_PREPARTO' ? 'Secado preparto' :
+        estado === 'NO_PRODUCTIVO' ? 'No productivo' :
+        estado === 'BAJA' ? 'Baja' :
+        estado;
+    }
 
-  celda.innerHTML = `
-    <div class="celda-crotal">${crotal}</div>
-    <div class="celda-pendiente">${textoEstado}</div>
-  `;
-}
+    celda.innerHTML = `
+      <div class="celda-crotal">${crotal}</div>
+      <div class="celda-pendiente">${textoEstado}</div>
+    `;
   }
 
   for (let i = 0; i < 5; i++) {
