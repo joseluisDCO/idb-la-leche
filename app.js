@@ -271,17 +271,17 @@ function renderGrid(posiciones) {
         <div class="celda-diff">${textoDiff}</div>
       `;
     } else {
-  const estado = posicion?.estado;
+  const estado = posicion?.estadoAnimal;
 
   let textoEstado = 'Pendiente';
 
   if (estado && estado !== 'PRODUCTIVO') {
     textoEstado =
-      estado === 'SECADO_PREPARTO' ? 'Secado' :
+      estado === 'SECADO_PREPARTO' ? 'Secado preparto' :
       estado === 'NO_PRODUCTIVO' ? 'No productivo' :
       estado === 'BAJA' ? 'Baja' :
       estado;
-  }
+}
 
   celda.innerHTML = `
     <div class="celda-crotal">${crotal}</div>
