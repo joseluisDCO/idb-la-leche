@@ -1382,6 +1382,9 @@ async function arrancarApp() {
       if (nav) nav.style.display = 'flex';
       if (grid) grid.style.display = 'flex';
       if (resumen) resumen.style.display = 'flex';
+      
+      const panelTurno = document.getElementById('panel-turno-fijo');
+      if (panelTurno) panelTurno.style.display = 'block';
 
       init();
     };
@@ -1740,6 +1743,10 @@ if (btnBuscarInformeAnimales) {
       if (nav) nav.style.display = 'none';
       if (grid) grid.style.display = 'none';
       if (resumen) resumen.style.display = 'none';
+
+      const panelTurno = document.getElementById('panel-turno-fijo');
+      if (panelTurno) panelTurno.style.display = 'none';
+      
     };
   }
 
