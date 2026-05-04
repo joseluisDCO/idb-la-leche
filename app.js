@@ -264,16 +264,30 @@ function renderGrid(posiciones) {
         : '';
 
       celda.innerHTML = `
-        <div class="celda-crotal">${crotal} ✔️</div>
+        <div class="celda-crotal">
+          <span class="ok-icon">✔</span> ${crotal}
+        </div>
         <div class="celda-litros">${Number(litros).toFixed(2)} L</div>
         <div class="celda-diff">${textoDiff}</div>
       `;
     } else {
-      celda.innerHTML = `
-        <div class="celda-crotal">${crotal}</div>
-        <div class="celda-pendiente">Pendiente</div>
-      `;
-    }
+  const estado = posicion?.estado;
+
+  let textoEstado = 'Pendiente';
+
+  if (estado && estado !== 'PRODUCTIVO') {
+    textoEstado =
+      estado === 'SECADO_PREPARTO' ? 'Secado' :
+      estado === 'NO_PRODUCTIVO' ? 'No productivo' :
+      estado === 'BAJA' ? 'Baja' :
+      estado;
+  }
+
+  celda.innerHTML = `
+    <div class="celda-crotal">${crotal}</div>
+    <div class="celda-pendiente">${textoEstado}</div>
+  `;
+}
   }
 
   for (let i = 0; i < 5; i++) {
