@@ -263,13 +263,20 @@ function renderGrid(posiciones) {
         ? `${signo}${Number(diferencia).toFixed(2)} L`
         : '';
 
-  celda.innerHTML = `
-    <div class="celda-crotal">
-      <span class="ok-icon">&#10003;</span> ${crotal}
-    </div>
-    <div class="celda-litros">🪣 ${Number(litros).toFixed(2)} L</div>
-    <div class="celda-diff">📊 ${textoDiff}</div>
-  `;
+const diffNum = Number(diferencia);
+const signo = diffNum > 0 ? '+' : '';
+const flecha = diffNum > 0 ? '▲' : diffNum < 0 ? '▼' : '•';
+const claseDiff = diffNum > 0 ? 'diff-mejor' : diffNum < 0 ? 'diff-peor' : 'diff-neutro';
+
+celda.innerHTML = `
+  <div class="celda-crotal">
+    <span class="ok-icon">&#10003;</span> ${crotal}
+  </div>
+  <div class="celda-litros">🪣 ${Number(litros).toFixed(2)} L</div>
+  <div class="celda-diff ${claseDiff}">
+    ${flecha} ${signo}${diffNum.toFixed(2)} L
+  </div>
+`;
 
     } else {
   const estado = posicion?.estadoAnimal;
