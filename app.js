@@ -209,18 +209,19 @@ async function comprobarConexion() {
 }
 
 function renderGrid(posiciones) {
-   const grid = document.getElementById('grid');
-    grid.innerHTML = '';
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
 
   const turnoLabel = document.getElementById('turno-label');
   if (turnoLabel) {
-  turnoLabel.textContent = `Turno ${turnoActual}`;
-  console.log('Turno pintado:', turnoActual);
+    turnoLabel.textContent = `Turno ${turnoActual}`;
+    console.log('Turno pintado:', turnoActual);
   }
+
   const posicionesTurno = posiciones.filter(p => p.numero_turno === turnoActual);
   const maxTurno = Math.max(...posiciones.map(p => p.numero_turno || 1), 1);
 
-  const Anterior = document.getElementById('btn-anterior');
+  const btnAnterior = document.getElementById('btn-anterior');
   if (btnAnterior) btnAnterior.disabled = turnoActual <= 1;
 
   const btnSiguiente = document.getElementById('btn-siguiente');
@@ -233,78 +234,68 @@ function renderGrid(posiciones) {
   const derecha = posicionesTurno
     .filter(p => p.lado === 'DERECHA')
     .sort((a, b) => a.posicion - b.posicion);
-    for (let i = 0; i < 5; i++) {
+
+  function pintarCelda(celda, posicion) {
+    const diferencia = posicion?.diferenciaLitros;
+    const litros = posicion?.litrosRegistrados;
+    const crotal = posicion?.crotal;
+
+    const claseComparacion =
+      diferencia > 0 ? ' mejor' :
+      diferencia < 0 ? ' peor' :
+      ' neutro';
+
+    celda.className =
+      'celda' +
+      (!crotal ? ' vacia' : '') +
+      claseComparacion;
+
+    if (!crotal) {
+      celda.innerHTML = `
+        <div class="celda-crotal">Vacía</div>
+      `;
+      return;
+    }
+
+    if (litros !== null && litros !== undefined) {
+      const signo = diferencia > 0 ? '+' : '';
+      const textoDiff = diferencia !== null && diferencia !== undefined
+        ? `${signo}${Number(diferencia).toFixed(2)} L`
+        : '';
+
+      celda.innerHTML = `
+        <div class="celda-crotal">${crotal} ✔️</div>
+        <div class="celda-litros">${Number(litros).toFixed(2)} L</div>
+        <div class="celda-diff">${textoDiff}</div>
+      `;
+    } else {
+      celda.innerHTML = `
+        <div class="celda-crotal">${crotal}</div>
+        <div class="celda-pendiente">Pendiente</div>
+      `;
+    }
+  }
+
+  for (let i = 0; i < 5; i++) {
     const fila = document.createElement('div');
     fila.className = 'fila';
 
     const celdaIzquierda = document.createElement('div');
-       const claseIzquierdaComparacion =
-      izquierda[i]?.diferenciaLitros > 0 ? ' mejor' :
-      izquierda[i]?.diferenciaLitros < 0 ? ' peor' :
-      ' neutro';
-
-    celdaIzquierda.className =
-      'celda' +
-      (!izquierda[i]?.crotal ? ' vacia' : '') +
-      claseIzquierdaComparacion;
-    const diffIzq = izquierda[i]?.diferenciaLitros;
-
-let textoDiffIzq = '';
-if (diffIzq !== null && diffIzq !== undefined) {
-  const signo = diffIzq > 0 ? '+' : '';
-  textoDiffIzq = ` ${signo}${diffIzq.toFixed(2)} L`;
-}
-
-    const litrosIzq = izquierda[i]?.litrosRegistrados;
-    const textoLitrosIzq = litrosIzq !== null && litrosIzq !== undefined
-      ? ` · ${Number(litrosIzq).toFixed(2)} L`
-      : '';
-
-celdaIzquierda.textContent =
-  (izquierda[i]?.crotal || 'Vacía') +
-  (izquierda[i]?.registrada ? ' ✔️' : '') +
-  textoLitrosIzq +
-  textoDiffIzq;
+    pintarCelda(celdaIzquierda, izquierda[i]);
     celdaIzquierda.style.cursor = 'pointer';
     celdaIzquierda.onclick = () => abrirModal(izquierda[i]);
 
     const celdaDerecha = document.createElement('div');
-        const claseDerechaComparacion =
-      derecha[i]?.diferenciaLitros > 0 ? ' mejor' :
-      derecha[i]?.diferenciaLitros < 0 ? ' peor' :
-      ' neutro';
-
-    celdaDerecha.className =
-      'celda' +
-      (!derecha[i]?.crotal ? ' vacia' : '') +
-      claseDerechaComparacion;
-    const diffDer = derecha[i]?.diferenciaLitros;
-
-let textoDiffDer = '';
-if (diffDer !== null && diffDer !== undefined) {
-  const signo = diffDer > 0 ? '+' : '';
-  textoDiffDer = ` ${signo}${diffDer.toFixed(2)} L`;
-}
-
-    const litrosDer = derecha[i]?.litrosRegistrados;
-    const textoLitrosDer = litrosDer !== null && litrosDer !== undefined
-      ? ` · ${Number(litrosDer).toFixed(2)} L`
-      : '';
-
-celdaDerecha.textContent =
-  (derecha[i]?.crotal || 'Vacía') +
-  (derecha[i]?.registrada ? ' ✔️' : '') +
-  textoLitrosDer +
-  textoDiffDer;
+    pintarCelda(celdaDerecha, derecha[i]);
     celdaDerecha.style.cursor = 'pointer';
     celdaDerecha.onclick = () => abrirModal(derecha[i]);
 
     fila.appendChild(celdaIzquierda);
     fila.appendChild(celdaDerecha);
     grid.appendChild(fila);
+  }
 }
 
-}
 function abrirModal(pos) {
     if (pos?.crotal && pos?.estadoAnimal && pos.estadoAnimal !== 'PRODUCTIVO') {
     alert('Solo se puede registrar producción para animales en estado Productivo');
