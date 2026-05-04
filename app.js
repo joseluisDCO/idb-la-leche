@@ -265,7 +265,7 @@ function renderGrid(posiciones) {
 
       celda.innerHTML = `
         <div class="celda-crotal">
-          <span class="ok-icon">✔</span> ${crotal}
+          <span class="ok-icon">&#10003;</span> ${crotal}
         </div>
         <div class="celda-litros">${Number(litros).toFixed(2)} L</div>
         <div class="celda-diff">${textoDiff}</div>
