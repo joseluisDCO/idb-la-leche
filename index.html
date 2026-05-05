@@ -1015,6 +1015,39 @@ linear-gradient(
   color: var(--blue-dark) !important;
 }
 
+#header-ordeno {
+  position: sticky !important;
+  top: 96px !important;
+  z-index: 998 !important;
+
+  max-width: 980px;
+  margin: 0 auto !important;
+  padding: 8px 0 6px !important;
+
+  background: rgba(247,251,255,0.98) !important;
+  backdrop-filter: blur(10px);
+
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+
+  border-bottom: 1px solid var(--border);
+}
+
+#titulo-ordeno {
+  width: 100%;
+  text-align: center;
+  font-size: 1.18rem;
+  line-height: 1.1;
+  margin: 0;
+  color: var(--blue-dark);
+}
+
+#panel-turno-fijo {
+  top: 185px !important;
+}
+
 </style>
 </head>
 <body>
@@ -1329,15 +1362,16 @@ linear-gradient(
     </div>
   </div>
 
-  <div id="header-ordeno" style="display:none; justify-content:space-between; align-items:center;">
-    <div style="display:flex; gap:10px;">
+  <div id="header-ordeno" style="display:none;">
+    <div style="display:flex; gap:10px; justify-content:center;">
       <button id="btn-volver">Volver</button>
       <button id="btn-ir-alta-animal" class="btn-volver">Alta/Mod. Animal</button>
     </div>
+
+    <h1 id="titulo-ordeno">Registro de Producción Hoy</h1>
   </div>
 
   <div id="panel-turno-fijo" style="display:none;">
-  <h1 id="titulo-ordeno">Registro de Producción Hoy</h1>
   <div id="navegacion-turnos" style="display:flex; gap:10px; align-items:center; margin-bottom:16px;">
     <button id="btn-anterior">Anterior</button>
     <span id="turno-label">Turno 1</span>
