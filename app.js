@@ -158,7 +158,12 @@ function actualizarCantaras(sumaAyer, sumaHoy, porcentaje) {
   }
 
   if (barraExceso) {
-  barraExceso.style.display = porcentajeTexto > 100 ? 'block' : 'none';
+  if (porcentajeTexto > 100) {
+    const posicionMarca = (100 / porcentajeTexto) * 100;
+    barraExceso.style.display = 'block';
+    barraExceso.style.left = `${posicionMarca}%`;
+  } else {
+    barraExceso.style.display = 'none';
   }
 }
 
