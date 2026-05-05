@@ -109,8 +109,8 @@ async function init() {
   renderGrid(posicionesConEstado);
   console.log('Después de renderGrid');
 }
-function actualizarCantaras(sumaAyer, sumaHoy, porcentaje) {
 
+function actualizarCantaras(sumaAyer, sumaHoy, porcentaje) {
   let porcentajeTexto = 0;
   let porcentajeBarra = 0;
 
@@ -122,11 +122,16 @@ function actualizarCantaras(sumaAyer, sumaHoy, porcentaje) {
     porcentajeBarra = 100;
   }
 
-  const texto = document.getElementById('resumen-texto');
+  const ayerLinea = document.getElementById('resumen-ayer-linea');
+  const hoyLinea = document.getElementById('resumen-hoy-linea');
   const barra = document.getElementById('barra-leche-fill');
 
-  if (texto) {
-    texto.textContent = `Ayer ${sumaAyer.toFixed(2)} L · Hoy ${sumaHoy.toFixed(2)} L · ${porcentajeTexto.toFixed(0)}%`;
+  if (ayerLinea) {
+    ayerLinea.textContent = `Ayer: ${sumaAyer.toFixed(2)} L`;
+  }
+
+  if (hoyLinea) {
+    hoyLinea.textContent = `Hoy: ${sumaHoy.toFixed(2)} L · ${porcentajeTexto.toFixed(0)}%`;
   }
 
   if (barra) {
