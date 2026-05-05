@@ -132,11 +132,11 @@ function actualizarCantaras(sumaAyer, sumaHoy, porcentaje) {
   const barraExceso = document.getElementById('barra-exceso-fill');
 
   if (ayerLinea) {
-    ayerLinea.textContent = `🪣 Ayer: ${sumaAyer.toFixed(2)} L`;
+    ayerLinea.textContent = `Ayer: ${sumaAyer.toFixed(2)} L`;
   }
 
   if (hoyLitrosLinea) {
-    hoyLitrosLinea.textContent = `🪣 Hoy: ${sumaHoy.toFixed(2)} L`;
+    hoyLitrosLinea.textContent = `Hoy: ${sumaHoy.toFixed(2)} L`;
   }
 
   if (hoyPorcentaje) {
