@@ -242,6 +242,8 @@ function renderGrid(posiciones) {
     const crotal = posicion?.crotal;
     const estado = posicion?.estadoAnimal;
 
+    const esNoProductivo = estado && estado !== 'PRODUCTIVO';
+
     const claseComparacion =
       diferencia > 0 ? ' mejor' :
       diferencia < 0 ? ' peor' :
@@ -250,8 +252,8 @@ function renderGrid(posiciones) {
     celda.className =
       'celda' +
       (!crotal ? ' vacia' : '') +
-      claseComparacion;
-
+      (esNoProductivo ? ' no-productivo' : claseComparacion);
+      
     if (!crotal) {
       celda.innerHTML = `<div class="celda-crotal">Vacía</div>`;
       return;
