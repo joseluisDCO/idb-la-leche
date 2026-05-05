@@ -302,12 +302,27 @@ function renderGrid(posiciones) {
     const celdaIzquierda = document.createElement('div');
     pintarCelda(celdaIzquierda, izquierda[i]);
     celdaIzquierda.style.cursor = 'pointer';
-    celdaIzquierda.onclick = () => abrirModal(izquierda[i]);
+    celdaIzquierda.onclick = () => {
+    const pos = izquierda[i];
 
+    if (pos?.estadoAnimal && pos.estadoAnimal !== 'PRODUCTIVO') {
+      abrirAltaAnimalDirecto(pos);
+    } else {
+      abrirModal(pos);
+    }
+};
     const celdaDerecha = document.createElement('div');
     pintarCelda(celdaDerecha, derecha[i]);
     celdaDerecha.style.cursor = 'pointer';
-    celdaDerecha.onclick = () => abrirModal(derecha[i]);
+    celdaDerecha.onclick = () => {
+    const pos = derecha[i];
+
+    if (pos?.estadoAnimal && pos.estadoAnimal !== 'PRODUCTIVO') {
+      abrirAltaAnimalDirecto(pos);
+    } else {
+      abrirModal(pos);
+    }
+};
 
     fila.appendChild(celdaIzquierda);
     fila.appendChild(celdaDerecha);
@@ -335,6 +350,37 @@ selectOrdeno.value = ordenoAutomatico;
 
   modal.classList.remove('oculto');
 }
+
+function abrirAltaAnimalDirecto(pos) {
+  if (!pos?.crotal) return;
+
+  volverAltaAnimalARegistro = true;
+
+  // Ocultar entorno ordeño
+  const header = document.getElementById('header-ordeno');
+  const nav = document.getElementById('navegacion-turnos');
+  const grid = document.getElementById('grid');
+  const resumen = document.getElementById('comparador-resumen');
+  const panelTurno = document.getElementById('panel-turno-fijo');
+
+  if (header) header.style.display = 'none';
+  if (nav) nav.style.display = 'none';
+  if (grid) grid.style.display = 'none';
+  if (resumen) resumen.style.display = 'none';
+  if (panelTurno) panelTurno.style.display = 'none';
+
+  // Mostrar pantalla animal
+  const pantallaAlta = document.getElementById('pantalla-alta-animal');
+  if (pantallaAlta) pantallaAlta.style.display = 'block';
+
+  // 🔥 Rellenar directamente el crotal
+  const inputCrotalEstado = document.getElementById('input-crotal-estado');
+  if (inputCrotalEstado) inputCrotalEstado.value = pos.crotal;
+
+  // Opcional: scroll automático a la zona de estado
+  inputCrotalEstado?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
 function cerrarModal() {
   const modal = document.getElementById('modal');
   modal.classList.add('oculto');
@@ -1396,7 +1442,7 @@ const btnIrAltaAnimalDesdeOrdeño = document.getElementById('btn-ir-alta-animal'
 if (btnIrAltaAnimalDesdeOrdeño) {
   btnIrAltaAnimalDesdeOrdeño.onclick = () => {
     volverAltaAnimalARegistro = true;
-    
+
     const pantallaAlta = document.getElementById('pantalla-alta-animal');
 
     // Ocultar entorno ordeño
