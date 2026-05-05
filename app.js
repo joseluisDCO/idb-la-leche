@@ -1460,11 +1460,14 @@ async function arrancarApp() {
       if (grid) grid.style.display = 'flex';
       if (resumen) resumen.style.display = 'flex';
       
-      const panelTurno = document.getElementById('panel-turno-fijo');
-      if (panelTurno) panelTurno.style.display = 'block';
+   const panelTurno = document.getElementById('panel-turno-fijo');
+    if (panelTurno) panelTurno.style.display = 'block';
 
-      init();
-    };
+    const bloqueOrdeno = document.getElementById('bloque-ordeno-fijo');
+    if (bloqueOrdeno) bloqueOrdeno.style.display = 'block';
+
+    init();
+        };
   }
 
 const btnIrAltaAnimalDesdeOrdeño = document.getElementById('btn-ir-alta-animal');
@@ -1487,6 +1490,9 @@ if (btnIrAltaAnimalDesdeOrdeño) {
     if (grid) grid.style.display = 'none';
     if (resumen) resumen.style.display = 'none';
     if (panelTurno) panelTurno.style.display = 'none';
+
+    const bloqueOrdeno = document.getElementById('bloque-ordeno-fijo');
+    if (bloqueOrdeno) bloqueOrdeno.style.display = 'none';
 
     // Mostrar pantalla de animales
     if (pantallaAlta) pantallaAlta.style.display = 'block';
@@ -1524,6 +1530,11 @@ if (btnVolverAlta) {
       if (grid) grid.style.display = 'flex';
       if (resumen) resumen.style.display = 'flex';
       if (panelTurno) panelTurno.style.display = 'block';
+
+      if (panelTurno) panelTurno.style.display = 'block';
+
+      const bloqueOrdeno = document.getElementById('bloque-ordeno-fijo');
+      if (bloqueOrdeno) bloqueOrdeno.style.display = 'block';
 
       volverAltaAnimalARegistro = false;
       await init();
@@ -1869,6 +1880,8 @@ if (btnGuardarTurno) {
         const panelTurno = document.getElementById('panel-turno-fijo');
         if (panelTurno) panelTurno.style.display = 'none';
         
+        const bloqueOrdeno = document.getElementById('bloque-ordeno-fijo');
+        if (bloqueOrdeno) bloqueOrdeno.style.display = 'none';
       };
     }
 
