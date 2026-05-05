@@ -2,6 +2,7 @@ let posicionSeleccionada = null;
 let turnoActual = 1;
 let turnoEditandoActual = null;
 let hayCambiosTurno = false;
+let volverAltaAnimalARegistro = false;
 import { supabase } from './supabaseClient.js';
 
 async function init() {
@@ -1394,6 +1395,8 @@ const btnIrAltaAnimalDesdeOrdeño = document.getElementById('btn-ir-alta-animal'
 
 if (btnIrAltaAnimalDesdeOrdeño) {
   btnIrAltaAnimalDesdeOrdeño.onclick = () => {
+    volverAltaAnimalARegistro = true;
+    
     const pantallaAlta = document.getElementById('pantalla-alta-animal');
 
     // Ocultar entorno ordeño
@@ -1426,15 +1429,34 @@ if (btnIrAltaAnimalDesdeOrdeño) {
   }
 
   const btnVolverAlta = document.getElementById('btn-volver-alta');
-  if (btnVolverAlta) {
-    btnVolverAlta.onclick = () => {
-      const pantallaInicio = document.getElementById('pantalla-inicio');
-      const pantallaAlta = document.getElementById('pantalla-alta-animal');
+if (btnVolverAlta) {
+  btnVolverAlta.onclick = async () => {
+    const pantallaInicio = document.getElementById('pantalla-inicio');
+    const pantallaAlta = document.getElementById('pantalla-alta-animal');
 
-      if (pantallaAlta) pantallaAlta.style.display = 'none';
-      if (pantallaInicio) pantallaInicio.style.display = 'block';
-    };
-  }
+    if (pantallaAlta) pantallaAlta.style.display = 'none';
+
+    if (volverAltaAnimalARegistro) {
+      const header = document.getElementById('header-ordeno');
+      const nav = document.getElementById('navegacion-turnos');
+      const grid = document.getElementById('grid');
+      const resumen = document.getElementById('comparador-resumen');
+      const panelTurno = document.getElementById('panel-turno-fijo');
+
+      if (header) header.style.display = 'flex';
+      if (nav) nav.style.display = 'flex';
+      if (grid) grid.style.display = 'flex';
+      if (resumen) resumen.style.display = 'flex';
+      if (panelTurno) panelTurno.style.display = 'block';
+
+      volverAltaAnimalARegistro = false;
+      await init();
+      return;
+    }
+
+    if (pantallaInicio) pantallaInicio.style.display = 'block';
+  };
+}
 
   const btnCrearTurnos = document.getElementById('btn-crear-turnos');
   if (btnCrearTurnos) {
