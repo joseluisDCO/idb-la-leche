@@ -113,29 +113,58 @@ async function init() {
 function actualizarCantaras(sumaAyer, sumaHoy, porcentaje) {
   let porcentajeTexto = 0;
   let porcentajeBarra = 0;
+  let porcentajeExceso = 0;
 
   if (sumaAyer > 0) {
     porcentajeTexto = porcentaje;
     porcentajeBarra = Math.max(0, Math.min(porcentaje, 100));
+    porcentajeExceso = Math.max(0, Math.min(porcentaje - 100, 100));
   } else if (sumaHoy > 0) {
     porcentajeTexto = 100;
     porcentajeBarra = 100;
+    porcentajeExceso = 0;
   }
 
   const ayerLinea = document.getElementById('resumen-ayer-linea');
-  const hoyLinea = document.getElementById('resumen-hoy-linea');
-  const barra = document.getElementById('barra-leche-fill');
+  const hoyLitrosLinea = document.getElementById('resumen-hoy-litros-linea');
+  const hoyPorcentaje = document.getElementById('resumen-hoy-porcentaje');
+  const barraLeche = document.getElementById('barra-leche-fill');
+  const barraExceso = document.getElementById('barra-exceso-fill');
 
   if (ayerLinea) {
-    ayerLinea.textContent = `Ayer: ${sumaAyer.toFixed(2)} L`;
+    ayerLinea.textContent = `🪣 Ayer: ${sumaAyer.toFixed(2)} L`;
   }
 
-  if (hoyLinea) {
-    hoyLinea.textContent = `Hoy: ${sumaHoy.toFixed(2)} L · ${porcentajeTexto.toFixed(0)}%`;
+  if (hoyLitrosLinea) {
+    hoyLitrosLinea.textContent = `🪣 Hoy: ${sumaHoy.toFixed(2)} L`;
   }
 
-  if (barra) {
-    barra.style.width = `${porcentajeBarra}%`;
+  if (hoyPorcentaje) {
+    hoyPorcentaje.textContent = `${porcentajeTexto.toFixed(0)}%`;
+
+    hoyPorcentaje.classList.remove('porcentaje-rojo', 'porcentaje-verde', 'porcentaje-neutro');
+
+    if (porcentajeTexto >= 100) {
+      hoyPorcentaje.classList.add('porcentaje-verde');
+    } else if (porcentajeTexto > 0) {
+      hoyPorcentaje.classList.add('porcentaje-rojo');
+    } else {
+      hoyPorcentaje.classList.add('porcentaje-neutro');
+    }
+  }
+
+  if (barraLeche) {
+    barraLeche.style.width = `${porcentajeBarra}%`;
+  }
+
+  if (barraExceso) {
+    if (porcentajeExceso > 0) {
+      barraExceso.style.left = '96%';
+      barraExceso.style.width = '4%';
+    } else {
+      barraExceso.style.left = '100%';
+      barraExceso.style.width = '0%';
+    }
   }
 }
 

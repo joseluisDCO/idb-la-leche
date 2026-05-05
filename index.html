@@ -932,40 +932,86 @@ linear-gradient(
 }
 
 
+/* ===== Comparador Ayer / Hoy - versión pro ===== */
+
 #comparador-resumen {
-  padding: 10px 12px 12px;
-  background: linear-gradient(135deg, #8ED8FF 0%, #BFEAFF 100%);
-  border-bottom: 1px solid var(--border);
+  padding: 8px 10px 10px !important;
+  background: linear-gradient(135deg, #8ED8FF 0%, #BFEAFF 100%) !important;
+  border-bottom: 1px solid var(--border) !important;
+  border-radius: 0 0 20px 20px !important;
+  box-shadow: 0 8px 18px rgba(47,111,159,0.10);
 }
 
-.resumen-linea {
-  font-size: 0.9rem;
-  font-weight: 900;
-  color: #ffffff;
+.resumen-ayer-linea {
+  color: #6B8394 !important;
+  font-size: 0.78rem;
+  font-weight: 850;
   text-align: center;
-  margin-bottom: 8px;
-  line-height: 1.25;
-  text-shadow: 0 1px 2px rgba(23,71,102,0.25);
-}
-
-#resumen-ayer-linea {
-  margin-bottom: 2px;
+  margin-bottom: 6px;
 }
 
 .barra-leche {
+  position: relative;
   width: 100%;
-  height: 30px; /* 👈 3x altura */
-  background: rgba(23,71,102,0.25);
-  border-radius: 999px;
-  overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.5);
+  height: 30px !important;
+  background: rgba(23,71,102,0.24) !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(255,255,255,0.62) !important;
 }
 
 #barra-leche-fill {
-  height: 100%;
+  position: absolute;
+  inset: 0 auto 0 0;
+  height: 100% !important;
   width: 0%;
-  background: #ffffff;
+  background: #ffffff !important;
   transition: width 0.3s ease;
+  z-index: 1;
+}
+
+#barra-exceso-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 100%;
+  width: 0%;
+  background: rgba(255,122,0,0.72);
+  transition: width 0.3s ease, left 0.3s ease;
+  z-index: 2;
+}
+
+.barra-leche-texto {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  font-size: 0.82rem;
+  font-weight: 950;
+  color: var(--blue-dark);
+  text-align: center;
+  white-space: nowrap;
+}
+
+#resumen-hoy-porcentaje {
+  font-weight: 950;
+}
+
+.porcentaje-rojo {
+  color: #D9534F !important;
+}
+
+.porcentaje-verde {
+  color: #22A66A !important;
+}
+
+.porcentaje-neutro {
+  color: var(--blue-dark) !important;
 }
 
 </style>
@@ -1298,13 +1344,18 @@ linear-gradient(
   </div>
 
   <div id="comparador-resumen" style="display:none;">
-    <div class="resumen-linea">
-      <div id="resumen-ayer-linea">Ayer: 0.00 L</div>
-      <div id="resumen-hoy-linea">Hoy: 0.00 L · 0%</div>
+    <div id="resumen-ayer-linea" class="resumen-ayer-linea">
+      🪣 Ayer: 0.00 L
     </div>
 
     <div class="barra-leche">
       <div id="barra-leche-fill"></div>
+      <div id="barra-exceso-fill"></div>
+
+      <div class="barra-leche-texto">
+        <span id="resumen-hoy-litros-linea">🪣 Hoy: 0.00 L</span>
+        <span id="resumen-hoy-porcentaje" class="porcentaje-neutro">0%</span>
+      </div>
     </div>
   </div>
 
