@@ -110,13 +110,6 @@ async function init() {
   console.log('Después de renderGrid');
 }
 function actualizarCantaras(sumaAyer, sumaHoy, porcentaje) {
-  const ayerTexto = document.getElementById('resumen-ayer-litros');
-  const hoyTexto = document.getElementById('resumen-hoy-litros');
-  const hoyBarra = document.getElementById('resumen-hoy-barra');
-
-  if (ayerTexto) {
-    ayerTexto.textContent = `${sumaAyer.toFixed(2)} L`;
-  }
 
   let porcentajeTexto = 0;
   let porcentajeBarra = 0;
@@ -129,17 +122,18 @@ function actualizarCantaras(sumaAyer, sumaHoy, porcentaje) {
     porcentajeBarra = 100;
   }
 
-  if (hoyTexto) {
-    hoyTexto.textContent = `${sumaHoy.toFixed(2)} L · ${porcentajeTexto.toFixed(0)}%`;
+  const texto = document.getElementById('resumen-texto');
+  const barra = document.getElementById('barra-leche-fill');
+
+  if (texto) {
+    texto.textContent = `Ayer ${sumaAyer.toFixed(2)} L · Hoy ${sumaHoy.toFixed(2)} L · ${porcentajeTexto.toFixed(0)}%`;
   }
 
-  const hoyBox = document.getElementById('resumen-hoy-box');
-
-  if (hoyBox) {
-    hoyBox.style.setProperty('--progreso-hoy', `${porcentajeBarra}%`);
+  if (barra) {
+    barra.style.width = `${porcentajeBarra}%`;
   }
-
 }
+
 async function comprobarConexion() {
   console.log('Entrando en comprobarConexion');
 
@@ -253,7 +247,7 @@ function renderGrid(posiciones) {
       'celda' +
       (!crotal ? ' vacia' : '') +
       (esNoProductivo ? ' no-productivo' : claseComparacion);
-      
+
     if (!crotal) {
       celda.innerHTML = `<div class="celda-crotal">Vacía</div>`;
       return;

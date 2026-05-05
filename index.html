@@ -971,6 +971,35 @@ linear-gradient(
   color: var(--blue-dark) !important;
 }
 
+#comparador-resumen {
+  padding: 10px 12px;
+  background: rgba(255,255,255,0.9);
+  border-bottom: 1px solid var(--border);
+}
+
+.resumen-linea {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--blue-dark);
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+.barra-leche {
+  width: 100%;
+  height: 10px;
+  background: #dcdcdc;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+#barra-leche-fill {
+  height: 100%;
+  width: 0%;
+  background: #ffffff;
+  transition: width 0.3s ease;
+}
+
 </style>
 </head>
 <body>
@@ -1300,18 +1329,15 @@ linear-gradient(
     <button id="btn-siguiente">Siguiente</button>
   </div>
 
-<div id="comparador-resumen" style="display:none; gap:16px; margin-top:24px;">
-    <div class="resumen-box">
-      <h2>Ayer</h2>
-      <div id="resumen-ayer-litros" class="resumen-litros">0.00 L</div>
+  <div id="comparador-resumen" style="display:none;">
+    <div class="resumen-linea">
+      <span id="resumen-texto">Ayer 0.00 L · Hoy 0.00 L · 0%</span>
     </div>
 
-    <div id="resumen-hoy-box" class="resumen-box resumen-hoy-box">
-      <h2>Hoy</h2>
-      <div id="resumen-hoy-litros" class="resumen-litros">0.00 L · 0%</div>
+    <div class="barra-leche">
+      <div id="barra-leche-fill"></div>
     </div>
   </div>
-</div>  
 
   <div id="grid" style="display:none;"></div>
 
