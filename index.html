@@ -1362,38 +1362,40 @@ linear-gradient(
     </div>
   </div>
 
-  <div id="header-ordeno" style="display:none;">
-    <div style="display:flex; gap:10px; justify-content:center;">
-      <button id="btn-volver">Volver</button>
-      <button id="btn-ir-alta-animal" class="btn-volver">Alta/Mod. Animal</button>
-    </div>
+  <div id="bloque-ordeno-fijo" style="display:none;">
+    <div id="header-ordeno" style="display:none;">
+      <div style="display:flex; gap:10px; justify-content:center;">
+        <button id="btn-volver">Volver</button>
+        <button id="btn-ir-alta-animal" class="btn-volver">Alta/Mod. Animal</button>
+      </div>
 
     <h1 id="titulo-ordeno">Registro de Producción Hoy</h1>
-  </div>
-
-  <div id="panel-turno-fijo" style="display:none;">
-  <div id="navegacion-turnos" style="display:flex; gap:10px; align-items:center; margin-bottom:16px;">
-    <button id="btn-anterior">Anterior</button>
-    <span id="turno-label">Turno 1</span>
-    <button id="btn-siguiente">Siguiente</button>
-  </div>
-
-  <div id="comparador-resumen" style="display:none;">
-    <div id="resumen-ayer-linea" class="resumen-ayer-linea">
-      Ayer: 0.00 L
     </div>
 
-    <div class="barra-leche">
-      <div id="barra-leche-fill"></div>
-      <div id="barra-exceso-fill"></div>
+    <div id="panel-turno-fijo" style="display:none;">
+    <div id="navegacion-turnos" style="display:flex; gap:10px; align-items:center; margin-bottom:16px;">
+      <button id="btn-anterior">Anterior</button>
+      <span id="turno-label">Turno 1</span>
+      <button id="btn-siguiente">Siguiente</button>
+    </div>
 
-      <div class="barra-leche-texto">
-        <span id="resumen-hoy-litros-linea">Hoy: 0.00 L</span>
-        <span id="resumen-hoy-porcentaje" class="porcentaje-neutro">0%</span>
+    <div id="comparador-resumen" style="display:none;">
+      <div id="resumen-ayer-linea" class="resumen-ayer-linea">
+        Ayer: 0.00 L
       </div>
-    </div>
-  </div>
-</div> <!-- cierre de panel-turno-fijo -->
+
+      <div class="barra-leche">
+        <div id="barra-leche-fill"></div>
+          <div id="barra-exceso-fill"></div>
+
+            <div class="barra-leche-texto">
+              <span id="resumen-hoy-litros-linea">Hoy: 0.00 L</span>
+              <span id="resumen-hoy-porcentaje" class="porcentaje-neutro">0%</span>
+            </div>
+          </div>
+        </div>
+      </div> <!-- cierre de panel-turno-fijo -->
+    </div> <!-- cierre bloque-ordeno-fijo -->
 
   <div id="grid" style="display:none;"></div>
 
