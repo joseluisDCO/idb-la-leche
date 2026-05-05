@@ -1104,6 +1104,55 @@ linear-gradient(
   margin-top: 8px !important;
 }
 
+/* ===== Navegación secundaria Registro Ordeño ===== */
+
+.ordeno-nav {
+  width: calc(100% - 20px);
+  max-width: 420px;
+  margin: 0 auto 4px;
+  padding: 6px;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+
+  background: #DDEAF2;
+  border: 1px solid #BFD6E5;
+  border-radius: 16px;
+
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.55);
+}
+
+.ordeno-nav .nav-btn {
+  min-height: 40px;
+  padding: 8px 10px;
+
+  border-radius: 12px;
+  font-size: 0.82rem;
+  font-weight: 900;
+
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.ordeno-nav .nav-btn:hover {
+  transform: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+.ordeno-nav .nav-btn-volver {
+  background: #FFFFFF !important;
+  color: var(--blue-dark) !important;
+  border: 1px solid #BFD6E5 !important;
+}
+
+.ordeno-nav .nav-btn-animal {
+  background: #6FAED6 !important;
+  color: #FFFFFF !important;
+  border: 1px solid #5C9FC8 !important;
+}
+
 </style>
 </head>
 <body>
@@ -1420,9 +1469,9 @@ linear-gradient(
 
   <div id="bloque-ordeno-fijo" style="display:none;">
     <div id="header-ordeno" style="display:none;">
-      <div style="display:flex; gap:10px; justify-content:center;">
-        <button id="btn-volver">Volver</button>
-        <button id="btn-ir-alta-animal" class="btn-volver">Alta/Mod. Animal</button>
+      <div class="ordeno-nav">
+        <button id="btn-volver" class="nav-btn nav-btn-volver">← Volver</button>
+        <button id="btn-ir-alta-animal" class="nav-btn nav-btn-animal">✎ Animal</button>
       </div>
 
     <h1 id="titulo-ordeno">Registro de Producción Hoy</h1>
