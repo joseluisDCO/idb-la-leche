@@ -1390,6 +1390,30 @@ async function arrancarApp() {
     };
   }
 
+const btnIrAltaAnimalDesdeOrdeño = document.getElementById('btn-ir-alta-animal');
+
+if (btnIrAltaAnimalDesdeOrdeño) {
+  btnIrAltaAnimalDesdeOrdeño.onclick = () => {
+    const pantallaAlta = document.getElementById('pantalla-alta-animal');
+
+    // Ocultar entorno ordeño
+    const header = document.getElementById('header-ordeno');
+    const nav = document.getElementById('navegacion-turnos');
+    const grid = document.getElementById('grid');
+    const resumen = document.getElementById('comparador-resumen');
+    const panelTurno = document.getElementById('panel-turno-fijo');
+
+    if (header) header.style.display = 'none';
+    if (nav) nav.style.display = 'none';
+    if (grid) grid.style.display = 'none';
+    if (resumen) resumen.style.display = 'none';
+    if (panelTurno) panelTurno.style.display = 'none';
+
+    // Mostrar pantalla de animales
+    if (pantallaAlta) pantallaAlta.style.display = 'block';
+  };
+}
+
   const btnAltaAnimal = document.getElementById('btn-alta-animal');
   if (btnAltaAnimal) {
     btnAltaAnimal.onclick = () => {
@@ -1721,34 +1745,34 @@ if (btnGuardarTurno) {
 }
 
  
-const btnBuscarInformeAnimales = document.getElementById('btn-buscar-informe-animales');
-if (btnBuscarInformeAnimales) {
-  btnBuscarInformeAnimales.onclick = async () => {
-    await buscarInformeAnimales();
-  };
-}
+    const btnBuscarInformeAnimales = document.getElementById('btn-buscar-informe-animales');
+    if (btnBuscarInformeAnimales) {
+      btnBuscarInformeAnimales.onclick = async () => {
+        await buscarInformeAnimales();
+      };
+    }
 
-  const btnVolver = document.getElementById('btn-volver');
-  if (btnVolver) {
-    btnVolver.onclick = () => {
-      const pantallaInicio = document.getElementById('pantalla-inicio');
-      if (pantallaInicio) pantallaInicio.style.display = 'block';
+    const btnVolver = document.getElementById('btn-volver');
+    if (btnVolver) {
+      btnVolver.onclick = () => {
+        const pantallaInicio = document.getElementById('pantalla-inicio');
+        if (pantallaInicio) pantallaInicio.style.display = 'block';
 
-      const header = document.getElementById('header-ordeno');
-      const nav = document.getElementById('navegacion-turnos');
-      const grid = document.getElementById('grid');
-      const resumen = document.getElementById('comparador-resumen');
+        const header = document.getElementById('header-ordeno');
+        const nav = document.getElementById('navegacion-turnos');
+        const grid = document.getElementById('grid');
+        const resumen = document.getElementById('comparador-resumen');
 
-      if (header) header.style.display = 'none';
-      if (nav) nav.style.display = 'none';
-      if (grid) grid.style.display = 'none';
-      if (resumen) resumen.style.display = 'none';
+        if (header) header.style.display = 'none';
+        if (nav) nav.style.display = 'none';
+        if (grid) grid.style.display = 'none';
+        if (resumen) resumen.style.display = 'none';
 
-      const panelTurno = document.getElementById('panel-turno-fijo');
-      if (panelTurno) panelTurno.style.display = 'none';
-      
-    };
-  }
+        const panelTurno = document.getElementById('panel-turno-fijo');
+        if (panelTurno) panelTurno.style.display = 'none';
+        
+      };
+    }
 
   const btnGuardarAnimal = document.getElementById('btn-guardar-animal');
   if (btnGuardarAnimal) {
