@@ -158,13 +158,7 @@ function actualizarCantaras(sumaAyer, sumaHoy, porcentaje) {
   }
 
   if (barraExceso) {
-    if (porcentajeExceso > 0) {
-      barraExceso.style.left = '96%';
-      barraExceso.style.width = '4%';
-    } else {
-      barraExceso.style.left = '100%';
-      barraExceso.style.width = '0%';
-    }
+  barraExceso.style.display = porcentajeTexto > 100 ? 'block' : 'none';
   }
 }
 

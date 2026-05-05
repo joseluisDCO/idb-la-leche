@@ -972,13 +972,16 @@ linear-gradient(
 
 #barra-exceso-fill {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 100%;
-  width: 0%;
-  background: rgba(255,122,0,0.72);
-  transition: width 0.3s ease, left 0.3s ease;
-  z-index: 2;
+  top: 3px;
+  bottom: 3px;
+  right: 4px;
+
+  width: 3px;
+  background: #FF7A00;
+  border-radius: 999px;
+
+  display: none;
+  z-index: 4;
 }
 
 .barra-leche-texto {
@@ -1345,7 +1348,7 @@ linear-gradient(
 
   <div id="comparador-resumen" style="display:none;">
     <div id="resumen-ayer-linea" class="resumen-ayer-linea">
-      🪣 Ayer: 0.00 L
+      Ayer: 0.00 L
     </div>
 
     <div class="barra-leche">
@@ -1353,7 +1356,7 @@ linear-gradient(
       <div id="barra-exceso-fill"></div>
 
       <div class="barra-leche-texto">
-        <span id="resumen-hoy-litros-linea">🪣 Hoy: 0.00 L</span>
+        <span id="resumen-hoy-litros-linea">Hoy: 0.00 L</span>
         <span id="resumen-hoy-porcentaje" class="porcentaje-neutro">0%</span>
       </div>
     </div>
