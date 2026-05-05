@@ -166,6 +166,7 @@ function actualizarCantaras(sumaAyer, sumaHoy, porcentaje) {
     barraExceso.style.display = 'none';
   }
 }
+}
 
 async function comprobarConexion() {
   console.log('Entrando en comprobarConexion');
