@@ -325,39 +325,48 @@ function renderGrid(posiciones) {
     `;
   }
 
-  for (let i = 0; i < 5; i++) {
-    const fila = document.createElement('div');
-    fila.className = 'fila';
+ const maxPosicionesTurno = Math.max(
+  ...posicionesTurno.map(p => Number(p.posicion) || 0),
+  0
+);
 
-    const celdaIzquierda = document.createElement('div');
-    pintarCelda(celdaIzquierda, izquierda[i]);
-    celdaIzquierda.style.cursor = 'pointer';
-    celdaIzquierda.onclick = () => {
-    const pos = izquierda[i];
+for (let posicion = 1; posicion <= maxPosicionesTurno; posicion++) {
+  const fila = document.createElement('div');
+  fila.className = 'fila';
 
-    if (pos?.estadoAnimal && pos.estadoAnimal !== 'PRODUCTIVO') {
-      abrirAltaAnimalDirecto(pos);
-    } else {
-      abrirModal(pos);
-    }
-};
-    const celdaDerecha = document.createElement('div');
-    pintarCelda(celdaDerecha, derecha[i]);
-    celdaDerecha.style.cursor = 'pointer';
-    celdaDerecha.onclick = () => {
-    const pos = derecha[i];
+  const posIzquierda = izquierda.find(p => Number(p.posicion) === posicion);
+  const posDerecha = derecha.find(p => Number(p.posicion) === posicion);
+
+  const celdaIzquierda = document.createElement('div');
+  pintarCelda(celdaIzquierda, posIzquierda);
+  celdaIzquierda.style.cursor = 'pointer';
+  celdaIzquierda.onclick = () => {
+    const pos = posIzquierda;
 
     if (pos?.estadoAnimal && pos.estadoAnimal !== 'PRODUCTIVO') {
       abrirAltaAnimalDirecto(pos);
     } else {
       abrirModal(pos);
     }
-};
+  };
 
-    fila.appendChild(celdaIzquierda);
-    fila.appendChild(celdaDerecha);
-    grid.appendChild(fila);
-  }
+  const celdaDerecha = document.createElement('div');
+  pintarCelda(celdaDerecha, posDerecha);
+  celdaDerecha.style.cursor = 'pointer';
+  celdaDerecha.onclick = () => {
+    const pos = posDerecha;
+
+    if (pos?.estadoAnimal && pos.estadoAnimal !== 'PRODUCTIVO') {
+      abrirAltaAnimalDirecto(pos);
+    } else {
+      abrirModal(pos);
+    }
+  };
+
+  fila.appendChild(celdaIzquierda);
+  fila.appendChild(celdaDerecha);
+  grid.appendChild(fila);
+}
 }
 
 function abrirModal(pos) {
