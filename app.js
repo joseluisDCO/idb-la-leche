@@ -827,18 +827,20 @@ function generarGridTurnoActualizar(numeroPosiciones, posicionesExistentes = [],
     inputIzq.type = 'text';
     inputIzq.setAttribute('list', 'lista-crotales');
     inputIzq.placeholder = `Izq ${posicion}`;
-    inputIzq.value = conservarValoresActuales && valoresActuales.has(inputIzq.id)
-      ? valoresActuales.get(inputIzq.id)
-      : (posIzq?.crotal || '');
+    inputIzq.value =
+      conservarValoresActuales && valoresActuales.has(inputIzq.id)
+        ? valoresActuales.get(inputIzq.id)
+        : (posIzq?.crotal || '');
 
     const inputDer = document.createElement('input');
     inputDer.id = `edit-turno-der-${posicion}`;
     inputDer.type = 'text';
     inputDer.setAttribute('list', 'lista-crotales');
     inputDer.placeholder = `Der ${posicion}`;
-    inputDer.value = conservarValoresActuales && valoresActuales.has(inputDer.id)
-      ? valoresActuales.get(inputDer.id)
-      : (posDer?.crotal || '');
+    inputDer.value =
+      conservarValoresActuales && valoresActuales.has(inputDer.id)
+        ? valoresActuales.get(inputDer.id)
+        : (posDer?.crotal || '');
 
     inputIzq.oninput = () => {
       hayCambiosTurno = true;
@@ -897,7 +899,7 @@ function activarSeguimientoCambiosTurno() {
   if (inputPosiciones) {
     inputPosiciones.oninput = () => {
       hayCambiosTurno = true;
-      generarGridTurnoActualizar(undefined, [], true);
+      generarGridTurnoActualizar(undefined, posicionesTurnoOriginales, true);
     };
   }
 }
