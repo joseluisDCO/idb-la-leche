@@ -1617,6 +1617,76 @@ function mostrarModoAnimal(modo) {
   }
 }
 
+function inicializarFechasIngresoEconomico() {
+  const hoy = new Date();
+  const primerDiaMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+
+  const formato = (fecha) => fecha.toISOString().split('T')[0];
+
+  const desde = document.getElementById('ingreso-periodo-desde');
+  const hasta = document.getElementById('ingreso-periodo-hasta');
+
+  if (desde && !desde.value) desde.value = formato(primerDiaMes);
+  if (hasta && !hasta.value) hasta.value = formato(hoy);
+}
+
+function leerNumeroIngreso(id) {
+  const valor = document.getElementById(id)?.value;
+
+  if (valor === '' || valor === null || valor === undefined) {
+    return null;
+  }
+
+  const numero = Number(valor);
+
+  return Number.isFinite(numero) ? numero : null;
+}
+
+async function guardarIngresoEconomico() {
+  const mensaje = document.getElementById('mensaje-ingreso');
+
+  const periodoDesde = document.getElementById('ingreso-periodo-desde')?.value;
+  const periodoHasta = document.getElementById('ingreso-periodo-hasta')?.value;
+
+  if (!periodoDesde || !periodoHasta) {
+    alert('Selecciona el periodo de ingreso');
+    return;
+  }
+
+  if (periodoHasta < periodoDesde) {
+    alert('La fecha hasta no puede ser anterior a la fecha desde');
+    return;
+  }
+
+  const nuevoIngreso = {
+    periodo_desde: periodoDesde,
+    periodo_hasta: periodoHasta,
+    litros_recogidos: leerNumeroIngreso('ingreso-litros-recogidos'),
+    grasas: leerNumeroIngreso('ingreso-grasas'),
+    perdidas: leerNumeroIngreso('ingreso-perdidas'),
+    litros_pagados: leerNumeroIngreso('ingreso-litros-pagados'),
+    precio_base: leerNumeroIngreso('ingreso-precio-base'),
+    precio_final: leerNumeroIngreso('ingreso-precio-final'),
+    importe_total: leerNumeroIngreso('ingreso-importe-total')
+  };
+
+  const { error } = await supabase
+    .from('ingresos_economicos')
+    .insert(nuevoIngreso);
+
+  if (error) {
+    console.error('Error guardando ingreso económico:', error);
+    alert('No se pudo guardar el ingreso económico');
+    return;
+  }
+
+  if (mensaje) {
+    mensaje.textContent = 'Ingreso económico guardado correctamente';
+  }
+
+  alert('Ingreso económico guardado correctamente');
+}
+
 async function arrancarApp() {
   await comprobarConexion();
 
@@ -1896,6 +1966,37 @@ if (btnVolverActualizarTurnos) {
     if (pantallaInicio) pantallaInicio.style.display = 'block';
 
     hayCambiosTurno = false;
+  };
+}
+
+const btnIngresoEconomico = document.getElementById('btn-ingreso-economico');
+if (btnIngresoEconomico) {
+  btnIngresoEconomico.onclick = () => {
+    const pantallaInicio = document.getElementById('pantalla-inicio');
+    const pantallaIngreso = document.getElementById('pantalla-ingreso-economico');
+
+    if (pantallaInicio) pantallaInicio.style.display = 'none';
+    if (pantallaIngreso) pantallaIngreso.style.display = 'block';
+
+    inicializarFechasIngresoEconomico();
+  };
+}
+
+const btnVolverIngreso = document.getElementById('btn-volver-ingreso');
+if (btnVolverIngreso) {
+  btnVolverIngreso.onclick = () => {
+    const pantallaInicio = document.getElementById('pantalla-inicio');
+    const pantallaIngreso = document.getElementById('pantalla-ingreso-economico');
+
+    if (pantallaIngreso) pantallaIngreso.style.display = 'none';
+    if (pantallaInicio) pantallaInicio.style.display = 'block';
+  };
+}
+
+const btnGuardarIngreso = document.getElementById('btn-guardar-ingreso');
+if (btnGuardarIngreso) {
+  btnGuardarIngreso.onclick = async () => {
+    await guardarIngresoEconomico();
   };
 }
 

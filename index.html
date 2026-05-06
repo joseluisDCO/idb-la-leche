@@ -703,13 +703,14 @@
   display: block;
   }
 
-    .registrar-card button,
-  .informes-card button {
-    height: 170px;
-    min-height: 170px;
-    border-radius: 22px;
-    font-size: 1rem;
-  }
+  .registrar-card button,
+.ingreso-card button,
+.informes-card button {
+  height: 170px;
+  min-height: 170px;
+  border-radius: 22px;
+  font-size: 1rem;
+}
 
 /* ===== Registro de ordeño - cabecera fija ===== */
 #header-ordeno {
@@ -1399,6 +1400,102 @@ linear-gradient(
   color: var(--muted);
 }
 
+/* ===== Ingreso Económico ===== */
+
+#pantalla-ingreso-economico {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  overflow: visible !important;
+}
+
+#pantalla-ingreso-economico::before {
+  display: none !important;
+}
+
+.ingreso-nav {
+  position: sticky;
+  top: 96px;
+  z-index: 998;
+
+  width: calc(100% - 20px);
+  max-width: 520px;
+  margin: 0 auto 8px;
+  padding: 6px;
+
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+
+  background: #DDEAF2;
+  border: 1px solid #BFD6E5;
+  border-radius: 16px;
+
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.55);
+}
+
+.ingreso-nav .ingreso-nav-btn {
+  min-height: 40px;
+  padding: 8px 8px;
+
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 900;
+
+  background: #6FAED6 !important;
+  color: #FFFFFF !important;
+  border: 1px solid #5C9FC8 !important;
+
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.ingreso-nav .ingreso-nav-btn:hover {
+  transform: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+.ingreso-operacion-card {
+  width: calc(100% - 20px);
+  max-width: 520px;
+  margin: 0 auto 12px;
+  padding: 16px;
+
+  background: rgba(255,255,255,0.82);
+  border: 1px solid rgba(191,214,229,0.95);
+  border-radius: 18px;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.75),
+    0 6px 14px rgba(47,111,159,0.08);
+}
+
+.ingreso-operacion-card h1 {
+  margin: 0 0 14px;
+  text-align: center;
+  font-size: 1.18rem;
+  line-height: 1.15;
+  color: var(--blue-dark);
+}
+
+.ingreso-formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ingreso-mensaje {
+  min-height: 20px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-align: center;
+  color: var(--muted);
+}
+
 </style>
 </head>
 <body>
@@ -1429,6 +1526,10 @@ linear-gradient(
         <button id="btn-alta-animal">Alta / modificación<br>Animal</button>
         <button id="btn-crear-turnos">Crear / modificar<br>Turnos</button>
       </div>
+    </section>
+
+    <section class="inicio-card ingreso-card">
+      <button id="btn-ingreso-economico" class="full-width-btn">Ingreso Económico</button>
     </section>
 
     <section class="inicio-card informes-card">
@@ -1540,6 +1641,54 @@ linear-gradient(
 </div>
 </section>
 </div>
+
+<div id="pantalla-ingreso-economico" style="display:none;">
+
+  <div class="ingreso-nav">
+    <button id="btn-volver-ingreso" class="nav-btn ingreso-nav-btn">← Volver</button>
+  </div>
+
+  <section class="ingreso-operacion-card">
+    <h1>Ingreso Económico</h1>
+
+    <div class="ingreso-formulario">
+
+      <label>Periodo de ingreso - Desde</label>
+      <input id="ingreso-periodo-desde" type="date" />
+
+      <label>Periodo de ingreso - Hasta</label>
+      <input id="ingreso-periodo-hasta" type="date" />
+
+      <label>Litros recogidos</label>
+      <input id="ingreso-litros-recogidos" type="number" step="0.01" min="0" placeholder="Ej: 12500.00" />
+
+      <label>Grasas</label>
+      <input id="ingreso-grasas" type="number" step="0.0001" min="0" placeholder="Ej: 3.75" />
+
+      <label>Pérdidas</label>
+      <input id="ingreso-perdidas" type="number" step="0.01" min="0" placeholder="Ej: 120.00" />
+
+      <label>Litros pagados</label>
+      <input id="ingreso-litros-pagados" type="number" step="0.01" min="0" placeholder="Ej: 12380.00" />
+
+      <label>Precio base</label>
+      <input id="ingreso-precio-base" type="number" step="0.0001" min="0" placeholder="Ej: 0.4200" />
+
+      <label>Precio final</label>
+      <input id="ingreso-precio-final" type="number" step="0.0001" min="0" placeholder="Ej: 0.4550" />
+
+      <label>Importe total</label>
+      <input id="ingreso-importe-total" type="number" step="0.01" min="0" placeholder="Ej: 5632.90" />
+
+      <button id="btn-guardar-ingreso">Guardar ingreso económico</button>
+
+      <div id="mensaje-ingreso" class="ingreso-mensaje"></div>
+
+    </div>
+  </section>
+
+</div>
+
 
 <div id="pantalla-informes" style="display:none;">
   <div class="header-pantalla">
