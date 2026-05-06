@@ -1630,16 +1630,73 @@ function inicializarFechasIngresoEconomico() {
   if (hasta && !hasta.value) hasta.value = formato(hoy);
 }
 
-function leerNumeroIngreso(id) {
-  const valor = document.getElementById(id)?.value;
-
+function parsearNumeroES(valor) {
   if (valor === '' || valor === null || valor === undefined) {
     return null;
   }
 
-  const numero = Number(valor);
+  const limpio = String(valor)
+    .trim()
+    .replace(/\s/g, '')
+    .replace(/\./g, '')
+    .replace(',', '.');
+
+  const numero = Number(limpio);
 
   return Number.isFinite(numero) ? numero : null;
+}
+
+function leerNumeroIngreso(id) {
+  const valor = document.getElementById(id)?.value;
+  return parsearNumeroES(valor);
+}
+
+function formatearNumeroES(valor, decimales = 2) {
+  const numero = typeof valor === 'number'
+    ? valor
+    : parsearNumeroES(valor);
+
+  if (numero === null) {
+    return '';
+  }
+
+  return new Intl.NumberFormat('es-ES', {
+    minimumFractionDigits: decimales,
+    maximumFractionDigits: decimales
+  }).format(numero);
+}
+
+function activarFormatoCamposIngreso() {
+  const campos = [
+    { id: 'ingreso-litros-recogidos', decimales: 2 },
+    { id: 'ingreso-grasas', decimales: 4 },
+    { id: 'ingreso-perdidas', decimales: 2 },
+    { id: 'ingreso-litros-pagados', decimales: 2 },
+    { id: 'ingreso-precio-base', decimales: 4 },
+    { id: 'ingreso-precio-final', decimales: 4 },
+    { id: 'ingreso-importe-total', decimales: 2 }
+  ];
+
+  campos.forEach(({ id, decimales }) => {
+    const input = document.getElementById(id);
+    if (!input) return;
+
+    if (input.dataset.formatoIngresoActivado === '1') return;
+    input.dataset.formatoIngresoActivado = '1';
+
+    input.addEventListener('blur', () => {
+      if (input.value.trim() !== '') {
+        input.value = formatearNumeroES(input.value, decimales);
+      }
+    });
+
+    input.addEventListener('focus', () => {
+      const numero = parsearNumeroES(input.value);
+      if (numero !== null) {
+        input.value = String(numero).replace('.', ',');
+      }
+    });
+  });
 }
 
 async function guardarIngresoEconomico() {
@@ -1707,13 +1764,21 @@ function mostrarModoIngreso(modo) {
 }
 
 function formatearImporte(valor) {
-  const numero = Number(valor || 0);
-  return `${numero.toFixed(2)} €`;
+  return `${formatearNumeroES(Number(valor || 0), 2)} €`;
 }
 
 function formatearLitros(valor) {
-  const numero = Number(valor || 0);
-  return `${numero.toFixed(2)} L`;
+  return `${formatearNumeroES(Number(valor || 0), 2)} L`;
+}
+
+function formatearPrecio(valor) {
+  if (valor === null || valor === undefined) return '-';
+  return `${formatearNumeroES(Number(valor || 0), 4)} €`;
+}
+
+function formatearDecimal(valor, decimales = 2) {
+  if (valor === null || valor === undefined) return '-';
+  return formatearNumeroES(Number(valor || 0), decimales);
 }
 
 async function cargarIngresosAnuales() {
@@ -1808,11 +1873,11 @@ function mostrarDetalleIngresoMes(nombreMes, anio, ingresosMes) {
       <strong>${nombreMes} ${anio}</strong><br>
       Periodo: ${ingreso.periodo_desde || '-'} / ${ingreso.periodo_hasta || '-'}<br>
       Litros recogidos: ${formatearLitros(ingreso.litros_recogidos)}<br>
-      Grasas: ${ingreso.grasas ?? '-'}<br>
-      Pérdidas: ${ingreso.perdidas ?? '-'}<br>
+      Grasas: ${formatearDecimal(ingreso.grasas, 4)}<br>
+      Pérdidas: ${formatearDecimal(ingreso.perdidas, 2)}<br>
       Litros pagados: ${formatearLitros(ingreso.litros_pagados)}<br>
-      Precio base: ${ingreso.precio_base ?? '-'} €<br>
-      Precio final: ${ingreso.precio_final ?? '-'} €<br>
+      Precio base: ${formatearPrecio(ingreso.precio_base)}<br>
+      Precio final: ${formatearPrecio(ingreso.precio_final)}<br>
       Importe total: ${formatearImporte(ingreso.importe_total)}
     </div>
   `).join('');
@@ -2112,6 +2177,7 @@ if (btnIngresoEconomico) {
     if (pantallaIngreso) pantallaIngreso.style.display = 'block';
 
     inicializarFechasIngresoEconomico();
+    activarFormatoCamposIngreso();
     mostrarModoIngreso('nuevo');
   };
 }

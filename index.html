@@ -1748,6 +1748,55 @@ linear-gradient(
   }
 }
 
+/* ===== Fix final iPhone/Android date inputs Ingreso Económico ===== */
+
+@media (max-width: 520px) {
+  .ingreso-bloque-fijo {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  .ingreso-periodo-card {
+    width: calc(100% - 24px) !important;
+    max-width: calc(100% - 24px) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    overflow: hidden !important;
+  }
+
+  .ingreso-periodo-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 10px !important;
+  }
+
+  .ingreso-periodo-grid > div {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .ingreso-periodo-grid input[type="date"] {
+    display: block !important;
+
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+
+    box-sizing: border-box !important;
+
+    -webkit-appearance: none !important;
+    appearance: none !important;
+
+    font-size: 15px !important;
+    padding: 10px 10px !important;
+    text-align: center !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1924,27 +1973,27 @@ linear-gradient(
 
   <section id="bloque-ingreso-nuevo" class="ingreso-operacion-card">
     <div class="ingreso-formulario">
-
+      
       <label>Litros recogidos</label>
-      <input id="ingreso-litros-recogidos" type="number" step="0.01" min="0" placeholder="Ej: 12500.00" />
+      <input id="ingreso-litros-recogidos" type="text" inputmode="decimal" placeholder="Ej: 12.500,00" />
 
       <label>Grasas</label>
-      <input id="ingreso-grasas" type="number" step="0.0001" min="0" placeholder="Ej: 3.75" />
+      <input id="ingreso-grasas" type="text" inputmode="decimal" placeholder="Ej: 3,7500" />
 
       <label>Pérdidas</label>
-      <input id="ingreso-perdidas" type="number" step="0.01" min="0" placeholder="Ej: 120.00" />
+      <input id="ingreso-perdidas" type="text" inputmode="decimal" placeholder="Ej: 120,00" />
 
       <label>Litros pagados</label>
-      <input id="ingreso-litros-pagados" type="number" step="0.01" min="0" placeholder="Ej: 12380.00" />
+      <input id="ingreso-litros-pagados" type="text" inputmode="decimal" placeholder="Ej: 12.380,00" />
 
       <label>Precio base</label>
-      <input id="ingreso-precio-base" type="number" step="0.0001" min="0" placeholder="Ej: 0.4200" />
+      <input id="ingreso-precio-base" type="text" inputmode="decimal" placeholder="Ej: 0,4200" />
 
       <label>Precio final</label>
-      <input id="ingreso-precio-final" type="number" step="0.0001" min="0" placeholder="Ej: 0.4550" />
+      <input id="ingreso-precio-final" type="text" inputmode="decimal" placeholder="Ej: 0,4550" />
 
       <label>Importe total</label>
-      <input id="ingreso-importe-total" type="number" step="0.01" min="0" placeholder="Ej: 5632.90" />
+      <input id="ingreso-importe-total" type="text" inputmode="decimal" placeholder="Ej: 5.632,90" />
 
       <button id="btn-guardar-ingreso">Guardar ingreso económico</button>
 
