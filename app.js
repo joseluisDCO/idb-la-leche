@@ -1861,7 +1861,8 @@ async function cargarIngresosAnuales() {
   grid.innerHTML = '';
 
   if (detalle) {
-    detalle.innerHTML = '';
+  detalle.innerHTML = '';
+  detalle.style.display = 'none';
   }
 
   meses.forEach((nombreMes, index) => {
@@ -1897,6 +1898,8 @@ async function cargarIngresosAnuales() {
 function mostrarDetalleIngresoMes(nombreMes, anio, ingresosMes) {
   const detalle = document.getElementById('detalle-ingreso-mes');
   if (!detalle) return;
+
+  detalle.style.display = 'block';
 
   if (!ingresosMes || ingresosMes.length === 0) {
     detalle.innerHTML = `<strong>${nombreMes} ${anio}</strong><br>Sin ingresos registrados.`;
