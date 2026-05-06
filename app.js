@@ -559,14 +559,64 @@ async function cargarCrotalesDisponibles() {
 
   console.log('Opciones cargadas:', lista.children.length);
 }
+
+function generarGridTurnoEdicion() {
+  const grid = document.getElementById('grid-turno-edicion');
+  const inputPosiciones = document.getElementById('input-posiciones-turno');
+
+  if (!grid || !inputPosiciones) return;
+
+  let numeroPosiciones = parseInt(inputPosiciones.value, 10);
+
+  if (!numeroPosiciones || numeroPosiciones < 1) {
+    numeroPosiciones = 1;
+  }
+
+  if (numeroPosiciones > 12) {
+    numeroPosiciones = 12;
+    inputPosiciones.value = '12';
+  }
+
+  grid.innerHTML = '';
+
+  for (let i = 1; i <= numeroPosiciones; i++) {
+    const fila = document.createElement('div');
+    fila.className = 'fila';
+
+    const inputIzq = document.createElement('input');
+    inputIzq.id = `turno-izq-${i}`;
+    inputIzq.type = 'text';
+    inputIzq.setAttribute('list', 'lista-crotales');
+    inputIzq.placeholder = `Izq ${i}`;
+
+    const inputDer = document.createElement('input');
+    inputDer.id = `turno-der-${i}`;
+    inputDer.type = 'text';
+    inputDer.setAttribute('list', 'lista-crotales');
+    inputDer.placeholder = `Der ${i}`;
+
+    fila.appendChild(inputIzq);
+    fila.appendChild(inputDer);
+    grid.appendChild(fila);
+  }
+}
+
 async function guardarTurnoBase() {
   console.log('Entrando en guardarTurnoBase');
 
   const inputNumeroTurno = document.getElementById('input-numero-turno');
+  const inputPosicionesTurno = document.getElementById('input-posiciones-turno');
+
   const numeroTurno = parseInt(inputNumeroTurno?.value, 10);
+  const numeroPosiciones = parseInt(inputPosicionesTurno?.value, 10);
 
   if (!numeroTurno || numeroTurno < 1) {
     alert('Introduce un número de turno válido');
+    return;
+  }
+
+  if (!numeroPosiciones || numeroPosiciones < 1 || numeroPosiciones > 12) {
+    alert('Introduce un número de posiciones válido entre 1 y 12');
     return;
   }
 
@@ -574,11 +624,10 @@ async function guardarTurnoBase() {
     .from('animales')
     .select('crotal, estado')
     .neq('estado', 'BAJA');
-  
-    const { data: turnosExistentes, error: errorTurnosExistentes } = await supabase
+
+  const { data: turnosExistentes, error: errorTurnosExistentes } = await supabase
     .from('turnos_base_posiciones')
-    .select('crotal, numero_turno')
-  
+    .select('crotal, numero_turno');
 
   if (errorTurnosExistentes) {
     console.error('Error comprobando crotales ya asignados:', errorTurnosExistentes);
@@ -586,7 +635,7 @@ async function guardarTurnoBase() {
     return;
   }
 
-    const turnoYaExiste = (turnosExistentes || []).some(
+  const turnoYaExiste = (turnosExistentes || []).some(
     t => t.numero_turno === numeroTurno
   );
 
@@ -602,75 +651,63 @@ async function guardarTurnoBase() {
   }
 
   const crotalesValidos = new Set((animalesValidos || []).map(a => a.crotal));
-
-  const posiciones = [];
   const crotalesUsadosEnFormulario = new Set();
-  const ids = [
-    ['IZQUIERDA', 1, 'turno-izq-1'], ['DERECHA', 1, 'turno-der-1'],
-    ['IZQUIERDA', 2, 'turno-izq-2'], ['DERECHA', 2, 'turno-der-2'],
-    ['IZQUIERDA', 3, 'turno-izq-3'], ['DERECHA', 3, 'turno-der-3'],
-    ['IZQUIERDA', 4, 'turno-izq-4'], ['DERECHA', 4, 'turno-der-4'],
-    ['IZQUIERDA', 5, 'turno-izq-5'], ['DERECHA', 5, 'turno-der-5'],
-    ['IZQUIERDA', 6, 'turno-izq-6'], ['DERECHA', 6, 'turno-der-6'],
-    ['IZQUIERDA', 7, 'turno-izq-7'], ['DERECHA', 7, 'turno-der-7'],
-    ['IZQUIERDA', 8, 'turno-izq-8'], ['DERECHA', 8, 'turno-der-8']
-  ];
+  const posicionesParaGuardar = [];
 
-  for (const [lado, posicion, inputId] of ids) {
-    const valor = document.getElementById(inputId)?.value.trim() || '';
+  for (let posicion = 1; posicion <= numeroPosiciones; posicion++) {
+    const campos = [
+      ['IZQUIERDA', `turno-izq-${posicion}`],
+      ['DERECHA', `turno-der-${posicion}`]
+    ];
 
-        if (valor && !crotalesValidos.has(valor)) {
-      alert(`El crotal ${valor} no existe o está en Baja`);
-      return;
-    }
+    for (const [lado, inputId] of campos) {
+      const valor = document.getElementById(inputId)?.value.trim() || '';
 
-    if (valor && crotalesUsadosEnFormulario.has(valor)) {
-      alert(`El crotal ${valor} está repetido en este turno`);
-      return;
-    }
-
-        if (valor) {
-      const turnoExistente = (turnosExistentes || []).find(t => t.crotal === valor);
-      if (turnoExistente) {
-        alert(`El crotal ${valor} ya está asignado al turno ${turnoExistente.numero_turno}`);
+      if (valor && !crotalesValidos.has(valor)) {
+        alert(`El crotal ${valor} no existe o está en Baja`);
         return;
       }
-    }
 
-    if (valor) {
-      crotalesUsadosEnFormulario.add(valor);
-    }
+      if (valor && crotalesUsadosEnFormulario.has(valor)) {
+        alert(`El crotal ${valor} está repetido en este turno`);
+        return;
+      }
 
-    posiciones.push({ lado, posicion, crotal: valor || null });
+      if (valor) {
+        const turnoExistente = (turnosExistentes || []).find(t => t.crotal === valor);
+
+        if (turnoExistente) {
+          alert(`El crotal ${valor} ya está asignado al turno ${turnoExistente.numero_turno}`);
+          return;
+        }
+
+        crotalesUsadosEnFormulario.add(valor);
+      }
+
+      posicionesParaGuardar.push({
+        numero_turno: numeroTurno,
+        lado,
+        posicion,
+        crotal: valor || null
+      });
+    }
   }
 
- const posicionesParaGuardar = posiciones.map(p => ({
-  numero_turno: numeroTurno,
-  lado: p.lado,
-  posicion: p.posicion,
-  crotal: p.crotal
-}));
+  const { error: errorInsert } = await supabase
+    .from('turnos_base_posiciones')
+    .insert(posicionesParaGuardar);
 
-const { error: errorInsert } = await supabase
-  .from('turnos_base_posiciones')
-  .insert(posicionesParaGuardar);
+  if (errorInsert) {
+    console.error('Error guardando turno:', errorInsert);
+    alert('No se pudo guardar el turno');
+    return;
+  }
 
-if (errorInsert) {
-  console.error('Error guardando turno:', errorInsert);
-  alert('No se pudo guardar el turno');
-  return;
-}
+  alert(`Turno ${numeroTurno} guardado correctamente`);
 
-alert(`Turno ${numeroTurno} guardado correctamente`);
+  generarGridTurnoEdicion();
 
-for (let i = 1; i <= 8; i++) {
-  const izq = document.getElementById(`turno-izq-${i}`);
-  const der = document.getElementById(`turno-der-${i}`);
-  if (izq) izq.value = '';
-  if (der) der.value = '';
-}
-
-await cargarInfoTurnosCreados();
+  await cargarInfoTurnosCreados();
 }
 
 async function cargarInfoTurnosCreados() {
@@ -1592,6 +1629,13 @@ if (btnVolverAlta) {
       };
     }
 
+const inputPosicionesTurno = document.getElementById('input-posiciones-turno');
+if (inputPosicionesTurno) {
+  inputPosicionesTurno.oninput = () => {
+    generarGridTurnoEdicion();
+  };
+}
+  
 const btnCrearTurnos = document.getElementById('btn-crear-turnos');
 if (btnCrearTurnos) {
   btnCrearTurnos.onclick = async () => {
@@ -1606,6 +1650,8 @@ if (btnCrearTurnos) {
     await cargarCrotalesDisponibles();
     console.log('Crotales cargados en datalist');
     await cargarInfoTurnosCreados();
+
+    generarGridTurnoEdicion();
   };
 }
 

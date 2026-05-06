@@ -1493,45 +1493,15 @@ linear-gradient(
     <div id="info-turnos-creados" class="turnos-info"></div>
 
   <div style="margin-top:20px; display:flex; flex-direction:column; gap:16px;">
-    <label>Número de turno</label>
+   <label>Número de turno</label>
     <input id="input-numero-turno" type="number" min="1" step="1" placeholder="Ej: 3" />
+
+    <label>Número de posiciones por lado</label>
+    <input id="input-posiciones-turno" type="number" min="1" max="12" step="1" value="5" />
 
     <div id="aviso-crotal-turno" style="color:#b04a00; font-weight:bold;"></div>
 
-    <div id="grid-turno-edicion" style="display:flex; flex-direction:column; gap:10px;">
-      <div class="fila">
-        <input id="turno-izq-1" type="text" list="lista-crotales" placeholder="Izq 1" />
-        <input id="turno-der-1" type="text" list="lista-crotales" placeholder="Der 1" />
-      </div>
-      <div class="fila">
-        <input id="turno-izq-2" type="text" list="lista-crotales" placeholder="Izq 2" />
-        <input id="turno-der-2" type="text" list="lista-crotales" placeholder="Der 2" />
-      </div>
-      <div class="fila">
-        <input id="turno-izq-3" type="text" list="lista-crotales" placeholder="Izq 3" />
-        <input id="turno-der-3" type="text" list="lista-crotales" placeholder="Der 3" />
-      </div>
-      <div class="fila">
-        <input id="turno-izq-4" type="text" list="lista-crotales" placeholder="Izq 4" />
-        <input id="turno-der-4" type="text" list="lista-crotales" placeholder="Der 4" />
-      </div>
-      <div class="fila">
-        <input id="turno-izq-5" type="text" list="lista-crotales" placeholder="Izq 5" />
-        <input id="turno-der-5" type="text" list="lista-crotales" placeholder="Der 5" />
-      </div>
-      <div class="fila">
-        <input id="turno-izq-6" type="text" list="lista-crotales" placeholder="Izq 6" />
-        <input id="turno-der-6" type="text" list="lista-crotales" placeholder="Der 6" />
-      </div>
-      <div class="fila">
-        <input id="turno-izq-7" type="text" list="lista-crotales" placeholder="Izq 7" />
-        <input id="turno-der-7" type="text" list="lista-crotales" placeholder="Der 7" />
-      </div>
-      <div class="fila">
-        <input id="turno-izq-8" type="text" list="lista-crotales" placeholder="Izq 8" />
-        <input id="turno-der-8" type="text" list="lista-crotales" placeholder="Der 8" />
-      </div>
-    </div>
+    <div id="grid-turno-edicion" style="display:flex; flex-direction:column; gap:10px;"></div>
 
     <datalist id="lista-crotales"></datalist>
 
