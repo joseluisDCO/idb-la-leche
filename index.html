@@ -1301,6 +1301,104 @@ linear-gradient(
   gap: 12px;
 }
 
+/* ===== Crear / Modificar Turnos ===== */
+
+#pantalla-crear-turnos,
+#pantalla-actualizar-turnos {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  overflow: visible !important;
+}
+
+#pantalla-crear-turnos::before,
+#pantalla-actualizar-turnos::before {
+  display: none !important;
+}
+
+.turnos-nav {
+  position: sticky;
+  top: 96px;
+  z-index: 998;
+
+  width: calc(100% - 20px);
+  max-width: 520px;
+  margin: 0 auto 8px;
+  padding: 6px;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+
+  background: #DDEAF2;
+  border: 1px solid #BFD6E5;
+  border-radius: 16px;
+
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.55);
+}
+
+.turnos-nav .turnos-nav-btn {
+  min-height: 40px;
+  padding: 8px 8px;
+
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 900;
+
+  background: #6FAED6 !important;
+  color: #FFFFFF !important;
+  border: 1px solid #5C9FC8 !important;
+
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.turnos-nav .turnos-nav-btn:hover {
+  transform: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+.turnos-nav .turnos-nav-btn.activo {
+  background: var(--blue-dark) !important;
+  border-color: var(--blue-dark) !important;
+  color: #FFFFFF !important;
+}
+
+.turnos-operacion-card {
+  width: calc(100% - 20px);
+  max-width: 520px;
+  margin: 0 auto 12px;
+  padding: 16px;
+
+  background: rgba(255,255,255,0.82);
+  border: 1px solid rgba(191,214,229,0.95);
+  border-radius: 18px;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.75),
+    0 6px 14px rgba(47,111,159,0.08);
+}
+
+.turnos-operacion-card h1 {
+  margin: 0 0 8px;
+  text-align: center;
+  font-size: 1.18rem;
+  line-height: 1.15;
+  color: var(--blue-dark);
+}
+
+.turnos-info {
+  margin-bottom: 14px;
+  text-align: center;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
 </style>
 </head>
 <body>
@@ -1383,16 +1481,16 @@ linear-gradient(
 </div>
 
 <div id="pantalla-crear-turnos" style="display:none;">
-  <div class="header-pantalla">
-    <div>
-      <h1>Crear Turnos</h1>
-      <div id="info-turnos-creados" style="font-size:14px; color:#666;"></div>
-    </div>
-    <div style="display:flex; gap:8px;">
-      <button id="btn-ir-actualizar-turnos" class="btn-volver">Actualizar turnos</button>
-      <button id="btn-volver-turnos" class="btn-volver">Volver</button>
-    </div>
+
+  <div class="turnos-nav">
+    <button id="btn-volver-turnos" class="nav-btn turnos-nav-btn">← Volver</button>
+    <button id="btn-modo-crear-turnos" class="nav-btn turnos-nav-btn activo">＋ Crear</button>
+    <button id="btn-modo-modificar-turnos" class="nav-btn turnos-nav-btn">✎ Modificar</button>
   </div>
+
+  <section class="turnos-operacion-card">
+    <h1>Crear Turnos</h1>
+    <div id="info-turnos-creados" class="turnos-info"></div>
 
   <div style="margin-top:20px; display:flex; flex-direction:column; gap:16px;">
     <label>Número de turno</label>
@@ -1439,16 +1537,20 @@ linear-gradient(
 
     <button id="btn-guardar-turno">Guardar turno</button>
   </div>
+  </section>
 </div>
 
 <div id="pantalla-actualizar-turnos" style="display:none;">
-  <div class="header-pantalla">
-  <div>
-    <h1>Actualizar Turnos</h1>
-    <div id="info-turnos-actualizar" style="font-size:14px; color:#666;"></div>
+
+  <div class="turnos-nav">
+    <button id="btn-volver-actualizar-turnos" class="nav-btn turnos-nav-btn">← Volver</button>
+    <button id="btn-modo-crear-turnos-desde-modificar" class="nav-btn turnos-nav-btn">＋ Crear</button>
+    <button id="btn-modo-modificar-turnos-activo" class="nav-btn turnos-nav-btn activo">✎ Modificar</button>
   </div>
-  <button id="btn-volver-actualizar-turnos" class="btn-volver">Volver</button>
-</div>
+
+  <section class="turnos-operacion-card">
+    <h1>Modificar Turnos</h1>
+    <div id="info-turnos-actualizar" class="turnos-info"></div>
 
   <div style="margin-top:20px; display:flex; flex-direction:column; gap:16px;">
     <label>Selecciona turno</label>
@@ -1496,6 +1598,7 @@ linear-gradient(
       <button id="btn-eliminar-turno">Eliminar turno</button>
     </div>
   </div>
+  </section>
 </div>
 
 <div id="pantalla-informes" style="display:none;">
