@@ -1583,20 +1583,22 @@ if (btnVolverAlta) {
       };
     }
 
-  const btnCrearTurnos = document.getElementById('btn-crear-turnos');
-  if (btnCrearTurnos) {
-    btnCrearTurnos.onclick = async () => {
-      const pantallaInicio = document.getElementById('pantalla-inicio');
-      const pantallaTurnos = document.getElementById('pantalla-crear-turnos');
+const btnCrearTurnos = document.getElementById('btn-crear-turnos');
+if (btnCrearTurnos) {
+  btnCrearTurnos.onclick = async () => {
+    const pantallaInicio = document.getElementById('pantalla-inicio');
+    const pantallaTurnos = document.getElementById('pantalla-crear-turnos');
+    const pantallaActualizar = document.getElementById('pantalla-actualizar-turnos');
 
-      if (pantallaInicio) pantallaInicio.style.display = 'none';
-      if (pantallaTurnos) pantallaTurnos.style.display = 'block';
+    if (pantallaInicio) pantallaInicio.style.display = 'none';
+    if (pantallaActualizar) pantallaActualizar.style.display = 'none';
+    if (pantallaTurnos) pantallaTurnos.style.display = 'block';
 
-      await cargarCrotalesDisponibles();
-      console.log('Crotales cargados en datalist');
-      await cargarInfoTurnosCreados();
-    };
-  }
+    await cargarCrotalesDisponibles();
+    console.log('Crotales cargados en datalist');
+    await cargarInfoTurnosCreados();
+  };
+}
 
 const btnIrActualizarTurnos = document.getElementById('btn-ir-actualizar-turnos');
 
@@ -1611,6 +1613,44 @@ if (btnIrActualizarTurnos) {
     await cargarCrotalesDisponibles();
     await cargarTurnosParaActualizar();
     activarSeguimientoCambiosTurno();
+  };
+}
+
+const btnModoModificarTurnos = document.getElementById('btn-modo-modificar-turnos');
+if (btnModoModificarTurnos) {
+  btnModoModificarTurnos.onclick = async () => {
+    const pantallaCrearTurnos = document.getElementById('pantalla-crear-turnos');
+    const pantallaActualizar = document.getElementById('pantalla-actualizar-turnos');
+
+    if (pantallaCrearTurnos) pantallaCrearTurnos.style.display = 'none';
+    if (pantallaActualizar) pantallaActualizar.style.display = 'block';
+
+    await cargarCrotalesDisponibles();
+    await cargarTurnosParaActualizar();
+    activarSeguimientoCambiosTurno();
+  };
+}
+
+const btnModoCrearTurnosDesdeModificar = document.getElementById('btn-modo-crear-turnos-desde-modificar');
+if (btnModoCrearTurnosDesdeModificar) {
+  btnModoCrearTurnosDesdeModificar.onclick = async () => {
+    if (hayCambiosTurno) {
+      const continuar = confirm('Hay cambios sin guardar. ¿Quieres salir sin guardar?');
+      if (!continuar) {
+        return;
+      }
+    }
+
+    const pantallaCrearTurnos = document.getElementById('pantalla-crear-turnos');
+    const pantallaActualizar = document.getElementById('pantalla-actualizar-turnos');
+
+    if (pantallaActualizar) pantallaActualizar.style.display = 'none';
+    if (pantallaCrearTurnos) pantallaCrearTurnos.style.display = 'block';
+
+    hayCambiosTurno = false;
+
+    await cargarCrotalesDisponibles();
+    await cargarInfoTurnosCreados();
   };
 }
 
