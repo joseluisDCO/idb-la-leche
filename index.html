@@ -1496,6 +1496,92 @@ linear-gradient(
   color: var(--muted);
 }
 
+/* ===== Ingreso Económico - bloque fijo y fechas responsive ===== */
+
+.ingreso-bloque-fijo {
+  position: sticky;
+  top: 96px;
+  z-index: 998;
+
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto 10px;
+
+  background: rgba(247,251,255,0.98);
+  backdrop-filter: blur(10px);
+  border-radius: 0 0 20px 20px;
+  padding-bottom: 8px;
+}
+
+.ingreso-bloque-fijo .ingreso-nav {
+  position: static !important;
+  top: auto !important;
+
+  width: calc(100% - 20px);
+  margin: 0 auto 8px;
+
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.ingreso-nav .ingreso-nav-btn.activo {
+  background: var(--blue-dark) !important;
+  border-color: var(--blue-dark) !important;
+  color: #FFFFFF !important;
+}
+
+.ingreso-periodo-card {
+  width: calc(100% - 20px);
+  margin: 0 auto;
+  padding: 12px;
+
+  background: rgba(255,255,255,0.82);
+  border: 1px solid rgba(191,214,229,0.95);
+  border-radius: 18px;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.75),
+    0 6px 14px rgba(47,111,159,0.08);
+}
+
+.ingreso-periodo-card h1 {
+  margin: 0 0 10px;
+  text-align: center;
+  font-size: 1.18rem;
+  line-height: 1.15;
+  color: var(--blue-dark);
+}
+
+.ingreso-periodo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.ingreso-periodo-grid > div {
+  min-width: 0;
+}
+
+.ingreso-periodo-grid input {
+  width: 100%;
+  min-width: 0;
+}
+
+@media (max-width: 520px) {
+  .ingreso-periodo-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .ingreso-periodo-card {
+    padding: 10px;
+  }
+
+  .ingreso-periodo-grid input {
+    font-size: 14px;
+    padding: 11px 8px;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1644,20 +1730,36 @@ linear-gradient(
 
 <div id="pantalla-ingreso-economico" style="display:none;">
 
+<div class="ingreso-bloque-fijo">
+
   <div class="ingreso-nav">
     <button id="btn-volver-ingreso" class="nav-btn ingreso-nav-btn">← Volver</button>
+    <button id="btn-modo-ingreso-nuevo" class="nav-btn ingreso-nav-btn activo">＋ Nuevo</button>
+    <button id="btn-modo-ingreso-consulta" class="nav-btn ingreso-nav-btn">🔎 Consulta</button>
   </div>
 
-  <section class="ingreso-operacion-card">
-    <h1>Ingreso Económico</h1>
+    <section class="ingreso-periodo-card">
+      <h1>Ingreso Económico</h1>
 
+      <div class="ingreso-periodo-grid">
+        <div>
+          <label>Desde</label>
+          <input id="ingreso-periodo-desde" type="date" />
+        </div>
+
+        <div>
+          <label>Hasta</label>
+          <input id="ingreso-periodo-hasta" type="date" />
+        </div>
+      </div>
+    </section>
+
+    </div>
+
+  <section id="bloque-ingreso-nuevo" class="ingreso-operacion-card">
     <div class="ingreso-formulario">
 
-      <label>Periodo de ingreso - Desde</label>
-      <input id="ingreso-periodo-desde" type="date" />
-
-      <label>Periodo de ingreso - Hasta</label>
-      <input id="ingreso-periodo-hasta" type="date" />
+    <label>Litros recogidos</label>
 
       <label>Litros recogidos</label>
       <input id="ingreso-litros-recogidos" type="number" step="0.01" min="0" placeholder="Ej: 12500.00" />
