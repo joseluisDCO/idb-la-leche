@@ -1524,51 +1524,21 @@ linear-gradient(
 
   <div style="margin-top:20px; display:flex; flex-direction:column; gap:16px;">
     <label>Selecciona turno</label>
-    <select id="select-turno-editar">
-      <option value="">Selecciona un turno</option>
-    </select>
+<select id="select-turno-editar">
+  <option value="">Selecciona un turno</option>
+</select>
 
-    <div id="grid-turno-actualizar" style="display:flex; flex-direction:column; gap:10px;">
-      <div class="fila">
-        <input id="edit-turno-izq-1" type="text" list="lista-crotales" placeholder="Izq 1" />
-        <input id="edit-turno-der-1" type="text" list="lista-crotales" placeholder="Der 1" />
-      </div>
-      <div class="fila">
-        <input id="edit-turno-izq-2" type="text" list="lista-crotales" placeholder="Izq 2" />
-        <input id="edit-turno-der-2" type="text" list="lista-crotales" placeholder="Der 2" />
-      </div>
-      <div class="fila">
-        <input id="edit-turno-izq-3" type="text" list="lista-crotales" placeholder="Izq 3" />
-        <input id="edit-turno-der-3" type="text" list="lista-crotales" placeholder="Der 3" />
-      </div>
-      <div class="fila">
-        <input id="edit-turno-izq-4" type="text" list="lista-crotales" placeholder="Izq 4" />
-        <input id="edit-turno-der-4" type="text" list="lista-crotales" placeholder="Der 4" />
-      </div>
-      <div class="fila">
-        <input id="edit-turno-izq-5" type="text" list="lista-crotales" placeholder="Izq 5" />
-        <input id="edit-turno-der-5" type="text" list="lista-crotales" placeholder="Der 5" />
-      </div>
-      <div class="fila">
-        <input id="edit-turno-izq-6" type="text" list="lista-crotales" placeholder="Izq 6" />
-        <input id="edit-turno-der-6" type="text" list="lista-crotales" placeholder="Der 6" />
-      </div>
-      <div class="fila">
-        <input id="edit-turno-izq-7" type="text" list="lista-crotales" placeholder="Izq 7" />
-        <input id="edit-turno-der-7" type="text" list="lista-crotales" placeholder="Der 7" />
-      </div>
-      <div class="fila">
-        <input id="edit-turno-izq-8" type="text" list="lista-crotales" placeholder="Izq 8" />
-        <input id="edit-turno-der-8" type="text" list="lista-crotales" placeholder="Der 8" />
-      </div>
-    </div>
+<label>Número de posiciones por lado</label>
+<input id="input-posiciones-turno-editar" type="number" min="1" max="12" step="1" value="5" />
 
-    <div style="display:flex; gap:12px;">
-      <button id="btn-guardar-cambios-turno">Guardar cambios</button>
-      <button id="btn-eliminar-turno">Eliminar turno</button>
-    </div>
-  </div>
-  </section>
+<div id="grid-turno-actualizar" style="display:flex; flex-direction:column; gap:10px;"></div>
+
+<div style="display:flex; gap:12px;">
+  <button id="btn-guardar-cambios-turno">Guardar cambios</button>
+  <button id="btn-eliminar-turno">Eliminar turno</button>
+</div>
+</div>
+</section>
 </div>
 
 <div id="pantalla-informes" style="display:none;">

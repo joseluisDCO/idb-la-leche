@@ -3,6 +3,7 @@ let turnoActual = 1;
 let turnoEditandoActual = null;
 let hayCambiosTurno = false;
 let volverAltaAnimalARegistro = false;
+let posicionesTurnoOriginales = [];
 import { supabase } from './supabaseClient.js';
 
 async function init() {
@@ -782,7 +783,78 @@ async function cargarTurnosParaActualizar() {
   }
 }
 
+function generarGridTurnoActualizar(numeroPosiciones, posicionesExistentes = []) {
+  const grid = document.getElementById('grid-turno-actualizar');
+  const inputPosiciones = document.getElementById('input-posiciones-turno-editar');
+
+  if (!grid || !inputPosiciones) return;
+
+  let totalPosiciones = parseInt(numeroPosiciones ?? inputPosiciones.value, 10);
+
+  if (!totalPosiciones || totalPosiciones < 1) {
+    totalPosiciones = 1;
+  }
+
+  if (totalPosiciones > 12) {
+    totalPosiciones = 12;
+    inputPosiciones.value = '12';
+  }
+
+  const valoresActuales = new Map();
+
+  grid.querySelectorAll('input[id^="edit-turno-"]').forEach(input => {
+    valoresActuales.set(input.id, input.value.trim());
+  });
+
+  grid.innerHTML = '';
+
+  for (let posicion = 1; posicion <= totalPosiciones; posicion++) {
+    const fila = document.createElement('div');
+    fila.className = 'fila';
+
+    const posIzq = (posicionesExistentes || []).find(
+      p => p.lado === 'IZQUIERDA' && Number(p.posicion) === posicion
+    );
+
+    const posDer = (posicionesExistentes || []).find(
+      p => p.lado === 'DERECHA' && Number(p.posicion) === posicion
+    );
+
+    const inputIzq = document.createElement('input');
+    inputIzq.id = `edit-turno-izq-${posicion}`;
+    inputIzq.type = 'text';
+    inputIzq.setAttribute('list', 'lista-crotales');
+    inputIzq.placeholder = `Izq ${posicion}`;
+    inputIzq.value = valoresActuales.has(inputIzq.id)
+      ? valoresActuales.get(inputIzq.id)
+      : (posIzq?.crotal || '');
+
+    const inputDer = document.createElement('input');
+    inputDer.id = `edit-turno-der-${posicion}`;
+    inputDer.type = 'text';
+    inputDer.setAttribute('list', 'lista-crotales');
+    inputDer.placeholder = `Der ${posicion}`;
+    inputDer.value = valoresActuales.has(inputDer.id)
+      ? valoresActuales.get(inputDer.id)
+      : (posDer?.crotal || '');
+
+    inputIzq.oninput = () => {
+      hayCambiosTurno = true;
+    };
+
+    inputDer.oninput = () => {
+      hayCambiosTurno = true;
+    };
+
+    fila.appendChild(inputIzq);
+    fila.appendChild(inputDer);
+    grid.appendChild(fila);
+  }
+}
+
 async function cargarTurnoEnEdicion(numeroTurno) {
+  const inputPosicionesEditar = document.getElementById('input-posiciones-turno-editar');
+
   const { data, error } = await supabase
     .from('turnos_base_posiciones')
     .select('lado, posicion, crotal')
@@ -794,34 +866,37 @@ async function cargarTurnoEnEdicion(numeroTurno) {
     return;
   }
 
-  for (let i = 1; i <= 8; i++) {
-    const inputIzq = document.getElementById(`edit-turno-izq-${i}`);
-    const inputDer = document.getElementById(`edit-turno-der-${i}`);
+  posicionesTurnoOriginales = data || [];
 
-    const posIzq = (data || []).find(p => p.lado === 'IZQUIERDA' && p.posicion === i);
-    const posDer = (data || []).find(p => p.lado === 'DERECHA' && p.posicion === i);
+  const maxPosiciones = Math.max(
+    ...posicionesTurnoOriginales.map(p => Number(p.posicion) || 0),
+    1
+  );
 
-    if (inputIzq) inputIzq.value = posIzq?.crotal || '';
-    if (inputDer) inputDer.value = posDer?.crotal || '';
+  if (inputPosicionesEditar) {
+    inputPosicionesEditar.value = String(maxPosiciones);
   }
+
+  generarGridTurnoActualizar(maxPosiciones, posicionesTurnoOriginales);
+  activarSeguimientoCambiosTurno();
 }
 
 function activarSeguimientoCambiosTurno() {
-  for (let i = 1; i <= 8; i++) {
-    const inputIzq = document.getElementById(`edit-turno-izq-${i}`);
-    const inputDer = document.getElementById(`edit-turno-der-${i}`);
+  const inputsTurno = document.querySelectorAll('#grid-turno-actualizar input');
 
-    if (inputIzq) {
-      inputIzq.oninput = () => {
-        hayCambiosTurno = true;
-      };
-    }
+  inputsTurno.forEach(input => {
+    input.oninput = () => {
+      hayCambiosTurno = true;
+    };
+  });
 
-    if (inputDer) {
-      inputDer.oninput = () => {
-        hayCambiosTurno = true;
-      };
-    }
+  const inputPosiciones = document.getElementById('input-posiciones-turno-editar');
+
+  if (inputPosiciones) {
+    inputPosiciones.oninput = () => {
+      hayCambiosTurno = true;
+      generarGridTurnoActualizar();
+    };
   }
 }
 
@@ -831,91 +906,121 @@ async function guardarCambiosTurno() {
     return;
   }
 
-  const { data: animalesValidos } = await supabase
+  const inputPosicionesEditar = document.getElementById('input-posiciones-turno-editar');
+  const numeroPosiciones = parseInt(inputPosicionesEditar?.value, 10);
+
+  if (!numeroPosiciones || numeroPosiciones < 1 || numeroPosiciones > 12) {
+    alert('Introduce un número de posiciones válido entre 1 y 12');
+    return;
+  }
+
+  const posicionesEliminadasConCrotal = (posicionesTurnoOriginales || []).filter(
+    p => Number(p.posicion) > numeroPosiciones && p.crotal
+  );
+
+  if (posicionesEliminadasConCrotal.length > 0) {
+    const continuar = confirm(
+      `Vas a reducir el turno y se eliminarán ${posicionesEliminadasConCrotal.length} posiciones con crotal asignado. ¿Quieres continuar?`
+    );
+
+    if (!continuar) {
+      return;
+    }
+  }
+
+  const { data: animalesValidos, error: errorAnimales } = await supabase
     .from('animales')
     .select('crotal, estado')
     .neq('estado', 'BAJA');
 
-  const { data: turnosExistentes } = await supabase
+  if (errorAnimales) {
+    console.error('Error validando crotales:', errorAnimales);
+    alert('No se pudieron validar los crotales');
+    return;
+  }
+
+  const { data: turnosExistentes, error: errorTurnosExistentes } = await supabase
     .from('turnos_base_posiciones')
     .select('crotal, numero_turno');
 
+  if (errorTurnosExistentes) {
+    console.error('Error comprobando turnos existentes:', errorTurnosExistentes);
+    alert('No se pudieron comprobar los turnos existentes');
+    return;
+  }
+
   const crotalesValidos = new Set((animalesValidos || []).map(a => a.crotal));
   const crotalesUsados = new Set();
+  const posicionesParaGuardar = [];
 
-  const posiciones = [];
+  for (let posicion = 1; posicion <= numeroPosiciones; posicion++) {
+    const campos = [
+      ['IZQUIERDA', `edit-turno-izq-${posicion}`],
+      ['DERECHA', `edit-turno-der-${posicion}`]
+    ];
 
-  const ids = [
-    ['IZQUIERDA', 1, 'edit-turno-izq-1'], ['DERECHA', 1, 'edit-turno-der-1'],
-    ['IZQUIERDA', 2, 'edit-turno-izq-2'], ['DERECHA', 2, 'edit-turno-der-2'],
-    ['IZQUIERDA', 3, 'edit-turno-izq-3'], ['DERECHA', 3, 'edit-turno-der-3'],
-    ['IZQUIERDA', 4, 'edit-turno-izq-4'], ['DERECHA', 4, 'edit-turno-der-4'],
-    ['IZQUIERDA', 5, 'edit-turno-izq-5'], ['DERECHA', 5, 'edit-turno-der-5'],
-    ['IZQUIERDA', 6, 'edit-turno-izq-6'], ['DERECHA', 6, 'edit-turno-der-6'],
-    ['IZQUIERDA', 7, 'edit-turno-izq-7'], ['DERECHA', 7, 'edit-turno-der-7'],
-    ['IZQUIERDA', 8, 'edit-turno-izq-8'], ['DERECHA', 8, 'edit-turno-der-8']
-  ];
+    for (const [lado, inputId] of campos) {
+      const valor = document.getElementById(inputId)?.value.trim() || '';
 
-  for (const [lado, posicion, inputId] of ids) {
-    const valor = document.getElementById(inputId)?.value.trim() || '';
-
-    if (valor && !crotalesValidos.has(valor)) {
-      alert(`El crotal ${valor} no existe o está en Baja`);
-      return;
-    }
-
-    if (valor && crotalesUsados.has(valor)) {
-      alert(`El crotal ${valor} está repetido en este turno`);
-      return;
-    }
-
-    if (valor) {
-      const turnoExistente = (turnosExistentes || []).find(
-        t => t.crotal === valor && t.numero_turno !== turnoEditandoActual
-      );
-
-      if (turnoExistente) {
-        alert(`El crotal ${valor} ya está en el turno ${turnoExistente.numero_turno}`);
+      if (valor && !crotalesValidos.has(valor)) {
+        alert(`El crotal ${valor} no existe o está en Baja`);
         return;
       }
 
-      crotalesUsados.add(valor);
-    }
+      if (valor && crotalesUsados.has(valor)) {
+        alert(`El crotal ${valor} está repetido en este turno`);
+        return;
+      }
 
-    posiciones.push({
-      numero_turno: turnoEditandoActual,
-      lado,
-      posicion,
-      crotal: valor || null
-    });
+      if (valor) {
+        const turnoExistente = (turnosExistentes || []).find(
+          t => t.crotal === valor && t.numero_turno !== turnoEditandoActual
+        );
+
+        if (turnoExistente) {
+          alert(`El crotal ${valor} ya está en el turno ${turnoExistente.numero_turno}`);
+          return;
+        }
+
+        crotalesUsados.add(valor);
+      }
+
+      posicionesParaGuardar.push({
+        numero_turno: turnoEditandoActual,
+        lado,
+        posicion,
+        crotal: valor || null
+      });
+    }
   }
 
-  // BORRAR turno actual
   const { error: errorDelete } = await supabase
     .from('turnos_base_posiciones')
     .delete()
     .eq('numero_turno', turnoEditandoActual);
 
   if (errorDelete) {
-    console.error(errorDelete);
+    console.error('Error eliminando turno previo:', errorDelete);
     alert('Error eliminando turno previo');
     return;
   }
 
-  // INSERTAR nuevo
   const { error: errorInsert } = await supabase
     .from('turnos_base_posiciones')
-    .insert(posiciones);
+    .insert(posicionesParaGuardar);
 
   if (errorInsert) {
-    console.error(errorInsert);
+    console.error('Error guardando cambios:', errorInsert);
     alert('Error guardando cambios');
     return;
   }
 
   alert('Turno actualizado correctamente');
 
+  posicionesTurnoOriginales = posicionesParaGuardar;
   hayCambiosTurno = false;
+
+  await cargarTurnoEnEdicion(turnoEditandoActual);
 }
 
 async function eliminarTurno() {
