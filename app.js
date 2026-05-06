@@ -783,7 +783,7 @@ async function cargarTurnosParaActualizar() {
   }
 }
 
-function generarGridTurnoActualizar(numeroPosiciones, posicionesExistentes = []) {
+function generarGridTurnoActualizar(numeroPosiciones, posicionesExistentes = [], conservarValoresActuales = false) {
   const grid = document.getElementById('grid-turno-actualizar');
   const inputPosiciones = document.getElementById('input-posiciones-turno-editar');
 
@@ -802,9 +802,11 @@ function generarGridTurnoActualizar(numeroPosiciones, posicionesExistentes = [])
 
   const valoresActuales = new Map();
 
-  grid.querySelectorAll('input[id^="edit-turno-"]').forEach(input => {
-    valoresActuales.set(input.id, input.value.trim());
-  });
+  if (conservarValoresActuales) {
+    grid.querySelectorAll('input[id^="edit-turno-"]').forEach(input => {
+      valoresActuales.set(input.id, input.value.trim());
+    });
+  }
 
   grid.innerHTML = '';
 
@@ -825,7 +827,7 @@ function generarGridTurnoActualizar(numeroPosiciones, posicionesExistentes = [])
     inputIzq.type = 'text';
     inputIzq.setAttribute('list', 'lista-crotales');
     inputIzq.placeholder = `Izq ${posicion}`;
-    inputIzq.value = valoresActuales.has(inputIzq.id)
+    inputIzq.value = conservarValoresActuales && valoresActuales.has(inputIzq.id)
       ? valoresActuales.get(inputIzq.id)
       : (posIzq?.crotal || '');
 
@@ -834,7 +836,7 @@ function generarGridTurnoActualizar(numeroPosiciones, posicionesExistentes = [])
     inputDer.type = 'text';
     inputDer.setAttribute('list', 'lista-crotales');
     inputDer.placeholder = `Der ${posicion}`;
-    inputDer.value = valoresActuales.has(inputDer.id)
+    inputDer.value = conservarValoresActuales && valoresActuales.has(inputDer.id)
       ? valoresActuales.get(inputDer.id)
       : (posDer?.crotal || '');
 
@@ -895,7 +897,7 @@ function activarSeguimientoCambiosTurno() {
   if (inputPosiciones) {
     inputPosiciones.oninput = () => {
       hayCambiosTurno = true;
-      generarGridTurnoActualizar();
+      generarGridTurnoActualizar(undefined, [], true);
     };
   }
 }
