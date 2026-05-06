@@ -1729,6 +1729,25 @@ linear-gradient(
   }
 }
 
+/* ===== Fix definitivo móvil fechas Ingreso Económico ===== */
+
+@media (max-width: 520px) {
+  .ingreso-periodo-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  .ingreso-periodo-grid input[type="date"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+
+    font-size: 15px !important;
+    padding: 11px 12px !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1905,8 +1924,6 @@ linear-gradient(
 
   <section id="bloque-ingreso-nuevo" class="ingreso-operacion-card">
     <div class="ingreso-formulario">
-
-    <label>Litros recogidos</label>
 
       <label>Litros recogidos</label>
       <input id="ingreso-litros-recogidos" type="number" step="0.01" min="0" placeholder="Ej: 12500.00" />
