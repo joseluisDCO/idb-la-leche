@@ -1582,6 +1582,93 @@ linear-gradient(
   }
 }
 
+/* ===== Consulta ingresos económicos ===== */
+
+.grid-ingresos-anuales {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.mes-ingreso-card {
+  min-height: 72px;
+  padding: 10px 8px;
+
+  border-radius: 16px;
+  border: 1px solid #BFD6E5;
+  background: linear-gradient(135deg, #FFFFFF 0%, #EAF6FF 100%);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+
+  text-align: center;
+  cursor: pointer;
+
+  box-shadow: 0 6px 14px rgba(47,111,159,0.08);
+}
+
+.mes-ingreso-card.activo {
+  background: #6FAED6;
+  color: #FFFFFF;
+  border-color: #5C9FC8;
+}
+
+.mes-ingreso-card.sin-datos {
+  opacity: 0.45;
+}
+
+.mes-ingreso-nombre {
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.mes-ingreso-importe {
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.detalle-ingreso-mes {
+  margin-top: 14px;
+  padding: 12px;
+
+  background: rgba(255,255,255,0.88);
+  border: 1px solid rgba(191,214,229,0.95);
+  border-radius: 16px;
+
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.45;
+}
+
+.detalle-ingreso-mes strong {
+  color: var(--blue-dark);
+}
+
+@media (max-width: 520px) {
+  .grid-ingresos-anuales {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .mes-ingreso-card {
+    min-height: 68px;
+    padding: 8px 6px;
+  }
+
+  .mes-ingreso-nombre {
+    font-size: 0.72rem;
+  }
+
+  .mes-ingreso-importe {
+    font-size: 0.68rem;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1789,6 +1876,15 @@ linear-gradient(
     </div>
   </section>
 
+  <section id="bloque-ingreso-consulta" class="ingreso-operacion-card" style="display:none;">
+    <h1>Consulta de ingresos</h1>
+
+    <div id="grid-ingresos-anuales" class="grid-ingresos-anuales"></div>
+
+    <div id="detalle-ingreso-mes" class="detalle-ingreso-mes">
+      Selecciona un mes para ver el detalle del ingreso.
+    </div>
+  </section>
 </div>
 
 

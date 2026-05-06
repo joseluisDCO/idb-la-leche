@@ -1687,6 +1687,139 @@ async function guardarIngresoEconomico() {
   alert('Ingreso económico guardado correctamente');
 }
 
+function mostrarModoIngreso(modo) {
+  const bloqueNuevo = document.getElementById('bloque-ingreso-nuevo');
+  const bloqueConsulta = document.getElementById('bloque-ingreso-consulta');
+  const btnNuevo = document.getElementById('btn-modo-ingreso-nuevo');
+  const btnConsulta = document.getElementById('btn-modo-ingreso-consulta');
+
+  const esNuevo = modo === 'nuevo';
+
+  if (bloqueNuevo) bloqueNuevo.style.display = esNuevo ? 'block' : 'none';
+  if (bloqueConsulta) bloqueConsulta.style.display = esNuevo ? 'none' : 'block';
+
+  if (btnNuevo) btnNuevo.classList.toggle('activo', esNuevo);
+  if (btnConsulta) btnConsulta.classList.toggle('activo', !esNuevo);
+
+  if (!esNuevo) {
+    cargarIngresosAnuales();
+  }
+}
+
+function formatearImporte(valor) {
+  const numero = Number(valor || 0);
+  return `${numero.toFixed(2)} €`;
+}
+
+function formatearLitros(valor) {
+  const numero = Number(valor || 0);
+  return `${numero.toFixed(2)} L`;
+}
+
+async function cargarIngresosAnuales() {
+  const grid = document.getElementById('grid-ingresos-anuales');
+  const detalle = document.getElementById('detalle-ingreso-mes');
+
+  if (!grid) return;
+
+  const anioActual = new Date().getFullYear();
+  const desde = `${anioActual}-01-01`;
+  const hasta = `${anioActual}-12-31`;
+
+  const { data, error } = await supabase
+    .from('ingresos_economicos')
+    .select('*')
+    .gte('periodo_hasta', desde)
+    .lte('periodo_hasta', hasta)
+    .order('periodo_hasta', { ascending: true });
+
+  if (error) {
+    console.error('Error cargando ingresos económicos:', error);
+    alert('No se pudieron cargar los ingresos económicos');
+    return;
+  }
+
+  const meses = [
+    'Ene', 'Feb', 'Mar', 'Abr',
+    'May', 'Jun', 'Jul', 'Ago',
+    'Sep', 'Oct', 'Nov', 'Dic'
+  ];
+
+  const ingresosPorMes = Array.from({ length: 12 }, () => []);
+
+  (data || []).forEach(ingreso => {
+    if (!ingreso.periodo_hasta) return;
+
+    const fechaHasta = new Date(`${ingreso.periodo_hasta}T00:00:00`);
+    const mes = fechaHasta.getMonth();
+
+    if (mes >= 0 && mes <= 11) {
+      ingresosPorMes[mes].push(ingreso);
+    }
+  });
+
+  grid.innerHTML = '';
+
+  if (detalle) {
+    detalle.textContent = 'Selecciona un mes para ver el detalle del ingreso.';
+  }
+
+  meses.forEach((nombreMes, index) => {
+    const ingresosMes = ingresosPorMes[index];
+    const importeMes = ingresosMes.reduce(
+      (acc, item) => acc + Number(item.importe_total || 0),
+      0
+    );
+
+    const card = document.createElement('div');
+    card.className = 'mes-ingreso-card' + (ingresosMes.length ? '' : ' sin-datos');
+
+    card.innerHTML = `
+      <div class="mes-ingreso-nombre">${nombreMes}</div>
+      <div class="mes-ingreso-importe">
+        ${ingresosMes.length ? formatearImporte(importeMes) : 'Sin datos'}
+      </div>
+    `;
+
+    card.onclick = () => {
+      document.querySelectorAll('.mes-ingreso-card').forEach(c => {
+        c.classList.remove('activo');
+      });
+
+      card.classList.add('activo');
+      mostrarDetalleIngresoMes(nombreMes, anioActual, ingresosMes);
+    };
+
+    grid.appendChild(card);
+  });
+}
+
+function mostrarDetalleIngresoMes(nombreMes, anio, ingresosMes) {
+  const detalle = document.getElementById('detalle-ingreso-mes');
+  if (!detalle) return;
+
+  if (!ingresosMes || ingresosMes.length === 0) {
+    detalle.innerHTML = `<strong>${nombreMes} ${anio}</strong><br>Sin ingresos registrados.`;
+    return;
+  }
+
+  const bloques = ingresosMes.map(ingreso => `
+    <div style="margin-bottom:12px;">
+      <strong>${nombreMes} ${anio}</strong><br>
+      Periodo: ${ingreso.periodo_desde || '-'} / ${ingreso.periodo_hasta || '-'}<br>
+      Litros recogidos: ${formatearLitros(ingreso.litros_recogidos)}<br>
+      Grasas: ${ingreso.grasas ?? '-'}<br>
+      Pérdidas: ${ingreso.perdidas ?? '-'}<br>
+      Litros pagados: ${formatearLitros(ingreso.litros_pagados)}<br>
+      Precio base: ${ingreso.precio_base ?? '-'} €<br>
+      Precio final: ${ingreso.precio_final ?? '-'} €<br>
+      Importe total: ${formatearImporte(ingreso.importe_total)}
+    </div>
+  `).join('');
+
+  detalle.innerHTML = bloques;
+}
+
 async function arrancarApp() {
   await comprobarConexion();
 
@@ -1979,6 +2112,21 @@ if (btnIngresoEconomico) {
     if (pantallaIngreso) pantallaIngreso.style.display = 'block';
 
     inicializarFechasIngresoEconomico();
+    mostrarModoIngreso('nuevo');
+  };
+}
+
+const btnModoIngresoNuevo = document.getElementById('btn-modo-ingreso-nuevo');
+if (btnModoIngresoNuevo) {
+  btnModoIngresoNuevo.onclick = () => {
+    mostrarModoIngreso('nuevo');
+  };
+}
+
+const btnModoIngresoConsulta = document.getElementById('btn-modo-ingreso-consulta');
+if (btnModoIngresoConsulta) {
+  btnModoIngresoConsulta.onclick = () => {
+    mostrarModoIngreso('consulta');
   };
 }
 
