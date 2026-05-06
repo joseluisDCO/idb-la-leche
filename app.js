@@ -402,6 +402,7 @@ function abrirAltaAnimalDirecto(pos) {
   // Mostrar pantalla animal
   const pantallaAlta = document.getElementById('pantalla-alta-animal');
   if (pantallaAlta) pantallaAlta.style.display = 'block';
+  mostrarModoAnimal('modificar');
 
   // 🔥 Rellenar directamente el crotal
   const inputCrotalEstado = document.getElementById('input-crotal-estado');
@@ -1441,6 +1442,26 @@ function inicializarFechasAnimalMesActual() {
   if (fHasta) fHasta.value = hasta.toISOString().slice(0, 10);
 }
 
+function mostrarModoAnimal(modo) {
+  const bloqueAlta = document.getElementById('bloque-alta-animal');
+  const bloqueModificar = document.getElementById('bloque-modificar-animal');
+  const btnAlta = document.getElementById('btn-modo-alta-animal');
+  const btnModificar = document.getElementById('btn-modo-modificar-animal');
+  const tituloAnimal = document.getElementById('titulo-animal');
+
+  const esAlta = modo === 'alta';
+
+  if (bloqueAlta) bloqueAlta.style.display = esAlta ? 'flex' : 'none';
+  if (bloqueModificar) bloqueModificar.style.display = esAlta ? 'none' : 'flex';
+
+  if (btnAlta) btnAlta.classList.toggle('activo', esAlta);
+  if (btnModificar) btnModificar.classList.toggle('activo', !esAlta);
+
+  if (tituloAnimal) {
+    tituloAnimal.textContent = esAlta ? 'Alta de Animal' : 'Modificar estado';
+  }
+}
+
 async function arrancarApp() {
   await comprobarConexion();
 
@@ -1496,19 +1517,22 @@ if (btnIrAltaAnimalDesdeOrdeño) {
 
     // Mostrar pantalla de animales
     if (pantallaAlta) pantallaAlta.style.display = 'block';
+    mostrarModoAnimal('alta');
   };
 }
 
-  const btnAltaAnimal = document.getElementById('btn-alta-animal');
-  if (btnAltaAnimal) {
-    btnAltaAnimal.onclick = () => {
-      const pantallaInicio = document.getElementById('pantalla-inicio');
-      const pantallaAlta = document.getElementById('pantalla-alta-animal');
+const btnAltaAnimal = document.getElementById('btn-alta-animal');
+if (btnAltaAnimal) {
+  btnAltaAnimal.onclick = () => {
+    const pantallaInicio = document.getElementById('pantalla-inicio');
+    const pantallaAlta = document.getElementById('pantalla-alta-animal');
 
-      if (pantallaInicio) pantallaInicio.style.display = 'none';
-      if (pantallaAlta) pantallaAlta.style.display = 'block';
-    };
-  }
+    if (pantallaInicio) pantallaInicio.style.display = 'none';
+    if (pantallaAlta) pantallaAlta.style.display = 'block';
+
+    mostrarModoAnimal('alta');
+  };
+}
 
   const btnVolverAlta = document.getElementById('btn-volver-alta');
 if (btnVolverAlta) {
@@ -1544,6 +1568,20 @@ if (btnVolverAlta) {
     if (pantallaInicio) pantallaInicio.style.display = 'block';
   };
 }
+
+    const btnModoAltaAnimal = document.getElementById('btn-modo-alta-animal');
+    if (btnModoAltaAnimal) {
+      btnModoAltaAnimal.onclick = () => {
+        mostrarModoAnimal('alta');
+      };
+    }
+
+    const btnModoModificarAnimal = document.getElementById('btn-modo-modificar-animal');
+    if (btnModoModificarAnimal) {
+      btnModoModificarAnimal.onclick = () => {
+        mostrarModoAnimal('modificar');
+      };
+    }
 
   const btnCrearTurnos = document.getElementById('btn-crear-turnos');
   if (btnCrearTurnos) {

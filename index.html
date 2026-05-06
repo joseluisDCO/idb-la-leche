@@ -1207,6 +1207,96 @@ linear-gradient(
   margin-bottom: 4px !important;
 }
 
+/* ===== Alta / Modificación Animal ===== */
+
+#pantalla-alta-animal {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  overflow: visible !important;
+}
+
+#pantalla-alta-animal::before {
+  display: none !important;
+}
+
+.animal-nav {
+  width: calc(100% - 20px);
+  max-width: 520px;
+  margin: 0 auto 8px;
+  padding: 6px;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+
+  background: #DDEAF2;
+  border: 1px solid #BFD6E5;
+  border-radius: 16px;
+
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.55);
+}
+
+.animal-nav .animal-nav-btn {
+  min-height: 40px;
+  padding: 8px 8px;
+
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 900;
+
+  background: #6FAED6 !important;
+  color: #FFFFFF !important;
+  border: 1px solid #5C9FC8 !important;
+
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.animal-nav .animal-nav-btn:hover {
+  transform: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+.animal-nav .animal-nav-btn.activo {
+  background: var(--blue-dark) !important;
+  border-color: var(--blue-dark) !important;
+  color: #FFFFFF !important;
+}
+
+.animal-operacion-card {
+  width: calc(100% - 20px);
+  max-width: 520px;
+  margin: 0 auto 12px;
+  padding: 16px;
+
+  background: rgba(255,255,255,0.82);
+  border: 1px solid rgba(191,214,229,0.95);
+  border-radius: 18px;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.75),
+    0 6px 14px rgba(47,111,159,0.08);
+}
+
+.animal-operacion-card h1 {
+  margin: 0 0 14px;
+  text-align: center;
+  font-size: 1.18rem;
+  line-height: 1.15;
+  color: var(--blue-dark);
+}
+
+.animal-formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 </style>
 </head>
 <body>
@@ -1245,12 +1335,17 @@ linear-gradient(
   </div>
 
   <div id="pantalla-alta-animal" style="display:none;">
-    <div class="header-pantalla">
-      <h1>Alta de Animal</h1>
-      <button id="btn-volver-alta" class="btn-volver">Volver</button>
-    </div>
 
-    <div style="margin-top:20px; display:flex; flex-direction:column; gap:12px;">
+  <div class="animal-nav">
+    <button id="btn-volver-alta" class="nav-btn animal-nav-btn">← Volver</button>
+    <button id="btn-modo-alta-animal" class="nav-btn animal-nav-btn activo">＋ Alta</button>
+    <button id="btn-modo-modificar-animal" class="nav-btn animal-nav-btn">✎ Modificar</button>
+  </div>
+
+  <section class="animal-operacion-card">
+    <h1 id="titulo-animal">Alta de Animal</h1>
+
+    <div id="bloque-alta-animal" class="animal-formulario">
       <label>Crotal</label>
       <input id="input-crotal" type="text" placeholder="Ej: 1001" />
 
@@ -1262,12 +1357,10 @@ linear-gradient(
         <option value="BAJA">Baja</option>
       </select>
 
-      <button id="btn-guardar-animal">Guardar</button>
+      <button id="btn-guardar-animal">Guardar animal</button>
+    </div>
 
-      <hr>
-
-      <h2>Modificar estado</h2>
-
+    <div id="bloque-modificar-animal" class="animal-formulario" style="display:none;">
       <label>Crotal existente</label>
       <input id="input-crotal-estado" type="text" placeholder="Ej: 1001" />
 
@@ -1281,6 +1374,8 @@ linear-gradient(
 
       <button id="btn-actualizar-estado">Actualizar estado</button>
     </div>
+  </section>
+
 </div>
 
 <div id="pantalla-crear-turnos" style="display:none;">
