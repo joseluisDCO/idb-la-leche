@@ -1797,6 +1797,48 @@ linear-gradient(
   }
 }
 
+/* ===== Consulta ingresos: año y modificación ===== */
+
+.consulta-ayuda {
+  margin: -4px 0 12px;
+  text-align: center;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--muted);
+}
+
+#ingreso-anio-card {
+  margin-top: 8px;
+}
+
+#ingreso-anio-card label {
+  display: block;
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+#ingreso-anio-consulta {
+  text-align: center;
+  font-weight: 900;
+}
+
+.btn-modificar-ingreso {
+  width: 100%;
+  margin-top: 10px;
+  min-height: 40px;
+  padding: 8px 10px;
+
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 900;
+
+  background: #6FAED6 !important;
+  color: #FFFFFF !important;
+  border: 1px solid #5C9FC8 !important;
+
+  box-shadow: none !important;
+}
+
 </style>
 </head>
 <body>
@@ -1969,7 +2011,14 @@ linear-gradient(
       </div>
     </section>
 
-    </div>
+    <section id="ingreso-anio-card" class="ingreso-periodo-card" style="display:none;">
+      <h1>Consulta de ingresos</h1>
+
+      <label>Año de consulta</label>
+      <input id="ingreso-anio-consulta" type="number" min="2000" max="2100" step="1" />
+    </section>
+
+  </div>
 
   <section id="bloque-ingreso-nuevo" class="ingreso-operacion-card">
     <div class="ingreso-formulario">
@@ -2005,11 +2054,13 @@ linear-gradient(
   <section id="bloque-ingreso-consulta" class="ingreso-operacion-card" style="display:none;">
     <h1>Consulta de ingresos</h1>
 
-    <div id="grid-ingresos-anuales" class="grid-ingresos-anuales"></div>
-
-    <div id="detalle-ingreso-mes" class="detalle-ingreso-mes">
+    <div class="consulta-ayuda">
       Selecciona un mes para ver el detalle del ingreso.
     </div>
+
+    <div id="grid-ingresos-anuales" class="grid-ingresos-anuales"></div>
+
+    <div id="detalle-ingreso-mes" class="detalle-ingreso-mes"></div>
   </section>
 </div>
 

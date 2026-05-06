@@ -4,6 +4,7 @@ let turnoEditandoActual = null;
 let hayCambiosTurno = false;
 let volverAltaAnimalARegistro = false;
 let posicionesTurnoOriginales = [];
+let ingresoEditandoId = null;
 import { supabase } from './supabaseClient.js';
 
 async function init() {
@@ -1727,9 +1728,20 @@ async function guardarIngresoEconomico() {
     importe_total: leerNumeroIngreso('ingreso-importe-total')
   };
 
-  const { error } = await supabase
-    .from('ingresos_economicos')
-    .insert(nuevoIngreso);
+  let resultado;
+
+  if (ingresoEditandoId) {
+    resultado = await supabase
+      .from('ingresos_economicos')
+      .update(nuevoIngreso)
+      .eq('id', ingresoEditandoId);
+  } else {
+    resultado = await supabase
+      .from('ingresos_economicos')
+      .insert(nuevoIngreso);
+  }
+
+const { error } = resultado;
 
   if (error) {
     console.error('Error guardando ingreso económico:', error);
@@ -1742,6 +1754,12 @@ async function guardarIngresoEconomico() {
   }
 
   alert('Ingreso económico guardado correctamente');
+  ingresoEditandoId = null;
+
+  const btnGuardar = document.getElementById('btn-guardar-ingreso');
+  if (btnGuardar) {
+    btnGuardar.textContent = 'Guardar ingreso económico';
+  }
 }
 
 function mostrarModoIngreso(modo) {
@@ -1750,15 +1768,26 @@ function mostrarModoIngreso(modo) {
   const btnNuevo = document.getElementById('btn-modo-ingreso-nuevo');
   const btnConsulta = document.getElementById('btn-modo-ingreso-consulta');
 
+  const periodoCard = document.querySelector('.ingreso-periodo-card:not(#ingreso-anio-card)');
+  const anioCard = document.getElementById('ingreso-anio-card');
+  const inputAnio = document.getElementById('ingreso-anio-consulta');
+
   const esNuevo = modo === 'nuevo';
 
   if (bloqueNuevo) bloqueNuevo.style.display = esNuevo ? 'block' : 'none';
   if (bloqueConsulta) bloqueConsulta.style.display = esNuevo ? 'none' : 'block';
 
+  if (periodoCard) periodoCard.style.display = esNuevo ? 'block' : 'none';
+  if (anioCard) anioCard.style.display = esNuevo ? 'none' : 'block';
+
   if (btnNuevo) btnNuevo.classList.toggle('activo', esNuevo);
   if (btnConsulta) btnConsulta.classList.toggle('activo', !esNuevo);
 
   if (!esNuevo) {
+    if (inputAnio && !inputAnio.value) {
+      inputAnio.value = String(new Date().getFullYear());
+    }
+
     cargarIngresosAnuales();
   }
 }
@@ -1784,12 +1813,18 @@ function formatearDecimal(valor, decimales = 2) {
 async function cargarIngresosAnuales() {
   const grid = document.getElementById('grid-ingresos-anuales');
   const detalle = document.getElementById('detalle-ingreso-mes');
+  const inputAnio = document.getElementById('ingreso-anio-consulta');
 
   if (!grid) return;
 
-  const anioActual = new Date().getFullYear();
-  const desde = `${anioActual}-01-01`;
-  const hasta = `${anioActual}-12-31`;
+  const anioSeleccionado = parseInt(inputAnio?.value, 10) || new Date().getFullYear();
+
+  if (inputAnio && !inputAnio.value) {
+    inputAnio.value = String(anioSeleccionado);
+  }
+
+  const desde = `${anioSeleccionado}-01-01`;
+  const hasta = `${anioSeleccionado}-12-31`;
 
   const { data, error } = await supabase
     .from('ingresos_economicos')
@@ -1826,7 +1861,7 @@ async function cargarIngresosAnuales() {
   grid.innerHTML = '';
 
   if (detalle) {
-    detalle.textContent = 'Selecciona un mes para ver el detalle del ingreso.';
+    detalle.innerHTML = '';
   }
 
   meses.forEach((nombreMes, index) => {
@@ -1852,7 +1887,7 @@ async function cargarIngresosAnuales() {
       });
 
       card.classList.add('activo');
-      mostrarDetalleIngresoMes(nombreMes, anioActual, ingresosMes);
+      mostrarDetalleIngresoMes(nombreMes, anioSeleccionado, ingresosMes);
     };
 
     grid.appendChild(card);
@@ -1873,16 +1908,79 @@ function mostrarDetalleIngresoMes(nombreMes, anio, ingresosMes) {
       <strong>${nombreMes} ${anio}</strong><br>
       Periodo: ${ingreso.periodo_desde || '-'} / ${ingreso.periodo_hasta || '-'}<br>
       Litros recogidos: ${formatearLitros(ingreso.litros_recogidos)}<br>
-      Grasas: ${formatearDecimal(ingreso.grasas, 4)}<br>
-      Pérdidas: ${formatearDecimal(ingreso.perdidas, 2)}<br>
+      Grasas: ${formatearDecimal ? formatearDecimal(ingreso.grasas, 4) : (ingreso.grasas ?? '-')}<br>
+      Pérdidas: ${formatearDecimal ? formatearDecimal(ingreso.perdidas, 2) : (ingreso.perdidas ?? '-')}<br>
       Litros pagados: ${formatearLitros(ingreso.litros_pagados)}<br>
-      Precio base: ${formatearPrecio(ingreso.precio_base)}<br>
-      Precio final: ${formatearPrecio(ingreso.precio_final)}<br>
+      Precio base: ${formatearPrecio ? formatearPrecio(ingreso.precio_base) : `${ingreso.precio_base ?? '-'} €`}<br>
+      Precio final: ${formatearPrecio ? formatearPrecio(ingreso.precio_final) : `${ingreso.precio_final ?? '-'} €`}<br>
       Importe total: ${formatearImporte(ingreso.importe_total)}
+
+      <button class="btn-modificar-ingreso" data-ingreso-id="${ingreso.id}">
+        ✎ Modificar ingreso
+      </button>
     </div>
   `).join('');
 
   detalle.innerHTML = bloques;
+
+  detalle.querySelectorAll('.btn-modificar-ingreso').forEach(btn => {
+    btn.onclick = () => {
+      const id = Number(btn.dataset.ingresoId);
+      const ingreso = ingresosMes.find(item => Number(item.id) === id);
+
+      if (ingreso) {
+        solicitarClaveYEditarIngreso(ingreso);
+      }
+    };
+  });
+}
+
+function solicitarClaveYEditarIngreso(ingreso) {
+  const clave = prompt('Introduce la clave para modificar el ingreso');
+
+  if (clave !== '2301') {
+    alert('Clave incorrecta');
+    return;
+  }
+
+  ingresoEditandoId = ingreso.id;
+
+  const periodoDesde = document.getElementById('ingreso-periodo-desde');
+  const periodoHasta = document.getElementById('ingreso-periodo-hasta');
+
+  if (periodoDesde) periodoDesde.value = ingreso.periodo_desde || '';
+  if (periodoHasta) periodoHasta.value = ingreso.periodo_hasta || '';
+
+  const asignarValor = (id, valor, decimales = 2) => {
+    const input = document.getElementById(id);
+    if (!input) return;
+
+    if (valor === null || valor === undefined) {
+      input.value = '';
+      return;
+    }
+
+    if (typeof formatearNumeroES === 'function') {
+      input.value = formatearNumeroES(Number(valor), decimales);
+    } else {
+      input.value = String(valor);
+    }
+  };
+
+  asignarValor('ingreso-litros-recogidos', ingreso.litros_recogidos, 2);
+  asignarValor('ingreso-grasas', ingreso.grasas, 4);
+  asignarValor('ingreso-perdidas', ingreso.perdidas, 2);
+  asignarValor('ingreso-litros-pagados', ingreso.litros_pagados, 2);
+  asignarValor('ingreso-precio-base', ingreso.precio_base, 4);
+  asignarValor('ingreso-precio-final', ingreso.precio_final, 4);
+  asignarValor('ingreso-importe-total', ingreso.importe_total, 2);
+
+  const btnGuardar = document.getElementById('btn-guardar-ingreso');
+  if (btnGuardar) {
+    btnGuardar.textContent = 'Guardar cambios del ingreso';
+  }
+
+  mostrarModoIngreso('nuevo');
 }
 
 async function arrancarApp() {
@@ -2193,6 +2291,19 @@ const btnModoIngresoConsulta = document.getElementById('btn-modo-ingreso-consult
 if (btnModoIngresoConsulta) {
   btnModoIngresoConsulta.onclick = () => {
     mostrarModoIngreso('consulta');
+  };
+}
+
+const inputAnioConsulta = document.getElementById('ingreso-anio-consulta');
+if (inputAnioConsulta) {
+  inputAnioConsulta.onchange = async () => {
+    await cargarIngresosAnuales();
+  };
+
+  inputAnioConsulta.oninput = async () => {
+    if (String(inputAnioConsulta.value).length === 4) {
+      await cargarIngresosAnuales();
+    }
   };
 }
 
