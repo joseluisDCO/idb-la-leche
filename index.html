@@ -2128,6 +2128,180 @@ linear-gradient(
   box-shadow: 0 6px 12px rgba(47,111,159,0.06);
 }
 
+/* ===== Informe Producción por Fecha ===== */
+
+#pantalla-produccion-fecha {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  overflow: visible !important;
+}
+
+#pantalla-produccion-fecha::before {
+  display: none !important;
+}
+
+.produccion-fecha-nav {
+  position: sticky;
+  top: 96px;
+  z-index: 998;
+
+  width: calc(100% - 20px);
+  max-width: 520px;
+  margin: 0 auto 8px;
+  padding: 6px;
+
+  display: grid;
+  grid-template-columns: 1fr;
+
+  background: #DDEAF2;
+  border: 1px solid #BFD6E5;
+  border-radius: 16px;
+
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.55);
+}
+
+.produccion-fecha-nav-btn {
+  min-height: 40px;
+  padding: 8px 8px;
+
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 900;
+
+  background: #6FAED6 !important;
+  color: #FFFFFF !important;
+  border: 1px solid #5C9FC8 !important;
+
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.produccion-fecha-titulo-card {
+  position: sticky;
+  top: 154px;
+  z-index: 997;
+
+  width: calc(100% - 20px);
+  max-width: 520px;
+  margin: 0 auto 8px;
+  padding: 12px 16px;
+
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(10px);
+
+  border: 1px solid rgba(191,214,229,0.95);
+  border-radius: 18px;
+
+  box-shadow: 0 6px 14px rgba(47,111,159,0.08);
+}
+
+.produccion-fecha-titulo-card h1 {
+  margin: 0;
+  text-align: center;
+  font-size: 1.18rem;
+  line-height: 1.15;
+  color: var(--blue-dark);
+}
+
+.produccion-fecha-grafico-card,
+.produccion-fecha-meses-card,
+.produccion-fecha-busqueda-card {
+  width: calc(100% - 20px);
+  max-width: 520px;
+  margin: 0 auto 12px;
+  padding: 16px;
+
+  background: rgba(255,255,255,0.82);
+  border: 1px solid rgba(191,214,229,0.95);
+  border-radius: 18px;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.75),
+    0 6px 14px rgba(47,111,159,0.08);
+}
+
+.produccion-fecha-grafico-card canvas {
+  width: 100%;
+  height: 220px;
+  display: block;
+
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+}
+
+.produccion-fecha-meses-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.produccion-fecha-busqueda-card {
+  position: sticky;
+  top: 214px;
+  z-index: 996;
+
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(10px);
+}
+
+.produccion-fecha-busqueda-card h2 {
+  margin: 0 0 12px;
+  text-align: center;
+  font-size: 1rem;
+  color: var(--blue-dark);
+}
+
+.produccion-fecha-filtros {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.produccion-fecha-filtros > div {
+  min-width: 0;
+}
+
+.produccion-fecha-exportar {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.produccion-fecha-exportar button {
+  width: 100%;
+}
+
+.resultado-produccion-fecha {
+  width: calc(100% - 20px);
+  max-width: 520px;
+  margin: 12px auto 0;
+}
+
+@media (max-width: 520px) {
+  .produccion-fecha-titulo-card {
+    top: 148px;
+  }
+
+  .produccion-fecha-busqueda-card {
+    top: 206px;
+  }
+
+  .produccion-fecha-filtros {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .produccion-fecha-filtros input[type="date"] {
+    font-size: 13px;
+    padding: 10px 6px;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -2399,40 +2573,52 @@ linear-gradient(
 </div>
 
 <div id="pantalla-produccion-fecha" style="display:none;">
-  <div class="header-pantalla">
+
+  <div class="produccion-fecha-nav">
+    <button id="btn-volver-produccion-fecha" class="nav-btn produccion-fecha-nav-btn">← Volver</button>
+  </div>
+
+  <section class="produccion-fecha-titulo-card">
     <h1>Producción por fecha</h1>
-    <button id="btn-volver-produccion-fecha" class="btn-volver">Volver</button>
-  </div>
+  </section>
 
-  <div style="margin-top:20px; display:flex; flex-direction:column; gap:12px;">
-    <div style="display:flex; flex-direction:column; gap:10px;">
-      <label>Mes a comparar</label>
-      <input id="grafico-mes-base" type="month" />
+  <section class="produccion-fecha-grafico-card">
+    <canvas id="grafico-produccion-fecha" height="220"></canvas>
+  </section>
 
-      <label>Mes de comparación</label>
-      <input id="grafico-mes-comparacion" type="month" />
+  <section class="produccion-fecha-meses-card">
+    <label>Comparo el mes de</label>
+    <input id="grafico-mes-base" type="month" />
 
-     <button id="btn-actualizar-grafico-fecha">Actualizar gráfico</button>
+    <label>Con el mes de</label>
+    <input id="grafico-mes-comparacion" type="month" />
+  </section>
 
-    <canvas id="grafico-produccion-fecha" height="220" style="width:100%; background:#ffffff; border:1px solid var(--border); border-radius:18px;"></canvas>
+  <section class="produccion-fecha-busqueda-card">
+    <h2>Buscar producción</h2>
+
+    <div class="produccion-fecha-filtros">
+      <div>
+        <label>Desde</label>
+        <input id="filtro-fecha-desde" type="date" />
+      </div>
+
+      <div>
+        <label>Hasta</label>
+        <input id="filtro-fecha-hasta" type="date" />
+      </div>
     </div>
-    
-    <label>Desde</label>
-    <input id="filtro-fecha-desde" type="date" />
 
-    <label>Hasta</label>
-    <input id="filtro-fecha-hasta" type="date" />
+    <button id="btn-buscar-produccion-fecha">Buscar producción</button>
 
-    <button id="btn-buscar-produccion-fecha">Buscar</button>
+    <div class="produccion-fecha-exportar">
+      <button id="btn-exportar-excel-fecha">Exportar Excel</button>
+      <button id="btn-exportar-pdf-fecha">Exportar PDF</button>
+    </div>
+  </section>
 
-<div style="display:flex; gap:10px;">
-  <button id="btn-exportar-excel-fecha">Exportar Excel</button>
-  <button id="btn-exportar-pdf-fecha">Exportar PDF</button>
-</div>
+  <div id="resultado-produccion-fecha" class="resultado-produccion-fecha"></div>
 
-<div id="resultado-produccion-fecha" style="margin-top:20px;"></div>
-
-  </div>
 </div>
 
 <div id="pantalla-produccion-animal" style="display:none;">

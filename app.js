@@ -2362,6 +2362,7 @@ if (btnInformeProduccion) {
 }
 
 const btnInformeProduccionFechaDirecto = document.getElementById('btn-informe-produccion-fecha-directo');
+
 if (btnInformeProduccionFechaDirecto) {
   btnInformeProduccionFechaDirecto.onclick = () => {
     const pantallaInformes = document.getElementById('pantalla-informes');
@@ -2372,6 +2373,10 @@ if (btnInformeProduccionFechaDirecto) {
 
     inicializarFechasPorDefecto();
     inicializarMesesGraficoProduccion();
+
+    requestAnimationFrame(() => {
+      pintarGraficoProduccionFecha();
+    });
   };
 }
 
@@ -2389,6 +2394,20 @@ if (btnInformeProduccionAnimalDirecto) {
   };
 }
 
+const inputGraficoMesBase = document.getElementById('grafico-mes-base');
+if (inputGraficoMesBase) {
+  inputGraficoMesBase.onchange = async () => {
+    await pintarGraficoProduccionFecha();
+  };
+}
+
+const inputGraficoMesComparacion = document.getElementById('grafico-mes-comparacion');
+if (inputGraficoMesComparacion) {
+  inputGraficoMesComparacion.onchange = async () => {
+    await pintarGraficoProduccionFecha();
+  };
+}
+
 const btnProduccionFecha = document.getElementById('btn-produccion-fecha');
 if (btnProduccionFecha) {
   btnProduccionFecha.onclick = () => {
@@ -2400,6 +2419,10 @@ if (btnProduccionFecha) {
 
     inicializarFechasPorDefecto();
     inicializarMesesGraficoProduccion();
+
+    requestAnimationFrame(() => {
+      pintarGraficoProduccionFecha();
+    });
   };
 }
 
@@ -2413,11 +2436,11 @@ if (btnBuscarProduccionFecha) {
 const btnVolverProduccionFecha = document.getElementById('btn-volver-produccion-fecha');
 if (btnVolverProduccionFecha) {
   btnVolverProduccionFecha.onclick = () => {
-    const pantallaProduccion = document.getElementById('pantalla-informe-produccion');
+    const pantallaInformes = document.getElementById('pantalla-informes');
     const pantallaFecha = document.getElementById('pantalla-produccion-fecha');
 
     if (pantallaFecha) pantallaFecha.style.display = 'none';
-    if (pantallaProduccion) pantallaProduccion.style.display = 'block';
+    if (pantallaInformes) pantallaInformes.style.display = 'block';
   };
 }
 
