@@ -1363,124 +1363,223 @@ async function pintarGraficoProduccionFecha() {
   if (!canvas) return;
 
   const ctx = canvas.getContext('2d');
-    canvas.width = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
+
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
 
   const mesBase = document.getElementById('grafico-mes-base')?.value;
   const mesComparacion = document.getElementById('grafico-mes-comparacion')?.value;
 
   if (!mesBase || !mesComparacion) return;
 
+  const obtenerFinMes = (mesTexto) => {
+    const [anio, mes] = mesTexto.split('-').map(Number);
+    const ultimoDia = new Date(anio, mes, 0).getDate();
+
+    return `${anio}-${String(mes).padStart(2, '0')}-${String(ultimoDia).padStart(2, '0')}`;
+  };
+
   const inicioBase = `${mesBase}-01`;
-  const finBase = new Date(mesBase.split('-')[0], mesBase.split('-')[1], 0)
-    .toISOString().slice(0,10);
+  const finBase = obtenerFinMes(mesBase);
 
   const inicioComp = `${mesComparacion}-01`;
-  const finComp = new Date(mesComparacion.split('-')[0], mesComparacion.split('-')[1], 0)
-    .toISOString().slice(0,10);
+  const finComp = obtenerFinMes(mesComparacion);
 
-  const { data: dataBase } = await supabase
+  const { data: dataBase, error: errorBase } = await supabase
     .from('produccion')
     .select('fecha, litros')
     .gte('fecha', inicioBase)
     .lte('fecha', finBase);
 
-  const { data: dataComp } = await supabase
+  if (errorBase) {
+    console.error('Error cargando mes base:', errorBase);
+    return;
+  }
+
+  const { data: dataComp, error: errorComp } = await supabase
     .from('produccion')
     .select('fecha, litros')
     .gte('fecha', inicioComp)
     .lte('fecha', finComp);
 
-  const agrupar = (data) => {
+  if (errorComp) {
+    console.error('Error cargando mes comparación:', errorComp);
+    return;
+  }
+
+  const agruparPorDia = (data) => {
     const mapa = {};
-    (data || []).forEach(r => {
-      const dia = r.fecha.slice(8,10);
-      mapa[dia] = (mapa[dia] || 0) + Number(r.litros || 0);
+
+    (data || []).forEach(registro => {
+      const dia = registro.fecha.slice(8, 10);
+      mapa[dia] = (mapa[dia] || 0) + Number(registro.litros || 0);
     });
+
     return mapa;
   };
 
-  const baseMap = agrupar(dataBase);
-  const compMap = agrupar(dataComp);
+  const baseMap = agruparPorDia(dataBase);
+  const compMap = agruparPorDia(dataComp);
 
-  const dias = Array.from({ length: 31 }, (_, i) => String(i+1).padStart(2,'0'));
+  const dias = Array.from(
+    { length: 31 },
+    (_, i) => String(i + 1).padStart(2, '0')
+  );
 
-  const baseValores = dias.map(d => baseMap[d] || 0);
-  const compValores = dias.map(d => compMap[d] || 0);
+  const baseValores = dias.map(dia => baseMap[dia] || 0);
+  const compValores = dias.map(dia => compMap[dia] || 0);
 
-  // limpiar
-ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const w = canvas.width;
+  const h = canvas.height;
 
-const w = canvas.width;
-const h = canvas.height;
-const padding = 28;
-const chartW = w - padding * 2;
-const chartH = h - padding * 2;
+  const paddingLeft = 34;
+  const paddingRight = 16;
+  const paddingTop = 32;
+  const paddingBottom = 30;
 
-const max = Math.max(...baseValores, ...compValores, 1);
-const barGroupWidth = chartW / dias.length;
-const barWidth = Math.max(3, barGroupWidth * 0.36);
+  const chartW = w - paddingLeft - paddingRight;
+  const chartH = h - paddingTop - paddingBottom;
 
-// Fondo
-ctx.fillStyle = '#ffffff';
-ctx.fillRect(0, 0, w, h);
+  const max = Math.max(...baseValores, ...compValores, 1);
 
-// Ejes suaves
-ctx.strokeStyle = '#D7EAF5';
-ctx.lineWidth = 1;
-ctx.beginPath();
-ctx.moveTo(padding, padding);
-ctx.lineTo(padding, h - padding);
-ctx.lineTo(w - padding, h - padding);
-ctx.stroke();
+  const xParaIndice = (i) => {
+    return paddingLeft + (i / (dias.length - 1)) * chartW;
+  };
 
-// Barras
-dias.forEach((dia, i) => {
-  const base = baseValores[i];
-  const comp = compValores[i];
+  const yParaValor = (valor) => {
+    return paddingTop + chartH - (valor / max) * chartH;
+  };
 
-  const xCentro = padding + i * barGroupWidth + barGroupWidth / 2;
+  const etiquetaMes = (mesTexto) => {
+    const meses = [
+      'Ene', 'Feb', 'Mar', 'Abr',
+      'May', 'Jun', 'Jul', 'Ago',
+      'Sep', 'Oct', 'Nov', 'Dic'
+    ];
 
-  const baseH = (base / max) * chartH;
-  const compH = (comp / max) * chartH;
+    const [anio, mes] = mesTexto.split('-');
+    return `${meses[Number(mes) - 1]}/${String(anio).slice(-2)}`;
+  };
 
-  const yBase = h - padding - baseH;
-  const yComp = h - padding - compH;
+  ctx.clearRect(0, 0, w, h);
 
-  // Mes base azul
-  ctx.fillStyle = '#2F8FC6';
-  ctx.fillRect(xCentro - barWidth, yBase, barWidth, baseH);
+  // Fondo
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, w, h);
 
-  // Mes comparación naranja
-  ctx.fillStyle = '#FF7A00';
-  ctx.fillRect(xCentro + 1, yComp, barWidth, compH);
-});
+  // Ejes
+  ctx.strokeStyle = '#D7EAF5';
+  ctx.lineWidth = 1;
 
-// Etiquetas cada 5 días
-ctx.fillStyle = '#6B8394';
-ctx.font = '10px Arial';
-ctx.textAlign = 'center';
+  ctx.beginPath();
+  ctx.moveTo(paddingLeft, paddingTop);
+  ctx.lineTo(paddingLeft, h - paddingBottom);
+  ctx.lineTo(w - paddingRight, h - paddingBottom);
+  ctx.stroke();
 
-dias.forEach((dia, i) => {
-  if (i % 5 === 0 || dia === '31') {
-    const x = padding + i * barGroupWidth + barGroupWidth / 2;
-    ctx.fillText(String(i + 1), x, h - 8);
+  // Líneas horizontales suaves
+  ctx.strokeStyle = 'rgba(215,234,245,0.75)';
+  ctx.lineWidth = 1;
+
+  for (let i = 1; i <= 3; i++) {
+    const y = paddingTop + (chartH / 4) * i;
+
+    ctx.beginPath();
+    ctx.moveTo(paddingLeft, y);
+    ctx.lineTo(w - paddingRight, y);
+    ctx.stroke();
   }
-});
 
-// Leyenda
-ctx.textAlign = 'left';
-ctx.font = '12px Arial';
+  // Área del mes de comparación
+  ctx.beginPath();
 
-ctx.fillStyle = '#2F8FC6';
-ctx.fillRect(padding, 8, 10, 10);
-ctx.fillStyle = '#183243';
-ctx.fillText(`Mes base: ${mesBase}`, padding + 16, 17);
+  compValores.forEach((valor, i) => {
+    const x = xParaIndice(i);
+    const y = yParaValor(valor);
 
-ctx.fillStyle = '#FF7A00';
-ctx.fillRect(padding + 150, 8, 10, 10);
-ctx.fillStyle = '#183243';
-ctx.fillText(`Comparación: ${mesComparacion}`, padding + 166, 17);
+    if (i === 0) {
+      ctx.moveTo(x, h - paddingBottom);
+      ctx.lineTo(x, y);
+    } else {
+      ctx.lineTo(x, y);
+    }
+  });
+
+  ctx.lineTo(xParaIndice(compValores.length - 1), h - paddingBottom);
+  ctx.closePath();
+
+  ctx.fillStyle = 'rgba(255,122,0,0.22)';
+  ctx.fill();
+
+  // Borde superior del área de comparación
+  ctx.beginPath();
+
+  compValores.forEach((valor, i) => {
+    const x = xParaIndice(i);
+    const y = yParaValor(valor);
+
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+
+  ctx.strokeStyle = '#FF7A00';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Línea del mes base
+  ctx.beginPath();
+
+  baseValores.forEach((valor, i) => {
+    const x = xParaIndice(i);
+    const y = yParaValor(valor);
+
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+
+  ctx.strokeStyle = '#2F8FC6';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+
+  // Puntos del mes base
+  ctx.fillStyle = '#2F8FC6';
+
+  baseValores.forEach((valor, i) => {
+    if (valor <= 0) return;
+
+    const x = xParaIndice(i);
+    const y = yParaValor(valor);
+
+    ctx.beginPath();
+    ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  // Etiquetas de días
+  ctx.fillStyle = '#6B8394';
+  ctx.font = '10px Arial';
+  ctx.textAlign = 'center';
+
+  dias.forEach((dia, i) => {
+    if (i % 5 === 0 || dia === '31') {
+      const x = xParaIndice(i);
+      ctx.fillText(String(i + 1), x, h - 8);
+    }
+  });
+
+  // Leyenda simplificada
+  ctx.textAlign = 'left';
+  ctx.font = '12px Arial';
+
+  ctx.fillStyle = '#2F8FC6';
+  ctx.fillRect(paddingLeft, 8, 10, 10);
+  ctx.fillStyle = '#183243';
+  ctx.fillText(etiquetaMes(mesBase), paddingLeft + 16, 17);
+
+  ctx.fillStyle = '#FF7A00';
+  ctx.fillRect(paddingLeft + 92, 8, 10, 10);
+  ctx.fillStyle = '#183243';
+  ctx.fillText(etiquetaMes(mesComparacion), paddingLeft + 108, 17);
 }
 
 async function pintarGraficoTopAnimales() {
