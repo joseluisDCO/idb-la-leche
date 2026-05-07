@@ -1959,7 +1959,7 @@ linear-gradient(
   font-size: 0.9rem;
 }
 
-..informe-hoja {
+.informe-hoja {
   width: 100%;
   min-height: 58px;
   margin-top: 8px;
@@ -2065,6 +2065,36 @@ linear-gradient(
 .informe-rama-pendiente .informe-hoja::after {
   content: "";
   display: none;
+}
+
+/* ===== Ajuste títulos ramas Informes ===== */
+
+.informe-rama-titulo {
+  width: 100% !important;
+  min-height: 44px !important;
+
+  padding: 10px 14px !important;
+  margin-bottom: 12px !important;
+
+  border-radius: 14px !important;
+  background: rgba(221,234,242,0.85) !important;
+  border: 1px solid #BFD6E5 !important;
+
+  font-size: 1.05rem !important;
+  font-weight: 950 !important;
+  color: var(--blue-dark) !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+}
+
+.informe-rama-titulo::before {
+  content: "▸" !important;
+  color: var(--blue) !important;
+  font-size: 1rem !important;
+  font-weight: 950 !important;
 }
 
 </style>
@@ -2317,14 +2347,9 @@ linear-gradient(
         <div class="informe-rama-titulo">Económico</div>
         <button class="informe-hoja" disabled>Ingresos por mes</button>
         <button class="informe-hoja" disabled>Precio real por litro</button>
-      </div>
-
-      <div class="informe-rama informe-rama-pendiente">
-        <div class="informe-rama-titulo">Rentabilidad</div>
         <button class="informe-hoja" disabled>Rentabilidad por animal</button>
         <button class="informe-hoja" disabled>Rentabilidad por periodo</button>
       </div>
-
     </div>
   </section>
 
