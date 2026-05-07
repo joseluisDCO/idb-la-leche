@@ -2067,20 +2067,20 @@ linear-gradient(
   display: none;
 }
 
-/* ===== Ajuste títulos ramas Informes ===== */
+/* ===== Títulos internos de ramas Informes ===== */
 
 .informe-rama-titulo {
   width: 100% !important;
-  min-height: 44px !important;
+  min-height: auto !important;
 
-  padding: 10px 14px !important;
-  margin-bottom: 12px !important;
+  padding: 0 0 8px 2px !important;
+  margin: 0 0 12px !important;
 
-  border-radius: 14px !important;
-  background: rgba(221,234,242,0.85) !important;
-  border: 1px solid #BFD6E5 !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
 
-  font-size: 1.05rem !important;
+  font-size: 1.12rem !important;
   font-weight: 950 !important;
   color: var(--blue-dark) !important;
 
@@ -2088,13 +2088,20 @@ linear-gradient(
   align-items: center !important;
   justify-content: flex-start !important;
   gap: 8px !important;
+
+  border-bottom: 1px solid rgba(191,214,229,0.85) !important;
 }
 
 .informe-rama-titulo::before {
-  content: "▸" !important;
-  color: var(--blue) !important;
-  font-size: 1rem !important;
-  font-weight: 950 !important;
+  content: "" !important;
+  width: 5px !important;
+  height: 22px !important;
+
+  display: inline-block !important;
+  border-radius: 999px !important;
+
+  background: linear-gradient(180deg, var(--blue-dark), var(--blue-soft)) !important;
+  flex-shrink: 0 !important;
 }
 
 </style>
