@@ -2011,6 +2011,62 @@ linear-gradient(
   content: "";
 }
 
+/* ===== Ajuste fino botones acceso informes ===== */
+
+.informe-rama {
+  padding: 14px !important;
+}
+
+.informe-hoja {
+  min-height: 68px !important;
+  height: 68px !important;
+
+  margin-top: 10px !important;
+  padding: 14px 18px !important;
+
+  border-radius: 18px !important;
+
+  font-size: 0.9rem !important;
+  font-weight: 900 !important;
+
+  display: grid !important;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 18px;
+
+  text-align: left;
+}
+
+.informe-hoja::after {
+  content: "›";
+  width: 28px;
+  height: 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+  background: rgba(255,255,255,0.22);
+
+  font-size: 1.55rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.informes-arbol {
+  gap: 14px !important;
+}
+
+.informe-rama-titulo {
+  margin-bottom: 10px !important;
+}
+
+.informe-rama-pendiente .informe-hoja::after {
+  content: "";
+  display: none;
+}
+
 </style>
 </head>
 <body>
