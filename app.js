@@ -2361,6 +2361,34 @@ if (btnInformeProduccion) {
   };
 }
 
+const btnInformeProduccionFechaDirecto = document.getElementById('btn-informe-produccion-fecha-directo');
+if (btnInformeProduccionFechaDirecto) {
+  btnInformeProduccionFechaDirecto.onclick = () => {
+    const pantallaInformes = document.getElementById('pantalla-informes');
+    const pantallaFecha = document.getElementById('pantalla-produccion-fecha');
+
+    if (pantallaInformes) pantallaInformes.style.display = 'none';
+    if (pantallaFecha) pantallaFecha.style.display = 'block';
+
+    inicializarFechasPorDefecto();
+    inicializarMesesGraficoProduccion();
+  };
+}
+
+const btnInformeProduccionAnimalDirecto = document.getElementById('btn-informe-produccion-animal-directo');
+if (btnInformeProduccionAnimalDirecto) {
+  btnInformeProduccionAnimalDirecto.onclick = async () => {
+    const pantallaInformes = document.getElementById('pantalla-informes');
+    const pantallaAnimal = document.getElementById('pantalla-produccion-animal');
+
+    if (pantallaInformes) pantallaInformes.style.display = 'none';
+    if (pantallaAnimal) pantallaAnimal.style.display = 'block';
+
+    inicializarFechasAnimalMesActual();
+    await pintarGraficoTopAnimales();
+  };
+}
+
 const btnProduccionFecha = document.getElementById('btn-produccion-fecha');
 if (btnProduccionFecha) {
   btnProduccionFecha.onclick = () => {
@@ -2457,11 +2485,11 @@ if (btnExportarPdfAnimales) {
 const btnVolverProduccionAnimal = document.getElementById('btn-volver-produccion-animal');
 if (btnVolverProduccionAnimal) {
   btnVolverProduccionAnimal.onclick = () => {
-    const pantallaProduccion = document.getElementById('pantalla-informe-produccion');
+    const pantallaInformes = document.getElementById('pantalla-informes');
     const pantallaAnimal = document.getElementById('pantalla-produccion-animal');
 
     if (pantallaAnimal) pantallaAnimal.style.display = 'none';
-    if (pantallaProduccion) pantallaProduccion.style.display = 'block';
+    if (pantallaInformes) pantallaInformes.style.display = 'block';
   };
 }
 
