@@ -1849,6 +1849,152 @@ linear-gradient(
   min-height: 100px !important;
 }
 
+/* ===== Informes - árbol móvil ===== */
+
+#pantalla-informes {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  overflow: visible !important;
+}
+
+#pantalla-informes::before {
+  display: none !important;
+}
+
+.informes-nav {
+  position: sticky;
+  top: 96px;
+  z-index: 998;
+
+  width: calc(100% - 20px);
+  max-width: 520px;
+  margin: 0 auto 8px;
+  padding: 6px;
+
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+
+  background: #DDEAF2;
+  border: 1px solid #BFD6E5;
+  border-radius: 16px;
+
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.55);
+}
+
+.informes-nav .informes-nav-btn {
+  min-height: 40px;
+  padding: 8px 8px;
+
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 900;
+
+  background: #6FAED6 !important;
+  color: #FFFFFF !important;
+  border: 1px solid #5C9FC8 !important;
+
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.informes-operacion-card {
+  width: calc(100% - 20px);
+  max-width: 520px;
+  margin: 0 auto 12px;
+  padding: 16px;
+
+  background: rgba(255,255,255,0.82);
+  border: 1px solid rgba(191,214,229,0.95);
+  border-radius: 18px;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.75),
+    0 6px 14px rgba(47,111,159,0.08);
+}
+
+.informes-operacion-card h1 {
+  margin: 0 0 14px;
+  text-align: center;
+  font-size: 1.18rem;
+  line-height: 1.15;
+  color: var(--blue-dark);
+}
+
+.informes-arbol {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.informe-rama {
+  padding: 12px;
+
+  background: linear-gradient(135deg, #FFFFFF 0%, #F5FBFF 100%);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+
+  box-shadow: 0 6px 14px rgba(47,111,159,0.06);
+}
+
+.informe-rama-titulo {
+  margin-bottom: 8px;
+
+  font-size: 0.88rem;
+  font-weight: 950;
+  color: var(--blue-dark);
+
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.informe-rama-titulo::before {
+  content: "▸";
+  color: var(--blue-soft);
+  font-size: 0.9rem;
+}
+
+.informe-hoja {
+  width: 100%;
+  min-height: 46px;
+  margin-top: 6px;
+  padding: 9px 10px;
+
+  border-radius: 12px;
+  font-size: 0.82rem;
+  font-weight: 850;
+
+  background: #6FAED6 !important;
+  color: #FFFFFF !important;
+  border: 1px solid #5C9FC8 !important;
+
+  box-shadow: none !important;
+  transform: none !important;
+  text-align: left;
+}
+
+.informe-hoja:hover {
+  transform: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+.informe-rama-pendiente {
+  opacity: 0.72;
+}
+
+.informe-rama-pendiente .informe-hoja {
+  background: #DDEAF2 !important;
+  color: var(--muted) !important;
+  border-color: #BFD6E5 !important;
+  cursor: not-allowed;
+}
+
 </style>
 </head>
 <body>
@@ -2074,15 +2220,41 @@ linear-gradient(
 
 
 <div id="pantalla-informes" style="display:none;">
-  <div class="header-pantalla">
-    <h1>Informes</h1>
-    <button id="btn-volver-informes" class="btn-volver">Volver</button>
+
+  <div class="informes-nav">
+    <button id="btn-volver-informes" class="nav-btn informes-nav-btn">← Volver</button>
   </div>
 
-  <div style="margin-top:20px; display:flex; flex-direction:column; gap:12px;">
-    <button id="btn-informe-produccion">Producción</button>
-    <button id="btn-informe-animales">Animales</button>
-  </div>
+  <section class="informes-operacion-card">
+    <h1>Informes</h1>
+
+    <div class="informes-arbol">
+
+      <div class="informe-rama">
+        <div class="informe-rama-titulo">Producción</div>
+        <button id="btn-informe-produccion" class="informe-hoja">Producción por fecha / animal</button>
+      </div>
+
+      <div class="informe-rama">
+        <div class="informe-rama-titulo">Animales</div>
+        <button id="btn-informe-animales" class="informe-hoja">Censo y estados</button>
+      </div>
+
+      <div class="informe-rama informe-rama-pendiente">
+        <div class="informe-rama-titulo">Económico</div>
+        <button class="informe-hoja" disabled>Ingresos por mes</button>
+        <button class="informe-hoja" disabled>Precio real por litro</button>
+      </div>
+
+      <div class="informe-rama informe-rama-pendiente">
+        <div class="informe-rama-titulo">Rentabilidad</div>
+        <button class="informe-hoja" disabled>Rentabilidad por animal</button>
+        <button class="informe-hoja" disabled>Rentabilidad por periodo</button>
+      </div>
+
+    </div>
+  </section>
+
 </div>
 
 <div id="pantalla-informe-produccion" style="display:none;">
