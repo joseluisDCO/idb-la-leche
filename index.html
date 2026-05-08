@@ -27,7 +27,11 @@
   --radius: 22px;
   --screen-max: 980px;
   --card-max: 520px;
-  --sticky-nav-top: 96px;
+  --fixed-header-height: 64px;
+  --fixed-connection-height: 32px;
+  --sticky-nav-top: 104px;
+  --sticky-title-top: calc(var(--sticky-nav-top) + 58px);
+  --sticky-search-top: calc(var(--sticky-title-top) + 60px);
 }
 
 * {
@@ -36,7 +40,7 @@
 
 body {
   margin: 0;
-  padding: 0 16px 16px;
+  padding: calc(var(--fixed-header-height) + var(--fixed-connection-height) + 8px) 16px 16px;
   min-height: 100svh;
   font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
   color: var(--ink);
@@ -125,17 +129,23 @@ button:disabled {
 /* ===== Cabecera y conexión ===== */
 
 .app-header {
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 1000;
+  left: 16px;
+  right: 16px;
+  z-index: 2000;
+
+  height: var(--fixed-header-height);
   max-width: var(--screen-max);
-  margin: 0 auto 16px;
+  margin: 0 auto;
   padding: 5px 10px;
+
   display: flex;
   flex-direction: column;
   gap: 1px;
-  background: rgba(255,255,255,0.92);
-  backdrop-filter: blur(10px);
+
+  background: #FFFFFF;
+  backdrop-filter: none;
   border-bottom: 1px solid var(--border);
   box-shadow: 0 6px 18px rgba(23,71,102,0.08);
 }
@@ -176,11 +186,17 @@ button:disabled {
 }
 
 .connection-header {
-  position: sticky;
-  top: 58px;
-  z-index: 999;
+  position: fixed;
+  top: var(--fixed-header-height);
+  left: 16px;
+  right: 16px;
+  z-index: 1999;
+
+  height: var(--fixed-connection-height);
   max-width: var(--screen-max);
-  margin: -16px auto 16px;
+  margin: 0 auto;
+
+  background: #F7FBFF;
 }
 
 #estado-conexion {
@@ -188,13 +204,18 @@ button:disabled {
   align-items: center;
   justify-content: center;
   gap: 16px;
+
   width: 100%;
-  padding: 7px 10px;
+  height: var(--fixed-connection-height);
+  padding: 0 10px;
+
   border-radius: 0 0 14px 14px;
-  background: #e0e0e0;
+  background: #EAF6FF;
   border: 1px solid var(--border);
   border-top: none;
+
   box-shadow: 0 6px 18px rgba(23,71,102,0.08);
+
   font-size: 0.78rem;
   font-weight: 800;
 }
@@ -517,8 +538,8 @@ button:disabled {
   z-index: 998;
   max-width: var(--screen-max);
   margin: -4px auto 8px;
-  background: rgba(247,251,255,0.98);
-  backdrop-filter: blur(10px);
+  background: #F7FBFF;
+  backdrop-filter: none;
   border-bottom: 1px solid var(--border);
   border-radius: 0 0 20px 20px;
   overflow: hidden;
@@ -783,8 +804,8 @@ button:disabled {
   max-width: var(--card-max);
   margin: 0 auto 10px;
   padding-bottom: 8px;
-  background: rgba(247,251,255,0.98);
-  backdrop-filter: blur(10px);
+  background: #F7FBFF;
+  backdrop-filter: none;
   border-radius: 0 0 20px 20px;
   overflow: hidden;
   box-sizing: border-box;
@@ -960,12 +981,12 @@ button:disabled {
 
 .informes-operacion-card > h1 {
   position: sticky !important;
-  top: 154px !important;
+  top: var(--sticky-title-top) !important;
   z-index: 997 !important;
   margin: -16px -16px 16px !important;
   padding: 12px 16px 10px !important;
-  background: rgba(255,255,255,0.96) !important;
-  backdrop-filter: blur(10px);
+  background: #FFFFFF !important;
+  backdrop-filter: none;
   border-bottom: 1px solid rgba(191,214,229,0.95);
   border-radius: 18px 18px 0 0;
   text-align: center;
@@ -1299,8 +1320,14 @@ hr {
 /* ===== Responsive ===== */
 
 @media (max-width: 520px) {
-  body {
-  padding: 0 12px 12px;
+ body {
+  padding: calc(var(--fixed-header-height) + var(--fixed-connection-height) + 8px) 12px 12px;
+}
+
+.app-header,
+.connection-header {
+  left: 12px;
+  right: 12px;
 }
 
   #pantalla-inicio {
@@ -1366,11 +1393,15 @@ hr {
   .mes-ingreso-importe { font-size: 0.68rem; }
 
   .produccion-fecha-titulo-card {
-    top: 148px;
+    top: var(--sticky-title-top);
+    background: #F7FBFF;
+    backdrop-filter: none;
   }
 
   .produccion-fecha-busqueda-card {
-    top: 206px;
+    top: var(--sticky-search-top);
+    background: #FFFFFF;
+    backdrop-filter: none;
   }
 
   .produccion-fecha-filtros input[type="date"] {
