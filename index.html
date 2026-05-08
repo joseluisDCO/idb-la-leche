@@ -385,7 +385,7 @@ button:disabled {
   color: #FFFFFF !important;
 }
 
-..animal-nav,
+.animal-nav,
 .turnos-nav,
 .ingreso-nav,
 .informes-nav,
@@ -986,20 +986,32 @@ button:disabled {
 
 /* ===== Informes ===== */
 
+.informes-nav {
+  margin: 0 auto 0;
+  border-radius: 0;
+  background: #DDEAF2;
+}
+
 .informes-operacion-card > h1 {
   position: sticky !important;
-  top: var(--sticky-title-top) !important;
+  top: calc(var(--sticky-nav-top) + 53px) !important;
   z-index: 997 !important;
+
   margin: -16px -16px 16px !important;
   padding: 12px 16px 10px !important;
+
   background: #FFFFFF !important;
-  backdrop-filter: none;
+  backdrop-filter: none !important;
+
+  border-top: none !important;
   border-bottom: 1px solid rgba(191,214,229,0.95);
-  border-radius: 18px 18px 0 0;
+  border-radius: 0 0 16px 16px;
+
   text-align: center;
   font-size: 1.18rem;
   line-height: 1.15;
   color: var(--blue-dark);
+
   box-shadow: 0 6px 12px rgba(47,111,159,0.06);
 }
 
