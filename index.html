@@ -1103,22 +1103,48 @@ button:disabled {
 
 /* ===== Producción por fecha ===== */
 
+.produccion-fecha-nav {
+  position: sticky;
+  top: var(--sticky-nav-top);
+  z-index: 998;
+
+  width: calc(100% - 20px);
+  max-width: var(--card-max);
+  margin: 0 auto 0;
+  padding: 6px;
+
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+
+  background: #DDEAF2;
+  border: 1px solid #BFD6E5;
+  border-top: none;
+  border-radius: 0;
+
+  box-shadow:
+    0 6px 14px rgba(47,111,159,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.55);
+}
+
 .produccion-fecha-titulo-card {
   position: sticky;
-  top: 154px;
+  top: var(--sticky-title-top, calc(var(--sticky-nav-top) + 53px));
   z-index: 997;
 
   width: calc(100% - 20px);
   max-width: var(--card-max);
   margin: 0 auto 8px;
-  padding: 8px 0 10px;
+  padding: 10px 0 12px;
 
-  background: rgba(247,251,255,0.98);
-  backdrop-filter: blur(10px);
+  background: #F7FBFF;
+  backdrop-filter: none;
 
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
+  border: 1px solid #BFD6E5;
+  border-top: none;
+  border-radius: 0 0 16px 16px;
+
+  box-shadow: 0 6px 14px rgba(47,111,159,0.06);
 }
 
 .produccion-fecha-titulo-card h1 {
@@ -1165,13 +1191,13 @@ button:disabled {
 
 .produccion-fecha-busqueda-card {
   position: sticky;
-  top: 214px;
+  top: var(--sticky-search-top, calc(var(--sticky-nav-top) + 112px));
   z-index: 996;
 
   padding: 18px;
 
-  background: rgba(255,255,255,0.96);
-  backdrop-filter: blur(10px);
+  background: #FFFFFF;
+  backdrop-filter: none;
 }
 
 .produccion-fecha-busqueda-card h2 {
@@ -1206,8 +1232,10 @@ button:disabled {
 }
 
 #btn-buscar-produccion-fecha {
+  width: 100%;
   min-height: 58px;
   margin-bottom: 14px;
+  display: block;
 }
 
 .produccion-fecha-exportar {
@@ -1239,7 +1267,7 @@ button:disabled {
 
 @media (max-width: 520px) {
   .produccion-fecha-titulo-card {
-    top: 148px;
+    top: var(--sticky-title-top, calc(var(--sticky-nav-top) + 53px));
   }
 
   .produccion-fecha-meses-card input[type="month"] {
@@ -1251,7 +1279,7 @@ button:disabled {
   }
 
   .produccion-fecha-busqueda-card {
-    top: 206px;
+    top: var(--sticky-search-top, calc(var(--sticky-nav-top) + 112px));
   }
 
   .produccion-fecha-filtros {
