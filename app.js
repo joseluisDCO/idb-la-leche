@@ -2931,8 +2931,7 @@ function exportarProduccionFechaCSV() {
     return;
   }
 
-  const csv = filas.map(fila => fila.join(';')).join('
-');
+  const csv = filas.map(fila => fila.join(';')).join('');
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
 
@@ -2958,7 +2957,7 @@ async function registrarDesdeCelda(pos) {
     if (!crotal) return;
   }
 
-  const litrosInput = prompt(`Litros para ${crotal}`);
+  const litrosInput = prompt(`Litros para ${crotal}`);z
   if (!litrosInput) return;
 
   const litros = parseFloat(litrosInput);
