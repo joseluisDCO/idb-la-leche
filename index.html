@@ -2144,6 +2144,79 @@ button:disabled {
     inset 0 1px 0 rgba(255,255,255,0.85) !important;
 }
  
+
+/* ===== Solución final: resultados con scroll interno bajo el bloque fijo ===== */
+.resultado-produccion-fecha,
+.resultado-produccion-animal,
+.resultado-informe-animales {
+  width: calc(100% - 20px) !important;
+  max-width: var(--card-max) !important;
+  margin: 0 auto 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  background: #FFFFFF !important;
+  border-radius: 0 0 18px 18px !important;
+  z-index: 1100 !important;
+  box-shadow: 0 8px 18px rgba(47,111,159,0.07);
+}
+
+.resultado-produccion-fecha {
+  --resultado-top: var(--tabla-fecha-top, calc(var(--sticky-search-top) + 245px));
+  position: sticky !important;
+  top: var(--resultado-top) !important;
+  max-height: calc(100svh - var(--resultado-top) - 12px) !important;
+}
+
+.resultado-produccion-animal {
+  --resultado-top: var(--tabla-animal-top, calc(var(--sticky-search-top) + 245px));
+  position: sticky !important;
+  top: var(--resultado-top) !important;
+  max-height: calc(100svh - var(--resultado-top) - 12px) !important;
+}
+
+.resultado-informe-animales {
+  --resultado-top: var(--tabla-censo-top, calc(var(--sticky-search-top) + 245px));
+  position: sticky !important;
+  top: var(--resultado-top) !important;
+  max-height: calc(100svh - var(--resultado-top) - 12px) !important;
+}
+
+.resultado-produccion-fecha:empty,
+.resultado-produccion-animal:empty,
+.resultado-informe-animales:empty {
+  display: none !important;
+}
+
+.resultado-produccion-fecha > div,
+.resultado-produccion-animal > div,
+.resultado-informe-animales > div {
+  border-radius: 0 0 18px 18px !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+}
+
+.tabla-produccion-row,
+.tabla-informe-row {
+  background: #FFFFFF !important;
+}
+
+@media (max-width: 520px) {
+  .resultado-produccion-fecha {
+    --resultado-top: var(--tabla-fecha-top, calc(var(--sticky-search-top) + 240px));
+  }
+
+  .resultado-produccion-animal {
+    --resultado-top: var(--tabla-animal-top, calc(var(--sticky-search-top) + 240px));
+  }
+
+  .resultado-informe-animales {
+    --resultado-top: var(--tabla-censo-top, calc(var(--sticky-search-top) + 240px));
+  }
+}
+
+
 /* ===== Modal ===== */
 
 .modal {
