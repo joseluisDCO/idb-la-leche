@@ -3,8 +3,10 @@ let turnoActual = 1;
 let turnoEditandoActual = null;
 let hayCambiosTurno = false;
 let volverAltaAnimalARegistro = false;
+let volverAltaAnimalACenso = false;
 let posicionesTurnoOriginales = [];
 let ingresoEditandoId = null;
+let crotalRetornoCenso = null;
 import { supabase } from './supabaseClient.js';
 
 async function init() {
@@ -423,6 +425,47 @@ function abrirAltaAnimalDirecto(pos) {
   inputCrotalEstado?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
+
+
+function volverAlCrotalEnCenso() {
+  if (!crotalRetornoCenso) return;
+
+  const fila = Array.from(document.querySelectorAll('.tabla-informe-row'))
+    .find(elemento => elemento.dataset.crotal === crotalRetornoCenso);
+
+  if (fila) {
+    fila.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    fila.classList.add('fila-destacada');
+    setTimeout(() => fila.classList.remove('fila-destacada'), 1800);
+  }
+
+  crotalRetornoCenso = null;
+}
+
+function abrirModificarAnimalDesdeCenso(crotal, estadoActual = 'PRODUCTIVO') {
+  if (!crotal) return;
+
+  volverAltaAnimalACenso = true;
+  volverAltaAnimalARegistro = false;
+  crotalRetornoCenso = String(crotal);
+
+  const pantallaAnimales = document.getElementById('pantalla-informe-animales');
+  const pantallaAlta = document.getElementById('pantalla-alta-animal');
+
+  if (pantallaAnimales) pantallaAnimales.style.display = 'none';
+  if (pantallaAlta) pantallaAlta.style.display = 'block';
+
+  mostrarModoAnimal('modificar');
+
+  const inputCrotalEstado = document.getElementById('input-crotal-estado');
+  const inputEstadoNuevo = document.getElementById('input-estado-nuevo');
+
+  if (inputCrotalEstado) inputCrotalEstado.value = crotal;
+  if (inputEstadoNuevo && estadoActual) inputEstadoNuevo.value = estadoActual;
+
+  inputCrotalEstado?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
 function cerrarModal() {
   const modal = document.getElementById('modal');
   modal.classList.add('oculto');
@@ -771,7 +814,7 @@ async function cargarTurnosParaActualizar() {
     turnosUnicos.forEach(turno => {
       const option = document.createElement('option');
       option.value = String(turno);
-      option.textContent = `Turno ${turno}`;
+      option.textContent = String(turno);
       selectTurno.appendChild(option);
     });
 
@@ -1072,7 +1115,42 @@ function inicializarFechasPorDefecto() {
   if (inputHasta) inputHasta.value = formato(hoy);
 }
 
+
+function actualizarTopsStickyResultados() {
+  const root = document.documentElement;
+
+  const setTop = (selectorCard, variable) => {
+    const card = document.querySelector(selectorCard);
+    if (!card) return;
+
+    const base = getComputedStyle(card).top;
+    const topBase = Number.parseFloat(base) || 0;
+    const altura = Math.ceil(card.offsetHeight || 0);
+    root.style.setProperty(variable, `${topBase + altura}px`);
+  };
+
+  setTop('.produccion-fecha-busqueda-card', '--tabla-fecha-top');
+  setTop('.produccion-animal-busqueda-card', '--tabla-animal-top');
+  setTop('.animales-busqueda-card', '--tabla-censo-top');
+}
+
+window.addEventListener('resize', actualizarTopsStickyResultados);
+
+
+function mostrarCabeceraResultados(idCabecera, visible = true) {
+  const cabecera = document.getElementById(idCabecera);
+  if (cabecera) cabecera.style.display = visible ? 'grid' : 'none';
+}
+
+function ocultarCabecerasResultados() {
+  mostrarCabeceraResultados('cabecera-produccion-fecha', false);
+  mostrarCabeceraResultados('cabecera-produccion-animal', false);
+  mostrarCabeceraResultados('cabecera-informe-animales', false);
+}
+
+
 async function buscarProduccionPorFecha() {
+  mostrarCabeceraResultados('cabecera-produccion-fecha', false);
   const desde = document.getElementById('filtro-fecha-desde')?.value;
   const hasta = document.getElementById('filtro-fecha-hasta')?.value;
   const contenedor = document.getElementById('resultado-produccion-fecha');
@@ -1112,13 +1190,16 @@ async function buscarProduccionPorFecha() {
   const fechasOrdenadas = Object.keys(resumen).sort();
   contenedor.innerHTML = '';
 
-  const cabecera = document.getElementById('cabecera-produccion-fecha');
-  if (cabecera) cabecera.style.display = 'grid';
-
   const tabla = document.createElement('div');
   tabla.className = 'tabla-produccion-fecha';
 
-  tabla.innerHTML = `<div class="tabla-produccion-body"></div>`;
+  tabla.innerHTML = `
+    <div class="tabla-produccion-header">
+      <div>Fecha</div>
+      <div class="tabla-produccion-litros-col">Producción</div>
+    </div>
+    <div class="tabla-produccion-body"></div>
+  `;
 
   const cuerpo = tabla.querySelector('.tabla-produccion-body');
 
@@ -1128,6 +1209,7 @@ async function buscarProduccionPorFecha() {
     sinDatos.textContent = 'Sin datos en ese periodo';
     cuerpo.appendChild(sinDatos);
     contenedor.appendChild(tabla);
+    requestAnimationFrame(actualizarTopsStickyResultados);
     return;
   }
 
@@ -1153,6 +1235,8 @@ async function buscarProduccionPorFecha() {
   });
 
   contenedor.appendChild(tabla);
+  mostrarCabeceraResultados('cabecera-produccion-fecha', true);
+  requestAnimationFrame(actualizarTopsStickyResultados);
 }
 
 function inicializarFechasPorDefectoAnimal() {
@@ -1169,6 +1253,7 @@ function inicializarFechasPorDefectoAnimal() {
 }
 
 async function buscarProduccionPorAnimal() {
+  mostrarCabeceraResultados('cabecera-produccion-animal', false);
   const desde = document.getElementById('filtro-animal-desde')?.value;
   const hasta = document.getElementById('filtro-animal-hasta')?.value;
   const contenedor = document.getElementById('resultado-produccion-animal');
@@ -1217,12 +1302,16 @@ async function buscarProduccionPorAnimal() {
 
   contenedor.innerHTML = '';
 
-  const cabecera = document.getElementById('cabecera-produccion-animal');
-  if (cabecera) cabecera.style.display = 'grid';
-
   const tabla = document.createElement('div');
   tabla.className = 'tabla-informe tabla-produccion-animal';
-  tabla.innerHTML = `<div class="tabla-informe-body"></div>`;
+  tabla.innerHTML = `
+    <div class="tabla-informe-header" style="grid-template-columns: 1fr 1fr 1fr;">
+      <div>Crotal</div>
+      <div class="tabla-informe-col-right">Total</div>
+      <div class="tabla-informe-col-right">Media</div>
+    </div>
+    <div class="tabla-informe-body"></div>
+  `;
 
   const cuerpo = tabla.querySelector('.tabla-informe-body');
 
@@ -1232,6 +1321,7 @@ async function buscarProduccionPorAnimal() {
     sinDatos.textContent = 'Sin datos en ese periodo';
     cuerpo.appendChild(sinDatos);
     contenedor.appendChild(tabla);
+    requestAnimationFrame(actualizarTopsStickyResultados);
     return;
   }
 
@@ -1253,6 +1343,8 @@ async function buscarProduccionPorAnimal() {
   });
 
   contenedor.appendChild(tabla);
+  mostrarCabeceraResultados('cabecera-produccion-animal', true);
+  requestAnimationFrame(actualizarTopsStickyResultados);
 }
 
 function exportarProduccionAnimalCSV() {
@@ -1275,7 +1367,7 @@ function exportarProduccionAnimalCSV() {
     ['Informe', 'Producción por animal'],
     ['Periodo', `${formatearFechaES(desde)} - ${formatearFechaES(hasta)}`],
     [],
-    ['Crotal', 'Total litros', 'Media litros']
+    ['Crotal', 'Total en litros', 'Media en litros']
   ];
 
   filasTabla.forEach(fila => {
@@ -1325,11 +1417,7 @@ function abrirPDFTabla({ titulo, periodo, columnas, filas }) {
   }
 
   const th = columnas.map((col, index) => `<th class="${index > 0 ? 'num' : ''}">${col}</th>`).join('');
-  const trs = filas.map(fila => `
-    <tr>
-      ${fila.map((celda, index) => `<td class="${index > 0 ? 'num' : ''}">${celda}</td>`).join('')}
-    </tr>
-  `).join('');
+  const trs = filas.map(fila => `<tr>${fila.map((celda, index) => `<td class="${index > 0 ? 'num' : ''}">${celda}</td>`).join('')}</tr>`).join('');
 
   ventana.document.write(`
     <html>
@@ -1358,7 +1446,7 @@ function abrirPDFTabla({ titulo, periodo, columnas, filas }) {
             margin-bottom: 18px;
           }
           button {
-            min-height: 54px;
+            min-height: 56px;
             padding: 12px 14px;
             border: none;
             border-radius: 12px;
@@ -1404,7 +1492,8 @@ function abrirPDFTabla({ titulo, periodo, columnas, filas }) {
             border: 1px solid #E4F1F8;
             white-space: nowrap;
           }
-          th.num, td.num {
+          th.num,
+          td.num {
             text-align: right;
           }
           @media (max-width: 520px) {
@@ -1413,7 +1502,7 @@ function abrirPDFTabla({ titulo, periodo, columnas, filas }) {
             .meta { font-size: 15px; }
             table { font-size: 14px; }
             th, td { padding: 10px 8px; }
-            button { min-height: 56px; font-size: 15px; }
+            button { min-height: 58px; font-size: 15px; }
           }
           @media print {
             .acciones { display: none; }
@@ -1450,13 +1539,13 @@ function exportarProduccionFechaPDF() {
 
   const filas = Array.from(filasTabla).map(fila => [
     formatearFechaES(fila.dataset.fecha || ''),
-    `${formatearNumeroES(Number(fila.dataset.litros || 0), 2)} L`
+    formatearNumeroES(Number(fila.dataset.litros || 0), 2)
   ]);
 
   abrirPDFTabla({
     titulo: 'Producción por fecha',
     periodo: `Periodo: ${formatearFechaES(desde)} - ${formatearFechaES(hasta)}`,
-    columnas: ['Fecha', 'Producción'],
+    columnas: ['Fecha', 'Producción en litros'],
     filas
   });
 }
@@ -1469,14 +1558,14 @@ function exportarProduccionAnimalPDF() {
 
   const filas = Array.from(filasTabla).map(fila => [
     fila.dataset.crotal || '',
-    `${formatearNumeroES(Number(fila.dataset.total || 0), 2)} L`,
-    `${formatearNumeroES(Number(fila.dataset.media || 0), 2)} L`
+    formatearNumeroES(Number(fila.dataset.total || 0), 2),
+    formatearNumeroES(Number(fila.dataset.media || 0), 2)
   ]);
 
   abrirPDFTabla({
     titulo: 'Producción por animal',
     periodo: `Periodo: ${formatearFechaES(desde)} - ${formatearFechaES(hasta)}`,
-    columnas: ['Crotal', 'Total', 'Media'],
+    columnas: ['Crotal', 'Total en litros', 'Media en litros'],
     filas
   });
 }
@@ -1605,25 +1694,21 @@ async function pintarGraficoProduccionFecha() {
   if (!canvas) return;
 
   const ctx = canvas.getContext('2d');
-
   canvas.width = canvas.offsetWidth;
   canvas.height = canvas.offsetHeight;
 
   const mesBase = document.getElementById('grafico-mes-base')?.value;
   const mesComparacion = document.getElementById('grafico-mes-comparacion')?.value;
-
   if (!mesBase || !mesComparacion) return;
 
   const obtenerFinMes = (mesTexto) => {
     const [anio, mes] = mesTexto.split('-').map(Number);
     const ultimoDia = new Date(anio, mes, 0).getDate();
-
     return `${anio}-${String(mes).padStart(2, '0')}-${String(ultimoDia).padStart(2, '0')}`;
   };
 
   const inicioBase = `${mesBase}-01`;
   const finBase = obtenerFinMes(mesBase);
-
   const inicioComp = `${mesComparacion}-01`;
   const finComp = obtenerFinMes(mesComparacion);
 
@@ -1651,94 +1736,87 @@ async function pintarGraficoProduccionFecha() {
 
   const agruparPorDia = (data) => {
     const mapa = {};
-
     (data || []).forEach(registro => {
       const dia = registro.fecha.slice(8, 10);
       mapa[dia] = (mapa[dia] || 0) + Number(registro.litros || 0);
     });
-
     return mapa;
   };
 
   const baseMap = agruparPorDia(dataBase);
   const compMap = agruparPorDia(dataComp);
-
-  const dias = Array.from(
-    { length: 31 },
-    (_, i) => String(i + 1).padStart(2, '0')
-  );
-
+  const dias = Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, '0'));
   const baseValores = dias.map(dia => baseMap[dia] || 0);
   const compValores = dias.map(dia => compMap[dia] || 0);
 
   const w = canvas.width;
   const h = canvas.height;
-
-  const paddingLeft = 34;
+  const paddingLeft = 50;
   const paddingRight = 16;
-  const paddingTop = 32;
+  const paddingTop = 34;
   const paddingBottom = 30;
-
   const chartW = w - paddingLeft - paddingRight;
   const chartH = h - paddingTop - paddingBottom;
-
   const max = Math.max(...baseValores, ...compValores, 1);
+  const marcaMax = Math.round(max);
+  const marca90 = Math.round(max * 0.9);
 
-  const xParaIndice = (i) => {
-    return paddingLeft + (i / (dias.length - 1)) * chartW;
-  };
-
-  const yParaValor = (valor) => {
-    return paddingTop + chartH - (valor / max) * chartH;
-  };
+  const xParaIndice = (i) => paddingLeft + (i / (dias.length - 1)) * chartW;
+  const yParaValor = (valor) => paddingTop + chartH - (valor / max) * chartH;
 
   const etiquetaMes = (mesTexto) => {
-    const meses = [
-      'Ene', 'Feb', 'Mar', 'Abr',
-      'May', 'Jun', 'Jul', 'Ago',
-      'Sep', 'Oct', 'Nov', 'Dic'
-    ];
-
+    const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
     const [anio, mes] = mesTexto.split('-');
     return `${meses[Number(mes) - 1]}/${String(anio).slice(-2)}`;
   };
 
   ctx.clearRect(0, 0, w, h);
-
-  // Fondo
   ctx.fillStyle = '#ffffff';
   ctx.fillRect(0, 0, w, h);
 
-  // Ejes
   ctx.strokeStyle = '#D7EAF5';
   ctx.lineWidth = 1;
-
   ctx.beginPath();
   ctx.moveTo(paddingLeft, paddingTop);
   ctx.lineTo(paddingLeft, h - paddingBottom);
   ctx.lineTo(w - paddingRight, h - paddingBottom);
   ctx.stroke();
 
-  // Líneas horizontales suaves
-  ctx.strokeStyle = 'rgba(215,234,245,0.75)';
-  ctx.lineWidth = 1;
+  const marcas = [
+    { valor: marcaMax, y: yParaValor(max) },
+    { valor: marca90, y: yParaValor(max * 0.9) }
+  ];
 
+  ctx.font = 'bold 10px Arial';
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'middle';
+
+  marcas.forEach(marca => {
+    ctx.strokeStyle = 'rgba(107,131,148,0.22)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(paddingLeft, marca.y);
+    ctx.lineTo(w - paddingRight, marca.y);
+    ctx.stroke();
+
+    ctx.fillStyle = '#6B8394';
+    ctx.fillText(`${marca.valor} L`, paddingLeft - 7, marca.y);
+  });
+
+  ctx.strokeStyle = 'rgba(215,234,245,0.55)';
+  ctx.lineWidth = 1;
   for (let i = 1; i <= 3; i++) {
     const y = paddingTop + (chartH / 4) * i;
-
     ctx.beginPath();
     ctx.moveTo(paddingLeft, y);
     ctx.lineTo(w - paddingRight, y);
     ctx.stroke();
   }
 
-  // Área del mes de comparación
   ctx.beginPath();
-
   compValores.forEach((valor, i) => {
     const x = xParaIndice(i);
     const y = yParaValor(valor);
-
     if (i === 0) {
       ctx.moveTo(x, h - paddingBottom);
       ctx.lineTo(x, y);
@@ -1746,73 +1824,55 @@ async function pintarGraficoProduccionFecha() {
       ctx.lineTo(x, y);
     }
   });
-
   ctx.lineTo(xParaIndice(compValores.length - 1), h - paddingBottom);
   ctx.closePath();
-
   ctx.fillStyle = 'rgba(255,122,0,0.22)';
   ctx.fill();
 
-  // Borde superior del área de comparación
   ctx.beginPath();
-
   compValores.forEach((valor, i) => {
     const x = xParaIndice(i);
     const y = yParaValor(valor);
-
     if (i === 0) ctx.moveTo(x, y);
     else ctx.lineTo(x, y);
   });
-
   ctx.strokeStyle = '#FF7A00';
   ctx.lineWidth = 2;
   ctx.stroke();
 
-  // Línea del mes base
   ctx.beginPath();
-
   baseValores.forEach((valor, i) => {
     const x = xParaIndice(i);
     const y = yParaValor(valor);
-
     if (i === 0) ctx.moveTo(x, y);
     else ctx.lineTo(x, y);
   });
-
   ctx.strokeStyle = '#2F8FC6';
   ctx.lineWidth = 3;
   ctx.stroke();
 
-  // Puntos del mes base
   ctx.fillStyle = '#2F8FC6';
-
   baseValores.forEach((valor, i) => {
     if (valor <= 0) return;
-
     const x = xParaIndice(i);
     const y = yParaValor(valor);
-
     ctx.beginPath();
     ctx.arc(x, y, 2.5, 0, Math.PI * 2);
     ctx.fill();
   });
 
-  // Etiquetas de días
   ctx.fillStyle = '#6B8394';
   ctx.font = '10px Arial';
   ctx.textAlign = 'center';
-
+  ctx.textBaseline = 'alphabetic';
   dias.forEach((dia, i) => {
     if (i % 5 === 0 || dia === '31') {
-      const x = xParaIndice(i);
-      ctx.fillText(String(i + 1), x, h - 8);
+      ctx.fillText(String(i + 1), xParaIndice(i), h - 8);
     }
   });
 
-  // Leyenda simplificada
   ctx.textAlign = 'left';
   ctx.font = '12px Arial';
-
   ctx.fillStyle = '#2F8FC6';
   ctx.fillRect(paddingLeft, 8, 10, 10);
   ctx.fillStyle = '#183243';
@@ -1822,12 +1882,6 @@ async function pintarGraficoProduccionFecha() {
   ctx.fillRect(paddingLeft + 92, 8, 10, 10);
   ctx.fillStyle = '#183243';
   ctx.fillText(etiquetaMes(mesComparacion), paddingLeft + 108, 17);
-
-  // Valor máximo de referencia
-  ctx.textAlign = 'left';
-  ctx.font = 'bold 11px Arial';
-  ctx.fillStyle = '#6B8394';
-  ctx.fillText(`Máx. ${formatearNumeroES(max, 0)} L`, 4, paddingTop + 4);
 }
 
 async function pintarGraficoTopAnimales() {
@@ -1835,13 +1889,11 @@ async function pintarGraficoTopAnimales() {
   if (!canvas) return;
 
   const ctx = canvas.getContext('2d');
-
   canvas.width = canvas.offsetWidth;
   canvas.height = canvas.offsetHeight;
 
   const desde = document.getElementById('filtro-animal-desde')?.value;
   const hasta = document.getElementById('filtro-animal-hasta')?.value;
-
   if (!desde || !hasta) return;
 
   const { data, error } = await supabase
@@ -1856,7 +1908,6 @@ async function pintarGraficoTopAnimales() {
   }
 
   const mapa = {};
-
   (data || []).forEach(r => {
     mapa[r.crotal] = (mapa[r.crotal] || 0) + Number(r.litros || 0);
   });
@@ -1868,10 +1919,10 @@ async function pintarGraficoTopAnimales() {
 
   const w = canvas.width;
   const h = canvas.height;
-  const paddingLeft = 64;
-  const paddingRight = 18;
-  const paddingTop = 18;
-  const paddingBottom = 16;
+  const paddingLeft = 38;
+  const paddingRight = 14;
+  const paddingTop = 24;
+  const paddingBottom = 42;
   const chartW = w - paddingLeft - paddingRight;
   const chartH = h - paddingTop - paddingBottom;
 
@@ -1888,43 +1939,58 @@ async function pintarGraficoTopAnimales() {
   }
 
   const max = Math.max(...top.map(t => t.litros), 1);
-  const gap = chartH / top.length;
-  const barHeight = Math.max(18, gap * 0.55);
+  const maxRedondeado = Math.round(max);
+  const guia = Math.round(max * 0.9);
   const colores = ['#0E4D74', '#2F8FC6', '#6FAED6', '#8ED8FF', '#BFEAFF'];
+  const yParaValor = (valor) => paddingTop + chartH - (valor / max) * chartH;
 
-  top.forEach((item, i) => {
-    const y = paddingTop + i * gap + 4;
-    const ancho = Math.max(8, (item.litros / max) * chartW);
+  ctx.strokeStyle = '#D7EAF5';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(paddingLeft, paddingTop);
+  ctx.lineTo(paddingLeft, paddingTop + chartH);
+  ctx.lineTo(w - paddingRight, paddingTop + chartH);
+  ctx.stroke();
+
+  [maxRedondeado, guia].forEach((valor, idx) => {
+    const y = idx === 0 ? yParaValor(max) : yParaValor(max * 0.9);
+    ctx.strokeStyle = idx === 0 ? 'rgba(107,131,148,0.28)' : 'rgba(107,131,148,0.18)';
+    ctx.beginPath();
+    ctx.moveTo(paddingLeft, y);
+    ctx.lineTo(w - paddingRight, y);
+    ctx.stroke();
 
     ctx.fillStyle = '#6B8394';
-    ctx.font = 'bold 12px Arial';
+    ctx.font = 'bold 9px Arial';
     ctx.textAlign = 'right';
-    ctx.fillText(`#${i + 1}`, paddingLeft - 40, y + barHeight / 2 + 4);
-
-    ctx.fillStyle = '#183243';
-    ctx.textAlign = 'left';
-    ctx.fillText(item.crotal, paddingLeft - 34, y + barHeight / 2 + 4);
-
-    ctx.fillStyle = 'rgba(23,71,102,0.08)';
-    ctx.fillRect(paddingLeft, y + 4, chartW, barHeight);
-
-    ctx.fillStyle = colores[i] || '#2F8FC6';
-    ctx.fillRect(paddingLeft, y, ancho, barHeight);
-
-    ctx.fillStyle = '#183243';
-    ctx.font = 'bold 12px Arial';
-    ctx.textAlign = 'right';
-    ctx.fillText(`${formatearNumeroES(item.litros, 1)} L`, w - paddingRight, y + barHeight / 2 + 4);
-
-    ctx.strokeStyle = '#EAF6FF';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(paddingLeft, y + barHeight + 8);
-    ctx.lineTo(w - paddingRight, y + barHeight + 8);
-    ctx.stroke();
+    ctx.textBaseline = 'middle';
+    ctx.fillText(`${valor}`, paddingLeft - 6, y);
   });
 
-  ctx.textAlign = 'left';
+  const slot = chartW / top.length;
+  const barW = Math.min(42, slot * 0.58);
+
+  top.forEach((item, i) => {
+    const x = paddingLeft + i * slot + (slot - barW) / 2;
+    const barH = (item.litros / max) * chartH;
+    const y = paddingTop + chartH - barH;
+
+    ctx.fillStyle = 'rgba(23,71,102,0.08)';
+    ctx.fillRect(x, paddingTop, barW, chartH);
+
+    ctx.fillStyle = colores[i] || '#2F8FC6';
+    ctx.fillRect(x, y, barW, barH);
+
+    ctx.fillStyle = '#183243';
+    ctx.font = 'bold 10px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillText(`${Math.round(item.litros)}`, x + barW / 2, Math.max(12, y - 6));
+
+    ctx.fillStyle = '#6B8394';
+    ctx.font = 'bold 9px Arial';
+    ctx.fillText(String(item.crotal), x + barW / 2, h - 10);
+  });
 }
 
 function inicializarFechasAnimalMesActual() {
@@ -2407,6 +2473,16 @@ if (btnVolverAlta) {
     const pantallaAlta = document.getElementById('pantalla-alta-animal');
 
     if (pantallaAlta) pantallaAlta.style.display = 'none';
+
+    if (volverAltaAnimalACenso) {
+      const pantallaAnimales = document.getElementById('pantalla-informe-animales');
+      if (pantallaAnimales) pantallaAnimales.style.display = 'block';
+      volverAltaAnimalACenso = false;
+      await cargarResumenEstadosAnimales();
+      await buscarInformeAnimales();
+      requestAnimationFrame(volverAlCrotalEnCenso);
+      return;
+    }
 
     if (volverAltaAnimalARegistro) {
       const header = document.getElementById('header-ordeno');
@@ -3063,12 +3139,6 @@ async function cargarResumenEstadosAnimales() {
 
   if (contenedor) {
     contenedor.innerHTML = '';
-    ordenEstados.forEach(estado => {
-      const chip = document.createElement('div');
-      chip.className = 'resumen-estado-chip';
-      chip.textContent = `${etiquetaEstadoAnimal(estado)} · ${resumen[estado] || 0}`;
-      contenedor.appendChild(chip);
-    });
   }
 
   if (!canvas) return;
@@ -3123,6 +3193,7 @@ async function cargarResumenEstadosAnimales() {
 }
 
 async function buscarInformeAnimales() {
+  mostrarCabeceraResultados('cabecera-informe-animales', false);
   const filtroCrotal = document.getElementById('filtro-animales-crotal')?.value.trim() || '';
   const filtroEstado = document.getElementById('filtro-animales-estado')?.value || '';
   const contenedor = document.getElementById('resultado-informe-animales');
@@ -3152,12 +3223,15 @@ async function buscarInformeAnimales() {
 
   contenedor.innerHTML = '';
 
-  const cabecera = document.getElementById('cabecera-informe-animales');
-  if (cabecera) cabecera.style.display = 'grid';
-
   const tabla = document.createElement('div');
   tabla.className = 'tabla-informe tabla-animales';
-  tabla.innerHTML = `<div class="tabla-informe-body"></div>`;
+  tabla.innerHTML = `
+    <div class="tabla-informe-header" style="grid-template-columns: 1fr 1fr;">
+      <div>Crotal</div>
+      <div class="tabla-informe-col-right">Estado</div>
+    </div>
+    <div class="tabla-informe-body"></div>
+  `;
 
   const cuerpo = tabla.querySelector('.tabla-informe-body');
 
@@ -3167,6 +3241,7 @@ async function buscarInformeAnimales() {
     sinDatos.textContent = 'Sin resultados';
     cuerpo.appendChild(sinDatos);
     contenedor.appendChild(tabla);
+    requestAnimationFrame(actualizarTopsStickyResultados);
     return;
   }
 
@@ -3177,15 +3252,23 @@ async function buscarInformeAnimales() {
     fila.dataset.crotal = animal.crotal || '';
     fila.dataset.estado = animal.estado || '';
 
+    fila.classList.add('fila-editable');
+    fila.title = 'Modificar estado del animal';
     fila.innerHTML = `
-      <div>${animal.crotal || '-'}</div>
+      <div><span class="crotal-editable">${animal.crotal || '-'} <span class="icono-editar-crotal" aria-hidden="true">✎</span></span></div>
       <div class="tabla-informe-col-right">${etiquetaEstadoAnimal(animal.estado)}</div>
     `;
+
+    fila.onclick = () => {
+      abrirModificarAnimalDesdeCenso(animal.crotal || '', animal.estado || 'PRODUCTIVO');
+    };
 
     cuerpo.appendChild(fila);
   });
 
   contenedor.appendChild(tabla);
+  mostrarCabeceraResultados('cabecera-informe-animales', true);
+  requestAnimationFrame(actualizarTopsStickyResultados);
 }
 
 function exportarProduccionFechaCSV() {
@@ -3208,13 +3291,13 @@ function exportarProduccionFechaCSV() {
     ['Informe', 'Producción por fecha'],
     ['Periodo', `${formatearFechaES(desde)} - ${formatearFechaES(hasta)}`],
     [],
-    ['Fecha', 'Producción']
+    ['Fecha', 'Producción en litros']
   ];
 
   filasTabla.forEach(fila => {
     filas.push([
       formatearFechaES(fila.dataset.fecha || ''),
-      `${formatearNumeroES(Number(fila.dataset.litros || 0), 2)} L`
+      formatearNumeroES(Number(fila.dataset.litros || 0), 2)
     ]);
   });
 

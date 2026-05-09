@@ -1839,20 +1839,215 @@ button:disabled {
   }
 }
 
-/* ===== Ajuste quirúrgico final: cabeceras de resultados dentro del bloque fijo ===== */
+
+
+/* ===== Ajustes 260509 v3 ===== */
+.produccion-fecha-meses-card {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  align-items: end;
+}
+
+.produccion-fecha-meses-card > div { min-width: 0; }
+
+.produccion-fecha-meses-card label {
+  display: block;
+  margin: 0 0 6px !important;
+  text-align: center;
+  font-size: 0.86rem;
+}
+
+.produccion-fecha-meses-card input[type="month"] {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  text-align: center;
+  font-size: 14px;
+  padding: 11px 8px;
+}
+
+#resumen-estados-animales,
+.resumen-estados-animales {
+  display: none !important;
+}
+
+.animales-busqueda-card,
+.produccion-animal-busqueda-card {
+  position: sticky;
+  top: var(--sticky-search-top);
+  z-index: 996;
+  background: #FFFFFF;
+  backdrop-filter: none;
+}
+
+.tabla-informe-header {
+  position: sticky !important;
+  top: calc(var(--sticky-search-top) + 252px) !important;
+  z-index: 995;
+  background: #DDEAF2 !important;
+}
+
+.tabla-animales .tabla-informe-header,
+.tabla-produccion-animal .tabla-informe-header {
+  top: calc(var(--sticky-search-top) + 252px) !important;
+}
+
+.tabla-informe-row.fila-editable { cursor: pointer; }
+.tabla-informe-row.fila-editable:hover { background: #F7FBFF; }
+
+.crotal-editable {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.icono-editar-crotal {
+  font-size: 0.72rem;
+  color: var(--blue-soft);
+  opacity: 0.85;
+}
+
+.produccion-animal-grafico-card canvas { height: 230px !important; }
+
+@media (max-width: 520px) {
+  .produccion-fecha-meses-card { gap: 10px !important; }
+  .produccion-fecha-meses-card input[type="month"] {
+    font-size: 13px;
+    padding: 10px 5px;
+  }
+
+  .tabla-informe-header,
+  .tabla-animales .tabla-informe-header,
+  .tabla-produccion-animal .tabla-informe-header {
+    top: calc(var(--sticky-search-top) + 246px) !important;
+  }
+}
+
+
+/* ===== Ajustes finales pre-feedback primos ===== */
+
+.ingreso-periodo-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  width: 100% !important;
+}
+
+.ingreso-periodo-grid > div {
+  min-width: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+}
+
+.ingreso-periodo-grid label {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.ingreso-periodo-grid input[type="date"] {
+  font-size: 14px !important;
+  padding: 10px 6px !important;
+  text-align: center !important;
+}
+
+.produccion-fecha-busqueda-card,
+.produccion-animal-busqueda-card,
+.animales-busqueda-card {
+  z-index: 1200 !important;
+  background: #FFFFFF !important;
+  box-shadow:
+    0 10px 18px rgba(47,111,159,0.10),
+    inset 0 1px 0 rgba(255,255,255,0.75) !important;
+}
+
+.tabla-produccion-header,
+.tabla-informe-header {
+  position: sticky !important;
+  z-index: 1190 !important;
+  background: #DDEAF2 !important;
+  box-shadow: 0 4px 10px rgba(47,111,159,0.08) !important;
+}
+
+.tabla-produccion-header {
+  top: var(--tabla-fecha-top, calc(var(--sticky-search-top) + 245px)) !important;
+}
+
+.tabla-produccion-animal .tabla-informe-header {
+  top: var(--tabla-animal-top, calc(var(--sticky-search-top) + 245px)) !important;
+}
+
+.tabla-animales .tabla-informe-header {
+  top: var(--tabla-censo-top, calc(var(--sticky-search-top) + 245px)) !important;
+}
+
+.resultado-produccion-fecha,
+.resultado-produccion-animal,
+.resultado-informe-animales {
+  position: relative;
+  z-index: 1;
+}
+
+.crotal-editable {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icono-editar-crotal {
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #EAF6FF 0%, #DDEAF2 100%);
+  border: 1px solid #BFD6E5;
+  color: var(--blue-dark);
+  font-size: 0.82rem;
+  font-weight: 950;
+  opacity: 1;
+}
+
+.fila-destacada {
+  animation: destacar-fila 1.6s ease-in-out 1;
+}
+
+@keyframes destacar-fila {
+  0%, 100% { background: #FFFFFF; }
+  30%, 70% { background: #EAF6FF; }
+}
+
+@media (max-width: 520px) {
+  .tabla-produccion-header {
+    top: var(--tabla-fecha-top, calc(var(--sticky-search-top) + 240px)) !important;
+  }
+
+  .tabla-produccion-animal .tabla-informe-header {
+    top: var(--tabla-animal-top, calc(var(--sticky-search-top) + 240px)) !important;
+  }
+
+  .tabla-animales .tabla-informe-header {
+    top: var(--tabla-censo-top, calc(var(--sticky-search-top) + 240px)) !important;
+  }
+}
+
+/* ===== Ajuste final estable: cabeceras de resultado dentro del bloque fijo ===== */
 
 .produccion-fecha-busqueda-card,
 .produccion-animal-busqueda-card,
 .animales-busqueda-card {
   position: sticky !important;
   top: var(--sticky-search-top) !important;
-  z-index: 1600 !important;
+  z-index: 1500 !important;
   background: #FFFFFF !important;
-  border: 1px solid rgba(191,214,229,0.95) !important;
+  backdrop-filter: none !important;
+  overflow: visible !important;
   box-shadow:
     0 12px 22px rgba(47,111,159,0.14),
     inset 0 1px 0 rgba(255,255,255,0.85) !important;
-  overflow: visible !important;
 }
 
 .cabecera-resultados {
@@ -1862,7 +2057,7 @@ button:disabled {
   border-top: 1px solid #BFD6E5;
   border-bottom: 1px solid #BFD6E5;
   color: var(--blue-dark);
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   font-weight: 950;
   box-shadow: 0 4px 10px rgba(47,111,159,0.08);
 }
@@ -1895,17 +2090,17 @@ button:disabled {
   background: #FFFFFF !important;
 }
 
-.tabla-produccion-body,
-.tabla-informe-body {
-  background: #FFFFFF !important;
-}
-
 .resultado-produccion-fecha,
 .resultado-produccion-animal,
 .resultado-informe-animales {
   position: relative !important;
   z-index: 1 !important;
   margin-top: 0 !important;
+}
+
+.tabla-produccion-body,
+.tabla-informe-body {
+  background: #FFFFFF !important;
 }
 
 .tabla-produccion-row:first-child,
@@ -1919,7 +2114,7 @@ button:disabled {
     margin-right: -18px;
     margin-bottom: -18px;
     padding: 12px 18px;
-    font-size: 0.88rem;
+    font-size: 0.86rem;
   }
 }
 
@@ -2225,7 +2420,7 @@ hr {
         </div>
       </div>
 
-      <div class="turnos-guia">Introduce el nº de crotal en cada posición</div>
+      <div class="turnos-guia">Actualice el número de crotal en cada posición</div>
     </div>
 
     <div class="turnos-grid-wrapper">
@@ -2399,11 +2594,15 @@ hr {
   </section>
 
   <section class="produccion-fecha-meses-card">
-    <label>Comparo el mes de</label>
-    <input id="grafico-mes-base" type="month" />
+    <div>
+      <label>Comparo</label>
+      <input id="grafico-mes-base" type="month" />
+    </div>
 
-    <label>Con el mes de</label>
-    <input id="grafico-mes-comparacion" type="month" />
+    <div>
+      <label>Con</label>
+      <input id="grafico-mes-comparacion" type="month" />
+    </div>
   </section>
 
   <section class="produccion-fecha-busqueda-card">
@@ -2450,7 +2649,7 @@ hr {
   </div>
 
   <section class="produccion-animal-grafico-card">
-    <h2>Vacas con más producción</h2>
+    <h2>Vacas con más producción (Litros)</h2>
     <canvas id="grafico-top-animales" height="220"></canvas>
   </section>
 
