@@ -1176,6 +1176,8 @@ async function buscarProduccionPorAnimal() {
   const hasta = document.getElementById('filtro-animal-hasta')?.value;
   const contenedor = document.getElementById('resultado-produccion-animal');
 
+  if (!contenedor) return;
+
   if (!desde || !hasta) {
     alert('Selecciona fechas válidas');
     return;
@@ -1201,11 +1203,7 @@ async function buscarProduccionPorAnimal() {
     const fecha = reg.fecha;
 
     if (!resumen[crotal]) {
-      resumen[crotal] = {
-        crotal,
-        total: 0,
-        fechas: new Set()
-      };
+      resumen[crotal] = { crotal, total: 0, fechas: new Set() };
     }
 
     resumen[crotal].total += litros;
@@ -1222,66 +1220,207 @@ async function buscarProduccionPorAnimal() {
 
   contenedor.innerHTML = '';
 
+  const tabla = document.createElement('div');
+  tabla.className = 'tabla-informe tabla-produccion-animal';
+  tabla.innerHTML = `
+    <div class="tabla-informe-header" style="grid-template-columns: 1fr 1fr 1fr;">
+      <div>Crotal</div>
+      <div class="tabla-informe-col-right">Total</div>
+      <div class="tabla-informe-col-right">Media</div>
+    </div>
+    <div class="tabla-informe-body"></div>
+  `;
+
+  const cuerpo = tabla.querySelector('.tabla-informe-body');
+
   if (resultado.length === 0) {
-    contenedor.textContent = 'Sin datos en ese periodo';
+    const sinDatos = document.createElement('div');
+    sinDatos.className = 'sin-datos-tabla';
+    sinDatos.textContent = 'Sin datos en ese periodo';
+    cuerpo.appendChild(sinDatos);
+    contenedor.appendChild(tabla);
     return;
   }
 
   resultado.forEach(item => {
-    const div = document.createElement('div');
-    div.style.padding = '10px';
-    div.style.background = '#fff';
-    div.style.border = '1px solid #ddd';
-    div.style.borderRadius = '8px';
-    div.style.marginBottom = '8px';
+    const fila = document.createElement('div');
+    fila.className = 'tabla-informe-row';
+    fila.style.gridTemplateColumns = '1fr 1fr 1fr';
+    fila.dataset.crotal = item.crotal;
+    fila.dataset.total = String(item.total);
+    fila.dataset.media = String(item.media);
 
-    div.textContent = `${item.crotal} → Total: ${item.total.toFixed(2)} L | Media: ${item.media.toFixed(2)} L`;
+    fila.innerHTML = `
+      <div>${item.crotal}</div>
+      <div class="tabla-informe-col-right">${formatearNumeroES(item.total, 2)} L</div>
+      <div class="tabla-informe-col-right">${formatearNumeroES(item.media, 2)} L</div>
+    `;
 
-    contenedor.appendChild(div);
+    cuerpo.appendChild(fila);
   });
+
+  contenedor.appendChild(tabla);
 }
 
 function exportarProduccionAnimalCSV() {
   const resultado = document.getElementById('resultado-produccion-animal');
+  const desde = document.getElementById('filtro-animal-desde')?.value || '';
+  const hasta = document.getElementById('filtro-animal-hasta')?.value || '';
 
-  if (!resultado || !resultado.children.length) {
+  if (!resultado) {
     alert('No hay datos para exportar');
     return;
   }
 
-  const filas = [['Crotal', 'Total Litros', 'Media Litros']];
+  const filasTabla = resultado.querySelectorAll('.tabla-informe-row');
+  if (!filasTabla.length) {
+    alert('No hay datos para exportar');
+    return;
+  }
 
-  Array.from(resultado.children).forEach(div => {
-    const texto = div.textContent || '';
+  const filas = [
+    ['Informe', 'Producción por animal'],
+    ['Periodo', `${formatearFechaES(desde)} - ${formatearFechaES(hasta)}`],
+    [],
+    ['Crotal', 'Total litros', 'Media litros']
+  ];
 
-    // Formato actual:
-    // 1001 → Total: 120.00 L | Media: 15.00 L
-
-    const partes = texto.split('→');
-    if (partes.length !== 2) return;
-
-    const crotal = partes[0].trim();
-
-    const datos = partes[1].split('|');
-
-    const total = datos[0]?.replace('Total:', '').replace('L', '').trim();
-    const media = datos[1]?.replace('Media:', '').replace('L', '').trim();
-
-    filas.push([crotal, total, media]);
+  filasTabla.forEach(fila => {
+    filas.push([
+      fila.dataset.crotal || '',
+      formatearNumeroES(Number(fila.dataset.total || 0), 2),
+      formatearNumeroES(Number(fila.dataset.media || 0), 2)
+    ]);
   });
 
-  const csv = filas.map(fila => fila.join(';')).join('\n');
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
+  descargarCSV('produccion_por_animal.csv', filas);
+}
 
+
+function formatearFechaES(fechaISO) {
+  if (!fechaISO || !String(fechaISO).includes('-')) return fechaISO || '-';
+  const [anio, mes, dia] = String(fechaISO).split('-');
+  return `${dia}/${mes}/${anio}`;
+}
+
+function descargarCSV(nombreArchivo, filas) {
+  const csv = filas
+    .map(fila => fila.map(celda => `"${String(celda ?? '').replace(/"/g, '""')}"`).join(';'))
+    .join('\n');
+
+  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
   const enlace = document.createElement('a');
   enlace.href = url;
-  enlace.download = 'produccion_por_animal.csv';
+  enlace.download = nombreArchivo;
   document.body.appendChild(enlace);
   enlace.click();
   document.body.removeChild(enlace);
-
   URL.revokeObjectURL(url);
+}
+
+function abrirPDFTabla({ titulo, periodo, columnas, filas }) {
+  if (!filas || !filas.length) {
+    alert('No hay datos para exportar');
+    return;
+  }
+
+  const ventana = window.open('', '_blank');
+  if (!ventana) {
+    alert('El navegador ha bloqueado la ventana del PDF');
+    return;
+  }
+
+  const th = columnas.map(col => `<th>${col}</th>`).join('');
+  const trs = filas.map(fila => `<tr>${fila.map(celda => `<td>${celda}</td>`).join('')}</tr>`).join('');
+
+  ventana.document.write(`
+    <html>
+      <head>
+        <title>${titulo}</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 24px; color: #183243; }
+          h1 { margin: 0 0 8px; color: #174766; }
+          .meta { margin-bottom: 18px; color: #6B8394; font-weight: 700; }
+          table { width: 100%; border-collapse: collapse; font-size: 13px; }
+          th { background: #DDEAF2; color: #174766; text-align: left; padding: 10px; border: 1px solid #BFD6E5; }
+          td { padding: 9px 10px; border: 1px solid #E4F1F8; }
+          td:not(:first-child), th:not(:first-child) { text-align: right; }
+          .acciones { margin-bottom: 20px; }
+          button { padding: 10px 14px; border: none; border-radius: 8px; cursor: pointer; margin-right: 8px; }
+          @media print { .acciones { display: none; } }
+        </style>
+      </head>
+      <body>
+        <div class="acciones">
+          <button onclick="window.print()">Imprimir / Guardar PDF</button>
+          <button onclick="window.close()">Cerrar</button>
+        </div>
+        <h1>${titulo}</h1>
+        <div class="meta">${periodo || ''}<br>Generado: ${new Date().toLocaleString('es-ES')}</div>
+        <table><thead><tr>${th}</tr></thead><tbody>${trs}</tbody></table>
+      </body>
+    </html>
+  `);
+  ventana.document.close();
+}
+
+function exportarProduccionFechaPDF() {
+  const resultado = document.getElementById('resultado-produccion-fecha');
+  const desde = document.getElementById('filtro-fecha-desde')?.value || '';
+  const hasta = document.getElementById('filtro-fecha-hasta')?.value || '';
+  const filasTabla = resultado?.querySelectorAll('.tabla-produccion-row') || [];
+
+  const filas = Array.from(filasTabla).map(fila => [
+    formatearFechaES(fila.dataset.fecha || ''),
+    `${formatearNumeroES(Number(fila.dataset.litros || 0), 2)} L`
+  ]);
+
+  abrirPDFTabla({
+    titulo: 'Producción por fecha',
+    periodo: `Periodo: ${formatearFechaES(desde)} - ${formatearFechaES(hasta)}`,
+    columnas: ['Fecha', 'Producción'],
+    filas
+  });
+}
+
+function exportarProduccionAnimalPDF() {
+  const resultado = document.getElementById('resultado-produccion-animal');
+  const desde = document.getElementById('filtro-animal-desde')?.value || '';
+  const hasta = document.getElementById('filtro-animal-hasta')?.value || '';
+  const filasTabla = resultado?.querySelectorAll('.tabla-informe-row') || [];
+
+  const filas = Array.from(filasTabla).map(fila => [
+    fila.dataset.crotal || '',
+    `${formatearNumeroES(Number(fila.dataset.total || 0), 2)} L`,
+    `${formatearNumeroES(Number(fila.dataset.media || 0), 2)} L`
+  ]);
+
+  abrirPDFTabla({
+    titulo: 'Producción por animal',
+    periodo: `Periodo: ${formatearFechaES(desde)} - ${formatearFechaES(hasta)}`,
+    columnas: ['Crotal', 'Total', 'Media'],
+    filas
+  });
+}
+
+function exportarAnimalesPDF() {
+  const resultado = document.getElementById('resultado-informe-animales');
+  const filtroCrotal = document.getElementById('filtro-animales-crotal')?.value.trim() || 'Todos';
+  const filtroEstado = document.getElementById('filtro-animales-estado')?.value || 'Todos';
+  const filasTabla = resultado?.querySelectorAll('.tabla-informe-row') || [];
+
+  const filas = Array.from(filasTabla).map(fila => [
+    fila.dataset.crotal || '',
+    etiquetaEstadoAnimal(fila.dataset.estado || '')
+  ]);
+
+  abrirPDFTabla({
+    titulo: 'Censo de animales',
+    periodo: `Filtro crotal: ${filtroCrotal} · Estado: ${filtroEstado}`,
+    columnas: ['Crotal', 'Estado'],
+    filas
+  });
 }
 
 function exportarResultadoPDF(titulo, resultadoId) {
@@ -1337,35 +1476,36 @@ function exportarResultadoPDF(titulo, resultadoId) {
 
 function exportarAnimalesCSV() {
   const resultado = document.getElementById('resultado-informe-animales');
+  const filtroCrotal = document.getElementById('filtro-animales-crotal')?.value.trim() || 'Todos';
+  const filtroEstado = document.getElementById('filtro-animales-estado')?.value || 'Todos';
 
-  if (!resultado || !resultado.children.length) {
+  if (!resultado) {
     alert('No hay datos para exportar');
     return;
   }
 
-  const filas = [['Crotal', 'Estado']];
+  const filasTabla = resultado.querySelectorAll('.tabla-informe-row');
+  if (!filasTabla.length) {
+    alert('No hay datos para exportar');
+    return;
+  }
 
-  Array.from(resultado.children).forEach(div => {
-    const texto = div.textContent || '';
-    const partes = texto.split('→');
+  const filas = [
+    ['Informe', 'Censo de animales'],
+    ['Filtro crotal', filtroCrotal],
+    ['Filtro estado', filtroEstado],
+    [],
+    ['Crotal', 'Estado']
+  ];
 
-    if (partes.length === 2) {
-      filas.push([partes[0].trim(), partes[1].trim()]);
-    }
+  filasTabla.forEach(fila => {
+    filas.push([
+      fila.dataset.crotal || '',
+      etiquetaEstadoAnimal(fila.dataset.estado || '')
+    ]);
   });
 
-  const csv = filas.map(fila => fila.join(';')).join('\n');
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-
-  const enlace = document.createElement('a');
-  enlace.href = url;
-  enlace.download = 'informe_animales.csv';
-  document.body.appendChild(enlace);
-  enlace.click();
-  document.body.removeChild(enlace);
-
-  URL.revokeObjectURL(url);
+  descargarCSV('censo_animales.csv', filas);
 }
 
 function inicializarMesesGraficoProduccion() {
@@ -1605,6 +1745,12 @@ async function pintarGraficoProduccionFecha() {
   ctx.fillRect(paddingLeft + 92, 8, 10, 10);
   ctx.fillStyle = '#183243';
   ctx.fillText(etiquetaMes(mesComparacion), paddingLeft + 108, 17);
+
+  // Valor máximo de referencia
+  ctx.textAlign = 'left';
+  ctx.font = 'bold 11px Arial';
+  ctx.fillStyle = '#6B8394';
+  ctx.fillText(`Máx. ${formatearNumeroES(max, 0)} L`, 4, paddingTop + 4);
 }
 
 async function pintarGraficoTopAnimales() {
@@ -1643,66 +1789,61 @@ async function pintarGraficoTopAnimales() {
     .sort((a, b) => b.litros - a.litros)
     .slice(0, 5);
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
   const w = canvas.width;
   const h = canvas.height;
-  const padding = 34;
-  const chartW = w - padding * 2;
-  const chartH = h - padding * 2;
+  const paddingLeft = 64;
+  const paddingRight = 18;
+  const paddingTop = 18;
+  const paddingBottom = 16;
+  const chartW = w - paddingLeft - paddingRight;
+  const chartH = h - paddingTop - paddingBottom;
 
+  ctx.clearRect(0, 0, w, h);
   ctx.fillStyle = '#ffffff';
   ctx.fillRect(0, 0, w, h);
-
-  ctx.fillStyle = '#183243';
-  ctx.font = 'bold 14px Arial';
-  ctx.textAlign = 'left';
-  ctx.fillText('Top 5 producción acumulada', padding, 20);
 
   if (top.length === 0) {
     ctx.font = '13px Arial';
     ctx.fillStyle = '#6B8394';
-    ctx.fillText('Sin datos en el periodo seleccionado', padding, 55);
+    ctx.textAlign = 'center';
+    ctx.fillText('Sin datos en el periodo seleccionado', w / 2, h / 2);
     return;
   }
 
   const max = Math.max(...top.map(t => t.litros), 1);
   const gap = chartH / top.length;
-  const barHeight = Math.max(18, gap * 0.48);
+  const barHeight = Math.max(18, gap * 0.55);
   const colores = ['#0E4D74', '#2F8FC6', '#6FAED6', '#8ED8FF', '#BFEAFF'];
 
   top.forEach((item, i) => {
-    const y = padding + 18 + i * gap;
-    const ancho = Math.max(4, (item.litros / max) * chartW);
+    const y = paddingTop + i * gap + 4;
+    const ancho = Math.max(8, (item.litros / max) * chartW);
 
-    ctx.fillStyle = 'rgba(23,71,102,0.10)';
-    ctx.fillRect(padding + 3, y + 4, ancho, barHeight);
+    ctx.fillStyle = '#6B8394';
+    ctx.font = 'bold 12px Arial';
+    ctx.textAlign = 'right';
+    ctx.fillText(`#${i + 1}`, paddingLeft - 40, y + barHeight / 2 + 4);
+
+    ctx.fillStyle = '#183243';
+    ctx.textAlign = 'left';
+    ctx.fillText(item.crotal, paddingLeft - 34, y + barHeight / 2 + 4);
+
+    ctx.fillStyle = 'rgba(23,71,102,0.08)';
+    ctx.fillRect(paddingLeft, y + 4, chartW, barHeight);
 
     ctx.fillStyle = colores[i] || '#2F8FC6';
-    ctx.fillRect(padding, y, ancho, barHeight);
-
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 12px Arial';
-    ctx.textAlign = 'left';
-
-    // Texto dentro de la barra (crotal + ranking)
-    ctx.fillText(`#${i + 1} · ${item.crotal}`, padding + 6, y + barHeight / 2 + 4);
+    ctx.fillRect(paddingLeft, y, ancho, barHeight);
 
     ctx.fillStyle = '#183243';
     ctx.font = 'bold 12px Arial';
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 12px Arial';
     ctx.textAlign = 'right';
+    ctx.fillText(`${formatearNumeroES(item.litros, 1)} L`, w - paddingRight, y + barHeight / 2 + 4);
 
-    // Evita que se salga si la barra es pequeña
-    const posTexto = Math.max(padding + ancho - 6, padding + 80);
-
-ctx.fillText(`${item.litros.toFixed(1)} L`, posTexto, y + barHeight / 2 + 4);
     ctx.strokeStyle = '#EAF6FF';
     ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(padding, y + barHeight + 8);
-    ctx.lineTo(w - padding, y + barHeight + 8);
+    ctx.moveTo(paddingLeft, y + barHeight + 8);
+    ctx.lineTo(w - paddingRight, y + barHeight + 8);
     ctx.stroke();
   });
 
@@ -2578,14 +2719,14 @@ if (btnExportarExcelFecha) {
 const btnExportarPdfFecha = document.getElementById('btn-exportar-pdf-fecha');
 if (btnExportarPdfFecha) {
   btnExportarPdfFecha.onclick = () => {
-    exportarResultadoPDF('Producción por fecha', 'resultado-produccion-fecha');
+    exportarProduccionFechaPDF();
   };
 }
 
 const btnExportarPdfAnimal = document.getElementById('btn-exportar-pdf-animal');
 if (btnExportarPdfAnimal) {
   btnExportarPdfAnimal.onclick = () => {
-    exportarResultadoPDF('Producción por animal', 'resultado-produccion-animal');
+    exportarProduccionAnimalPDF();
   };
 }
 
@@ -2625,7 +2766,7 @@ if (btnExportarExcelAnimales) {
 const btnExportarPdfAnimales = document.getElementById('btn-exportar-pdf-animales');
 if (btnExportarPdfAnimales) {
   btnExportarPdfAnimales.onclick = () => {
-    exportarResultadoPDF('Informe de animales', 'resultado-informe-animales');
+    exportarAnimalesPDF();
   };
 }
 
@@ -2810,8 +2951,17 @@ async function actualizarEstadoAnimal() {
   if (inputEstadoNuevo) inputEstadoNuevo.value = 'PRODUCTIVO';
 }
 
+function etiquetaEstadoAnimal(estado) {
+  return estado === 'PRODUCTIVO' ? 'Productivo' :
+    estado === 'SECADO_PREPARTO' ? 'Secado preparto' :
+    estado === 'NO_PRODUCTIVO' ? 'No productivo' :
+    estado === 'BAJA' ? 'Baja' :
+    estado || 'Sin estado';
+}
+
 async function cargarResumenEstadosAnimales() {
   const contenedor = document.getElementById('resumen-estados-animales');
+  const canvas = document.getElementById('grafico-estados-animales');
 
   const { data, error } = await supabase
     .from('animales')
@@ -2822,30 +2972,72 @@ async function cargarResumenEstadosAnimales() {
     return;
   }
 
-  const resumen = {};
+  const ordenEstados = ['PRODUCTIVO', 'SECADO_PREPARTO', 'NO_PRODUCTIVO', 'BAJA'];
+  const resumen = Object.fromEntries(ordenEstados.map(estado => [estado, 0]));
 
   (data || []).forEach(a => {
     const estado = a.estado || 'SIN_ESTADO';
-
-    if (!resumen[estado]) {
-      resumen[estado] = 0;
-    }
-
-    resumen[estado]++;
+    resumen[estado] = (resumen[estado] || 0) + 1;
   });
 
-  contenedor.innerHTML = '';
+  if (contenedor) {
+    contenedor.innerHTML = '';
+    ordenEstados.forEach(estado => {
+      const chip = document.createElement('div');
+      chip.className = 'resumen-estado-chip';
+      chip.textContent = `${etiquetaEstadoAnimal(estado)} · ${resumen[estado] || 0}`;
+      contenedor.appendChild(chip);
+    });
+  }
 
-  Object.entries(resumen).forEach(([estado, cantidad]) => {
-    const div = document.createElement('div');
-    div.style.padding = '8px';
-    div.style.background = '#fff';
-    div.style.border = '1px solid #ddd';
-    div.style.borderRadius = '6px';
+  if (!canvas) return;
 
-    div.textContent = `${estado} → ${cantidad}`;
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
 
-    contenedor.appendChild(div);
+  const w = canvas.width;
+  const h = canvas.height;
+  const paddingLeft = 34;
+  const paddingRight = 16;
+  const paddingTop = 18;
+  const paddingBottom = 48;
+  const chartW = w - paddingLeft - paddingRight;
+  const chartH = h - paddingTop - paddingBottom;
+  const valores = ordenEstados.map(estado => resumen[estado] || 0);
+  const max = Math.max(...valores, 1);
+  const colores = ['#0E4D74', '#2F8FC6', '#6FAED6', '#BFEAFF'];
+
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(0, 0, w, h);
+
+  const barW = chartW / ordenEstados.length * 0.56;
+  const gap = chartW / ordenEstados.length;
+
+  ordenEstados.forEach((estado, i) => {
+    const valor = resumen[estado] || 0;
+    const x = paddingLeft + i * gap + (gap - barW) / 2;
+    const barH = (valor / max) * chartH;
+    const y = paddingTop + chartH - barH;
+
+    ctx.fillStyle = 'rgba(23,71,102,0.08)';
+    ctx.fillRect(x, paddingTop, barW, chartH);
+
+    ctx.fillStyle = colores[i];
+    ctx.fillRect(x, y, barW, barH);
+
+    ctx.fillStyle = '#183243';
+    ctx.font = 'bold 13px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(String(valor), x + barW / 2, y - 6);
+
+    ctx.fillStyle = '#6B8394';
+    ctx.font = 'bold 10px Arial';
+    const etiqueta = estado === 'PRODUCTIVO' ? 'Prod.' :
+      estado === 'SECADO_PREPARTO' ? 'Sec.' :
+      estado === 'NO_PRODUCTIVO' ? 'No prod.' : 'Baja';
+    ctx.fillText(etiqueta, x + barW / 2, h - 22);
   });
 }
 
@@ -2853,6 +3045,8 @@ async function buscarInformeAnimales() {
   const filtroCrotal = document.getElementById('filtro-animales-crotal')?.value.trim() || '';
   const filtroEstado = document.getElementById('filtro-animales-estado')?.value || '';
   const contenedor = document.getElementById('resultado-informe-animales');
+
+  if (!contenedor) return;
 
   let query = supabase
     .from('animales')
@@ -2877,72 +3071,76 @@ async function buscarInformeAnimales() {
 
   contenedor.innerHTML = '';
 
+  const tabla = document.createElement('div');
+  tabla.className = 'tabla-informe tabla-animales';
+  tabla.innerHTML = `
+    <div class="tabla-informe-header" style="grid-template-columns: 1fr 1fr;">
+      <div>Crotal</div>
+      <div class="tabla-informe-col-right">Estado</div>
+    </div>
+    <div class="tabla-informe-body"></div>
+  `;
+
+  const cuerpo = tabla.querySelector('.tabla-informe-body');
+
   if (!data || data.length === 0) {
-    contenedor.textContent = 'Sin resultados';
+    const sinDatos = document.createElement('div');
+    sinDatos.className = 'sin-datos-tabla';
+    sinDatos.textContent = 'Sin resultados';
+    cuerpo.appendChild(sinDatos);
+    contenedor.appendChild(tabla);
     return;
   }
 
   data.forEach(animal => {
-    const div = document.createElement('div');
-    div.style.padding = '10px';
-    div.style.background = '#fff';
-    div.style.border = '1px solid #ddd';
-    div.style.borderRadius = '8px';
-    div.style.marginBottom = '8px';
+    const fila = document.createElement('div');
+    fila.className = 'tabla-informe-row';
+    fila.style.gridTemplateColumns = '1fr 1fr';
+    fila.dataset.crotal = animal.crotal || '';
+    fila.dataset.estado = animal.estado || '';
 
-    div.textContent = `${animal.crotal} → ${animal.estado}`;
+    fila.innerHTML = `
+      <div>${animal.crotal || '-'}</div>
+      <div class="tabla-informe-col-right">${etiquetaEstadoAnimal(animal.estado)}</div>
+    `;
 
-    contenedor.appendChild(div);
+    cuerpo.appendChild(fila);
   });
+
+  contenedor.appendChild(tabla);
 }
 
 function exportarProduccionFechaCSV() {
   const resultado = document.getElementById('resultado-produccion-fecha');
+  const desde = document.getElementById('filtro-fecha-desde')?.value || '';
+  const hasta = document.getElementById('filtro-fecha-hasta')?.value || '';
 
   if (!resultado) {
     alert('No hay datos para exportar');
     return;
   }
 
-  const filas = [['Fecha', 'Litros']];
   const filasTabla = resultado.querySelectorAll('.tabla-produccion-row');
-
-  if (filasTabla.length) {
-    filasTabla.forEach(fila => {
-      const fecha = fila.dataset.fecha || fila.querySelector('.tabla-produccion-fecha-col')?.textContent?.trim() || '';
-      const litros = fila.dataset.litros || fila.querySelector('.tabla-produccion-litros-col')?.textContent?.replace('L', '').trim() || '';
-      filas.push([fecha, litros]);
-    });
-  } else {
-    Array.from(resultado.children).forEach(div => {
-      const texto = div.textContent || '';
-      const partes = texto.split('→');
-
-      if (partes.length === 2) {
-        const fecha = partes[0].trim();
-        const litros = partes[1].replace('L', '').trim();
-        filas.push([fecha, litros]);
-      }
-    });
-  }
-
-  if (filas.length <= 1) {
+  if (!filasTabla.length) {
     alert('No hay datos para exportar');
     return;
   }
 
-  const csv = filas.map(fila => fila.join(';')).join('');
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
+  const filas = [
+    ['Informe', 'Producción por fecha'],
+    ['Periodo', `${formatearFechaES(desde)} - ${formatearFechaES(hasta)}`],
+    [],
+    ['Fecha', 'Producción']
+  ];
 
-  const enlace = document.createElement('a');
-  enlace.href = url;
-  enlace.download = 'produccion_por_fecha.csv';
-  document.body.appendChild(enlace);
-  enlace.click();
-  document.body.removeChild(enlace);
+  filasTabla.forEach(fila => {
+    filas.push([
+      formatearFechaES(fila.dataset.fecha || ''),
+      `${formatearNumeroES(Number(fila.dataset.litros || 0), 2)} L`
+    ]);
+  });
 
-  URL.revokeObjectURL(url);
+  descargarCSV('produccion_por_fecha.csv', filas);
 }
 
 arrancarApp();
@@ -2957,7 +3155,7 @@ async function registrarDesdeCelda(pos) {
     if (!crotal) return;
   }
 
-  const litrosInput = prompt(`Litros para ${crotal}`);z
+  const litrosInput = prompt(`Litros para ${crotal}`);
   if (!litrosInput) return;
 
   const litros = parseFloat(litrosInput);

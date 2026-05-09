@@ -4,8 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>iDB La Leche</title>
-  <link rel="manifest" href="/manifest.json">
-  <link rel="apple-touch-icon" href="/icon-192.png">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" sizes="192x192" href="./icon-192.png">
+  <link rel="apple-touch-icon" sizes="512x512" href="./icon-512.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
  <style>
 :root {
   --milk: #FFFFFF;
@@ -1596,6 +1599,246 @@ button:disabled {
   font-weight: 850;
 }
 
+
+
+/* ===== Informes nuevos: Producción por animal y Censo ===== */
+#pantalla-produccion-animal,
+#pantalla-informe-animales {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  overflow: visible !important;
+}
+
+#pantalla-produccion-animal::before,
+#pantalla-informe-animales::before {
+  display: none !important;
+}
+
+.produccion-animal-top-fijo,
+.animales-top-fijo {
+  position: sticky;
+  top: var(--sticky-nav-top);
+  z-index: 998;
+  width: calc(100% - 20px);
+  max-width: var(--card-max);
+  margin: 0 auto 12px;
+  background: #F7FBFF;
+  border: 1px solid #BFD6E5;
+  border-top: none;
+  border-radius: 0 0 18px 18px;
+  box-shadow: 0 6px 14px rgba(47,111,159,0.08);
+  overflow: hidden;
+}
+
+.produccion-animal-nav,
+.animales-nav {
+  width: 100%;
+  margin: 0;
+  padding: 6px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  background: #DDEAF2;
+  border-bottom: 1px solid #BFD6E5;
+}
+
+.produccion-animal-titulo-card,
+.animales-titulo-card {
+  padding: 12px 16px 14px;
+  background: #FFFFFF;
+}
+
+.produccion-animal-titulo-card h1,
+.animales-titulo-card h1 {
+  margin: 0;
+  text-align: center;
+  font-size: 1.22rem;
+  line-height: 1.15;
+  font-weight: 950;
+  color: var(--blue-dark);
+}
+
+.produccion-animal-grafico-card,
+.produccion-animal-busqueda-card,
+.animales-resumen-card,
+.animales-busqueda-card {
+  width: calc(100% - 20px);
+  max-width: var(--card-max);
+  margin: 0 auto 12px;
+  padding: 16px;
+  background: rgba(255,255,255,0.88);
+  border: 1px solid rgba(191,214,229,0.95);
+  border-radius: 18px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.75), 0 6px 14px rgba(47,111,159,0.08);
+}
+
+.produccion-animal-grafico-card h2,
+.produccion-animal-busqueda-card h2,
+.animales-resumen-card h2,
+.animales-busqueda-card h2 {
+  margin: 0 0 14px;
+  text-align: center;
+  font-size: 1rem;
+  color: var(--blue-dark);
+}
+
+.produccion-animal-grafico-card canvas,
+.animales-resumen-card canvas {
+  width: 100%;
+  height: 210px;
+  display: block;
+  background: #FFFFFF;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+}
+
+.animales-resumen-card canvas {
+  height: 190px;
+}
+
+.resumen-estados-animales {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.resumen-estado-chip {
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: #EAF6FF;
+  border: 1px solid #C6DEEE;
+  font-size: 0.75rem;
+  font-weight: 850;
+  color: var(--blue-dark);
+  text-align: center;
+}
+
+.produccion-animal-filtros,
+.animales-filtros {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.produccion-animal-filtros > div,
+.animales-filtros > div {
+  min-width: 0;
+}
+
+.produccion-animal-filtros label,
+.animales-filtros label {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.produccion-animal-filtros input[type="date"],
+.animales-filtros input,
+.animales-filtros select {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+#btn-buscar-produccion-animal,
+#btn-buscar-informe-animales {
+  width: 100%;
+  min-height: 58px;
+  margin-bottom: 14px;
+  display: block;
+}
+
+.produccion-animal-exportar,
+.animales-exportar {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.produccion-animal-exportar button,
+.animales-exportar button {
+  width: 100%;
+  min-height: 54px;
+}
+
+.resultado-produccion-animal,
+.resultado-informe-animales {
+  width: calc(100% - 20px);
+  max-width: var(--card-max);
+  margin: 12px auto 0;
+}
+
+.tabla-informe {
+  background: rgba(255,255,255,0.92);
+  border: 1px solid rgba(191,214,229,0.95);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 8px 18px rgba(47,111,159,0.07);
+}
+
+.tabla-informe-header,
+.tabla-informe-row {
+  display: grid;
+  gap: 10px;
+  align-items: center;
+}
+
+.tabla-informe-header {
+  position: static !important;
+  padding: 10px 14px;
+  background: #DDEAF2;
+  border-bottom: 1px solid #BFD6E5;
+  color: var(--blue-dark);
+  font-size: 0.82rem;
+  font-weight: 950;
+}
+
+.tabla-informe-row {
+  padding: 12px 14px;
+  background: #FFFFFF;
+  border-bottom: 1px solid #E4F1F8;
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.tabla-informe-row:last-child {
+  border-bottom: none;
+}
+
+.tabla-informe-col-right {
+  text-align: right;
+  color: var(--blue-dark);
+  font-weight: 950;
+}
+
+.tabla-produccion-header {
+  position: static !important;
+  top: auto !important;
+}
+
+@media (max-width: 520px) {
+  .produccion-animal-filtros,
+  .animales-filtros {
+    gap: 10px;
+  }
+
+  .produccion-animal-filtros input[type="date"],
+  .animales-filtros input,
+  .animales-filtros select {
+    -webkit-appearance: none;
+    appearance: none;
+    font-size: 13px;
+    padding: 10px 6px;
+  }
+}
+
 /* ===== Modal ===== */
 
 .modal {
@@ -2106,65 +2349,95 @@ hr {
 </div>
 
 <div id="pantalla-produccion-animal" style="display:none;">
-  <div class="header-pantalla">
-    <h1>Producción por animal</h1>
-    <button id="btn-volver-produccion-animal" class="btn-volver">Volver</button>
+  <div class="produccion-animal-top-fijo">
+    <div class="produccion-animal-nav">
+      <button id="btn-volver-produccion-animal" class="nav-btn produccion-animal-nav-btn">← Volver</button>
+    </div>
+
+    <section class="produccion-animal-titulo-card">
+      <h1>Producción por animal</h1>
+    </section>
   </div>
 
-  <div style="margin-top:20px; display:flex; flex-direction:column; gap:12px;">
-    <div style="display:flex; flex-direction:column; gap:10px;">
-      <h2 style="font-size:1rem;">Top 5 vacas más productivas</h2>
-      <canvas id="grafico-top-animales" height="220" style="width:100%; background:#ffffff; border:1px solid var(--border); border-radius:18px;"></canvas>
-    </div>
-    
-    <label>Desde</label>
-    <input id="filtro-animal-desde" type="date" />
+  <section class="produccion-animal-grafico-card">
+    <h2>Vacas con más producción</h2>
+    <canvas id="grafico-top-animales" height="220"></canvas>
+  </section>
 
-    <label>Hasta</label>
-    <input id="filtro-animal-hasta" type="date" />
+  <section class="produccion-animal-busqueda-card">
+    <h2>Buscar producción</h2>
+
+    <div class="produccion-animal-filtros">
+      <div>
+        <label>Desde</label>
+        <input id="filtro-animal-desde" type="date" />
+      </div>
+
+      <div>
+        <label>Hasta</label>
+        <input id="filtro-animal-hasta" type="date" />
+      </div>
+    </div>
 
     <button id="btn-buscar-produccion-animal">Buscar</button>
 
-<div style="display:flex; gap:10px;">
-  <button id="btn-exportar-excel-animal">Exportar Excel</button>
-  <button id="btn-exportar-pdf-animal">Exportar PDF</button>
-</div>
+    <div class="produccion-animal-exportar">
+      <button id="btn-exportar-excel-animal">Exportar Excel</button>
+      <button id="btn-exportar-pdf-animal">Exportar PDF</button>
+    </div>
+  </section>
 
-<div id="resultado-produccion-animal" style="margin-top:20px;"></div>
-  </div>
+  <div id="resultado-produccion-animal" class="resultado-produccion-animal"></div>
 </div>
 
 <div id="pantalla-informe-animales" style="display:none;">
-  <div class="header-pantalla">
-    <h1>Animales</h1>
-    <button id="btn-volver-informe-animales" class="btn-volver">Volver</button>
+  <div class="animales-top-fijo">
+    <div class="animales-nav">
+      <button id="btn-volver-informe-animales" class="nav-btn animales-nav-btn">← Volver</button>
+    </div>
+
+    <section class="animales-titulo-card">
+      <h1>Censo de animales</h1>
+    </section>
   </div>
 
-  <div style="margin-top:20px; display:flex; flex-direction:column; gap:12px;">
-    <div id="resumen-estados-animales" style="display:flex; flex-direction:column; gap:8px;"></div>
+  <section class="animales-resumen-card">
+    <h2>Animales por estado</h2>
+    <canvas id="grafico-estados-animales" height="190"></canvas>
+    <div id="resumen-estados-animales" class="resumen-estados-animales"></div>
+  </section>
 
-    <label>Filtrar por crotal</label>
-    <input id="filtro-animales-crotal" type="text" placeholder="Ej: 1001" />
+  <section class="animales-busqueda-card">
+    <h2>Buscar animales</h2>
 
-    <label>Filtrar por estado</label>
-    <select id="filtro-animales-estado">
-      <option value="">Todos</option>
-      <option value="PRODUCTIVO">Productivo</option>
-      <option value="SECADO_PREPARTO">Secado Preparto</option>
-      <option value="NO_PRODUCTIVO">No Productivo</option>
-      <option value="BAJA">Baja</option>
-    </select>
+    <div class="animales-filtros">
+      <div>
+        <label>Filtrar por crotal</label>
+        <input id="filtro-animales-crotal" type="text" placeholder="Ej: 1001" />
+      </div>
+
+      <div>
+        <label>Filtrar por estado</label>
+        <select id="filtro-animales-estado">
+          <option value="">Todos</option>
+          <option value="PRODUCTIVO">Productivo</option>
+          <option value="SECADO_PREPARTO">Secado Preparto</option>
+          <option value="NO_PRODUCTIVO">No Productivo</option>
+          <option value="BAJA">Baja</option>
+        </select>
+      </div>
+    </div>
 
     <button id="btn-buscar-informe-animales">Buscar</button>
 
-    <div id="resultado-informe-animales" style="margin-top:20px;"></div>
-
-    <div style="display:flex; gap:10px;">
+    <div class="animales-exportar">
       <button id="btn-exportar-excel-animales">Exportar Excel</button>
       <button id="btn-exportar-pdf-animales">Exportar PDF</button>
     </div>
-    </div>
-  </div>
+  </section>
+
+  <div id="resultado-informe-animales" class="resultado-informe-animales"></div>
+</div>
 
   <div id="bloque-ordeno-fijo" style="display:none;">
     <div id="header-ordeno" style="display:none;">
