@@ -6,6 +6,7 @@ let volverAltaAnimalARegistro = false;
 let volverAltaAnimalACenso = false;
 let posicionesTurnoOriginales = [];
 let ingresoEditandoId = null;
+let crotalRetornoCenso = null;
 import { supabase } from './supabaseClient.js';
 
 async function init() {
@@ -425,11 +426,28 @@ function abrirAltaAnimalDirecto(pos) {
 }
 
 
+
+function volverAlCrotalEnCenso() {
+  if (!crotalRetornoCenso) return;
+
+  const fila = Array.from(document.querySelectorAll('.tabla-informe-row'))
+    .find(elemento => elemento.dataset.crotal === crotalRetornoCenso);
+
+  if (fila) {
+    fila.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    fila.classList.add('fila-destacada');
+    setTimeout(() => fila.classList.remove('fila-destacada'), 1800);
+  }
+
+  crotalRetornoCenso = null;
+}
+
 function abrirModificarAnimalDesdeCenso(crotal, estadoActual = 'PRODUCTIVO') {
   if (!crotal) return;
 
   volverAltaAnimalACenso = true;
   volverAltaAnimalARegistro = false;
+  crotalRetornoCenso = String(crotal);
 
   const pantallaAnimales = document.getElementById('pantalla-informe-animales');
   const pantallaAlta = document.getElementById('pantalla-alta-animal');
@@ -796,7 +814,7 @@ async function cargarTurnosParaActualizar() {
     turnosUnicos.forEach(turno => {
       const option = document.createElement('option');
       option.value = String(turno);
-      option.textContent = `Turno ${turno}`;
+      option.textContent = String(turno);
       selectTurno.appendChild(option);
     });
 
@@ -1097,6 +1115,27 @@ function inicializarFechasPorDefecto() {
   if (inputHasta) inputHasta.value = formato(hoy);
 }
 
+
+function actualizarTopsStickyResultados() {
+  const root = document.documentElement;
+
+  const setTop = (selectorCard, variable) => {
+    const card = document.querySelector(selectorCard);
+    if (!card) return;
+
+    const base = getComputedStyle(card).top;
+    const topBase = Number.parseFloat(base) || 0;
+    const altura = Math.ceil(card.offsetHeight || 0);
+    root.style.setProperty(variable, `${topBase + altura}px`);
+  };
+
+  setTop('.produccion-fecha-busqueda-card', '--tabla-fecha-top');
+  setTop('.produccion-animal-busqueda-card', '--tabla-animal-top');
+  setTop('.animales-busqueda-card', '--tabla-censo-top');
+}
+
+window.addEventListener('resize', actualizarTopsStickyResultados);
+
 async function buscarProduccionPorFecha() {
   const desde = document.getElementById('filtro-fecha-desde')?.value;
   const hasta = document.getElementById('filtro-fecha-hasta')?.value;
@@ -1156,6 +1195,7 @@ async function buscarProduccionPorFecha() {
     sinDatos.textContent = 'Sin datos en ese periodo';
     cuerpo.appendChild(sinDatos);
     contenedor.appendChild(tabla);
+    requestAnimationFrame(actualizarTopsStickyResultados);
     return;
   }
 
@@ -1181,6 +1221,7 @@ async function buscarProduccionPorFecha() {
   });
 
   contenedor.appendChild(tabla);
+  requestAnimationFrame(actualizarTopsStickyResultados);
 }
 
 function inicializarFechasPorDefectoAnimal() {
@@ -1264,6 +1305,7 @@ async function buscarProduccionPorAnimal() {
     sinDatos.textContent = 'Sin datos en ese periodo';
     cuerpo.appendChild(sinDatos);
     contenedor.appendChild(tabla);
+    requestAnimationFrame(actualizarTopsStickyResultados);
     return;
   }
 
@@ -1285,6 +1327,7 @@ async function buscarProduccionPorAnimal() {
   });
 
   contenedor.appendChild(tabla);
+  requestAnimationFrame(actualizarTopsStickyResultados);
 }
 
 function exportarProduccionAnimalCSV() {
@@ -1307,7 +1350,7 @@ function exportarProduccionAnimalCSV() {
     ['Informe', 'Producción por animal'],
     ['Periodo', `${formatearFechaES(desde)} - ${formatearFechaES(hasta)}`],
     [],
-    ['Crotal', 'Total litros', 'Media litros']
+    ['Crotal', 'Total en litros', 'Media en litros']
   ];
 
   filasTabla.forEach(fila => {
@@ -1365,15 +1408,17 @@ function abrirPDFTabla({ titulo, periodo, columnas, filas }) {
         <title>${titulo}</title>
         <style>
           body { font-family: Arial, sans-serif; padding: 24px; color: #183243; }
-          h1 { margin: 0 0 8px; color: #174766; }
-          .meta { margin-bottom: 18px; color: #6B8394; font-weight: 700; }
-          table { width: 100%; border-collapse: collapse; font-size: 13px; }
-          th { background: #DDEAF2; color: #174766; text-align: left; padding: 10px; border: 1px solid #BFD6E5; }
-          td { padding: 9px 10px; border: 1px solid #E4F1F8; }
+          h1 { margin: 0 0 8px; color: #174766; font-size: 26px; }
+          .meta { margin-bottom: 18px; color: #6B8394; font-weight: 700; font-size: 15px; }
+          .tabla-wrapper { width: max-content; max-width: 100%; }
+          table { width: auto; border-collapse: collapse; font-size: 13px; table-layout: auto; }
+          th { background: #DDEAF2; color: #174766; text-align: left; padding: 10px 14px; border: 1px solid #BFD6E5; white-space: nowrap; }
+          td { padding: 8px 14px; border: 1px solid #E4F1F8; white-space: nowrap; }
           td:not(:first-child), th:not(:first-child) { text-align: right; }
-          .acciones { margin-bottom: 20px; }
-          button { padding: 10px 14px; border: none; border-radius: 8px; cursor: pointer; margin-right: 8px; }
-          @media print { .acciones { display: none; } }
+          .acciones { margin-bottom: 22px; display: flex; gap: 12px; flex-wrap: wrap; }
+          button { min-height: 48px; padding: 12px 18px; border: none; border-radius: 12px; cursor: pointer; margin: 0; font-size: 15px; font-weight: 800; background: #DDEAF2; color: #174766; }
+          @media print { .acciones { display: none; } body { padding: 10px; } }
+          @media (max-width: 520px) { body { padding: 18px; } button { min-height: 54px; font-size: 16px; } table { font-size: 12px; } th, td { padding: 8px 10px; } }
         </style>
       </head>
       <body>
@@ -1383,7 +1428,7 @@ function abrirPDFTabla({ titulo, periodo, columnas, filas }) {
         </div>
         <h1>${titulo}</h1>
         <div class="meta">${periodo || ''}<br>Generado: ${new Date().toLocaleString('es-ES')}</div>
-        <table><thead><tr>${th}</tr></thead><tbody>${trs}</tbody></table>
+        <div class="tabla-wrapper"><table><thead><tr>${th}</tr></thead><tbody>${trs}</tbody></table></div>
       </body>
     </html>
   `);
@@ -1398,13 +1443,13 @@ function exportarProduccionFechaPDF() {
 
   const filas = Array.from(filasTabla).map(fila => [
     formatearFechaES(fila.dataset.fecha || ''),
-    `${formatearNumeroES(Number(fila.dataset.litros || 0), 2)} L`
+    formatearNumeroES(Number(fila.dataset.litros || 0), 2)
   ]);
 
   abrirPDFTabla({
     titulo: 'Producción por fecha',
     periodo: `Periodo: ${formatearFechaES(desde)} - ${formatearFechaES(hasta)}`,
-    columnas: ['Fecha', 'Producción'],
+    columnas: ['Fecha', 'Producción en litros'],
     filas
   });
 }
@@ -1417,14 +1462,14 @@ function exportarProduccionAnimalPDF() {
 
   const filas = Array.from(filasTabla).map(fila => [
     fila.dataset.crotal || '',
-    `${formatearNumeroES(Number(fila.dataset.total || 0), 2)} L`,
-    `${formatearNumeroES(Number(fila.dataset.media || 0), 2)} L`
+    formatearNumeroES(Number(fila.dataset.total || 0), 2),
+    formatearNumeroES(Number(fila.dataset.media || 0), 2)
   ]);
 
   abrirPDFTabla({
     titulo: 'Producción por animal',
     periodo: `Periodo: ${formatearFechaES(desde)} - ${formatearFechaES(hasta)}`,
-    columnas: ['Crotal', 'Total', 'Media'],
+    columnas: ['Crotal', 'Total en litros', 'Media en litros'],
     filas
   });
 }
@@ -1823,7 +1868,7 @@ async function pintarGraficoTopAnimales() {
     ctx.font = 'bold 9px Arial';
     ctx.textAlign = 'right';
     ctx.textBaseline = 'middle';
-    ctx.fillText(`${valor} L`, paddingLeft - 6, y);
+    ctx.fillText(`${valor}`, paddingLeft - 6, y);
   });
 
   const slot = chartW / top.length;
@@ -1844,7 +1889,7 @@ async function pintarGraficoTopAnimales() {
     ctx.font = 'bold 10px Arial';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'alphabetic';
-    ctx.fillText(`${Math.round(item.litros)} L`, x + barW / 2, Math.max(12, y - 6));
+    ctx.fillText(`${Math.round(item.litros)}`, x + barW / 2, Math.max(12, y - 6));
 
     ctx.fillStyle = '#6B8394';
     ctx.font = 'bold 9px Arial';
@@ -2339,6 +2384,7 @@ if (btnVolverAlta) {
       volverAltaAnimalACenso = false;
       await cargarResumenEstadosAnimales();
       await buscarInformeAnimales();
+      requestAnimationFrame(volverAlCrotalEnCenso);
       return;
     }
 
@@ -3094,6 +3140,7 @@ async function buscarInformeAnimales() {
     sinDatos.textContent = 'Sin resultados';
     cuerpo.appendChild(sinDatos);
     contenedor.appendChild(tabla);
+    requestAnimationFrame(actualizarTopsStickyResultados);
     return;
   }
 
@@ -3119,6 +3166,7 @@ async function buscarInformeAnimales() {
   });
 
   contenedor.appendChild(tabla);
+  requestAnimationFrame(actualizarTopsStickyResultados);
 }
 
 function exportarProduccionFechaCSV() {
@@ -3141,13 +3189,13 @@ function exportarProduccionFechaCSV() {
     ['Informe', 'Producción por fecha'],
     ['Periodo', `${formatearFechaES(desde)} - ${formatearFechaES(hasta)}`],
     [],
-    ['Fecha', 'Producción']
+    ['Fecha', 'Producción en litros']
   ];
 
   filasTabla.forEach(fila => {
     filas.push([
       formatearFechaES(fila.dataset.fecha || ''),
-      `${formatearNumeroES(Number(fila.dataset.litros || 0), 2)} L`
+      formatearNumeroES(Number(fila.dataset.litros || 0), 2)
     ]);
   });
 
