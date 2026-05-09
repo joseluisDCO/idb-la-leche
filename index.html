@@ -2118,7 +2118,31 @@ button:disabled {
   }
 }
 
+/* ===== Tapadera superior para informes con bloque fijo ===== */
 
+.produccion-fecha-busqueda-card,
+.produccion-animal-busqueda-card,
+.animales-busqueda-card {
+  box-shadow:
+    0 -95px 0 0 #F7FBFF,
+    0 12px 22px rgba(47,111,159,0.14),
+    inset 0 1px 0 rgba(255,255,255,0.85) !important;
+}
+
+/* Refuerzo para que la zona fija tape siempre los datos al hacer scroll */
+.produccion-fecha-top-fijo,
+.produccion-animal-top-fijo,
+.animales-top-fijo {
+  background: #F7FBFF !important;
+  z-index: 1700 !important;
+}
+
+.produccion-fecha-busqueda-card,
+.produccion-animal-busqueda-card,
+.animales-busqueda-card {
+  z-index: 1650 !important;
+}
+ 
 /* ===== Modal ===== */
 
 .modal {
