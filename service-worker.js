@@ -1,4 +1,4 @@
-const CACHE_NAME = 'idb-la-leche-v8';
+const CACHE_NAME = 'idb-la-leche-v9';
 
 self.addEventListener('install', event => {
   self.skipWaiting();
