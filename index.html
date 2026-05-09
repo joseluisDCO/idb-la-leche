@@ -1839,6 +1839,91 @@ button:disabled {
   }
 }
 
+
+
+/* ===== Ajustes 260509 v3 ===== */
+.produccion-fecha-meses-card {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  align-items: end;
+}
+
+.produccion-fecha-meses-card > div { min-width: 0; }
+
+.produccion-fecha-meses-card label {
+  display: block;
+  margin: 0 0 6px !important;
+  text-align: center;
+  font-size: 0.86rem;
+}
+
+.produccion-fecha-meses-card input[type="month"] {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  text-align: center;
+  font-size: 14px;
+  padding: 11px 8px;
+}
+
+#resumen-estados-animales,
+.resumen-estados-animales {
+  display: none !important;
+}
+
+.animales-busqueda-card,
+.produccion-animal-busqueda-card {
+  position: sticky;
+  top: var(--sticky-search-top);
+  z-index: 996;
+  background: #FFFFFF;
+  backdrop-filter: none;
+}
+
+.tabla-informe-header {
+  position: sticky !important;
+  top: calc(var(--sticky-search-top) + 252px) !important;
+  z-index: 995;
+  background: #DDEAF2 !important;
+}
+
+.tabla-animales .tabla-informe-header,
+.tabla-produccion-animal .tabla-informe-header {
+  top: calc(var(--sticky-search-top) + 252px) !important;
+}
+
+.tabla-informe-row.fila-editable { cursor: pointer; }
+.tabla-informe-row.fila-editable:hover { background: #F7FBFF; }
+
+.crotal-editable {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.icono-editar-crotal {
+  font-size: 0.72rem;
+  color: var(--blue-soft);
+  opacity: 0.85;
+}
+
+.produccion-animal-grafico-card canvas { height: 230px !important; }
+
+@media (max-width: 520px) {
+  .produccion-fecha-meses-card { gap: 10px !important; }
+  .produccion-fecha-meses-card input[type="month"] {
+    font-size: 13px;
+    padding: 10px 5px;
+  }
+
+  .tabla-informe-header,
+  .tabla-animales .tabla-informe-header,
+  .tabla-produccion-animal .tabla-informe-header {
+    top: calc(var(--sticky-search-top) + 246px) !important;
+  }
+}
+
 /* ===== Modal ===== */
 
 .modal {
@@ -2314,11 +2399,15 @@ hr {
   </section>
 
   <section class="produccion-fecha-meses-card">
-    <label>Comparo el mes de</label>
-    <input id="grafico-mes-base" type="month" />
+    <div>
+      <label>Comparo</label>
+      <input id="grafico-mes-base" type="month" />
+    </div>
 
-    <label>Con el mes de</label>
-    <input id="grafico-mes-comparacion" type="month" />
+    <div>
+      <label>Con</label>
+      <input id="grafico-mes-comparacion" type="month" />
+    </div>
   </section>
 
   <section class="produccion-fecha-busqueda-card">
